@@ -1,0 +1,5 @@
+.vscode/
+
+#gitignore secure key files
+*.key
+*.pem
