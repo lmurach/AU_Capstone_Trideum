@@ -102,6 +102,24 @@ class Database:
                 )
                 VALUES(?, ?);""", DBTemp.door_log_data
         )
+        cur.executemany(
+            """INSERT INTO HVAC_logs(
+                date, floor
+                )
+                VALUES(?, ?);""", DBTemp.HVAC_log_data
+        )
+        cur.executemany(
+            """INSERT INTO motion_logs(
+                date, floor, is_alert
+                )
+                VALUES(?, ?, ?);""", DBTemp.motion_log_data
+        )
+        cur.executemany(
+            """INSERT INTO elevator_logs(
+                date, floor, state
+                )
+                VALUES(?, ?, ?);""", DBTemp.elevator_log_data
+        )
 
     @staticmethod
     def drop_db():
@@ -116,6 +134,44 @@ class Database:
         cur.execute("DROP TABLE IF EXISTS elevator_logs;")
         cur.execute("DROP TABLE IF EXISTS config;")
         con.commit()
+
+    @staticmethod
+    def get_log_string_array(sqlArray):
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        res = cur.execute(
+            """SELECT """
+        )
+
+    @staticmethod
+    def _get_logs_sql():
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        res = cur.execute(
+            """
+            SELECT e.name, d.date, NULL AS floor, NULL AS is_alert, NULL AS state
+            FROM employees AS e, door_logs AS d
+            WHERE d.e_id = e.id
+
+            UNION ALL
+
+            SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state
+            FROM HVAC_logs
+
+            UNION ALL
+
+            SELECT NULL AS name, date, floor, is_alert, NULL AS state
+            FROM motion_logs
+
+            UNION ALL
+
+            SELECT NULL AS name, date, floor, NULL AS is_alert, state
+            FROM elevator_logs
+
+            ORDER BY date;
+            """
+        )
+        return res
 
 Database.drop_db()
 Database.initialize_db()

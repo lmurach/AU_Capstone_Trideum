@@ -13,6 +13,15 @@ class DBTemp:
     This file is kept seperate so that if real data needs to be loaded,
     it can be left off from Github by adding it to the .gitignore file.'''
 
+    sample_date_times = [
+        datetime.datetime(2023, 10, 1, 1, 20, 20),
+        datetime.datetime(2023, 12, 17, 16, 2, 55),
+        datetime.datetime(2024, 1, 16, 11, 24, 13),
+        datetime.datetime(2024, 1, 18, 8, 24, 50),
+        datetime.datetime(2024, 1, 25, 11, 24, 13),
+        datetime.datetime(2024, 2, 2, 8, 24, 50)
+    ]
+    
     employee_data = [
         ("John Johnman", 1),
         ("Dave Daveman", 1),
@@ -21,17 +30,17 @@ class DBTemp:
     ]
 
     door_log_data = [
-        (datetime.datetime.now(), 2),
-        (datetime.datetime.now(), 1),
-        (datetime.datetime.now(), 2)
+        (sample_date_times[0], 2),
+        (sample_date_times[1], 1),
+        (sample_date_times[5], 2)
     ]
 
     HVAC_log_data = [
-        (datetime.datetime.now(), 1),
-        (datetime.datetime.now(), 2),
-        (datetime.datetime.now(), 3),
-        (datetime.datetime.now(), 1),
-        (datetime.datetime.now(), 2),
+        (sample_date_times[0], 1),
+        (sample_date_times[1], 2),
+        (sample_date_times[2], 3),
+        (sample_date_times[3], 1),
+        (sample_date_times[4], 2),
     ]
 
     motion_log_data = [
