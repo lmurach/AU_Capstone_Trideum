@@ -10,8 +10,17 @@ Purpose : The Database class handles all important logging to keep track of
 """
 
 import sqlite3
+from enum import IntEnum
 
 from database_temp_data import DBTemp
+
+class LogTypes(IntEnum):
+    NAME = 0
+    DATE = 1
+    FLOOR = 2
+    IS_ALERT = 3
+    STATE = 4
+    TYPE = 5
 
 # Note when generating test data: ids start at 1.
 # Do not use an id of 0 or a foreign key constrain error
@@ -137,11 +146,35 @@ class Database:
 
     @staticmethod
     def get_log_string_array(sqlArray):
-        con = sqlite3.connect("database.db")
-        cur = con.cursor()
-        res = cur.execute(
-            """SELECT """
-        )
+        log_string_array = []
+        for query in sqlArray:
+            if query[LogTypes.TYPE] == "door":
+                log_string_array.append(
+                    f"""{query[LogTypes.DATE]}: {query[LogTypes.NAME]} opened the door."""
+                )
+            if query[LogTypes.TYPE] == "HVAC":
+                log_string_array.append(
+                    f"""{query[LogTypes.DATE]}: HVAC turned on for floor {query[LogTypes.FLOOR]}."""
+                )
+            if query[LogTypes.TYPE] == "motion":
+                if query[LogTypes.IS_ALERT]:
+                    log_string_array.append(
+                        f"""{query[LogTypes.DATE]}: motion detected on floor {query[LogTypes.FLOOR]} after business hours."""
+                    )
+                else:
+                    log_string_array.append(
+                        f"""{query[LogTypes.DATE]}: motion detected on floor {query[LogTypes.FLOOR]}."""
+                    )
+            if query[LogTypes.TYPE] == "ele":
+                if query[LogTypes.STATE] == "requested":
+                    log_string_array.append(
+                        f"""{query[LogTypes.DATE]}: Elevator requested for floor {query[LogTypes.FLOOR]}."""
+                    )
+                if query[LogTypes.STATE] == "arrived":
+                    log_string_array.append(
+                        f"""{query[LogTypes.DATE]}: Elevator arrived on floor {query[LogTypes.FLOOR]}."""
+                    )
+        return log_string_array
 
     @staticmethod
     def _get_logs_sql():
@@ -149,29 +182,31 @@ class Database:
         cur = con.cursor()
         res = cur.execute(
             """
-            SELECT e.name, d.date, NULL AS floor, NULL AS is_alert, NULL AS state
+            SELECT e.name, d.date, NULL AS floor, NULL AS is_alert, NULL AS state, 'door' AS type
             FROM employees AS e, door_logs AS d
             WHERE d.e_id = e.id
 
             UNION ALL
 
-            SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state
+            SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
             FROM HVAC_logs
 
             UNION ALL
 
-            SELECT NULL AS name, date, floor, is_alert, NULL AS state
+            SELECT NULL AS name, date, floor, is_alert, NULL AS state, 'motion' AS type
             FROM motion_logs
 
             UNION ALL
 
-            SELECT NULL AS name, date, floor, NULL AS is_alert, state
+            SELECT NULL AS name, date, floor, NULL AS is_alert, state, 'ele' AS type
             FROM elevator_logs
 
             ORDER BY date;
             """
         )
-        return res
+        return res.fetchall()
 
 Database.drop_db()
 Database.initialize_db()
+print(Database.get_log_string_array(Database._get_logs_sql()))
+
