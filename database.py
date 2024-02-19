@@ -24,6 +24,7 @@ array function. Currently the code is managable but better solutions should
 exist for this type of function. 
 """
 
+from datetime import datetime
 import sqlite3
 from enum import IntEnum
 import os
@@ -83,6 +84,7 @@ class Database:
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                 date INTEGER,
                 e_id INTEGER,
+                is_alert INTEGER,
                 FOREIGN KEY(e_id) REFERENCES employees(id)
             );"""
         )
@@ -131,9 +133,9 @@ class Database:
         )
         cur.executemany(
             """INSERT INTO door_logs(
-                date, e_id
+                date, e_id, is_alert
                 )
-                VALUES(?, ?);""", DBTemp.door_log_data
+                VALUES(?, ?, ?);""", DBTemp.door_log_data
         )
         cur.executemany(
             """INSERT INTO HVAC_logs(
@@ -176,7 +178,7 @@ class Database:
         con.commit()
 
     @staticmethod
-    def get_config_temperature_array() -> int:
+    def get_config_temperature_array() -> list[int]:
         '''Returns an array of temperature sensors in order from the basement
         to the top floor.'''
         con = sqlite3.connect("database.db")
@@ -201,16 +203,55 @@ class Database:
 
 
     @staticmethod
+    def set_temperature(floor:int, temp:int):
+        '''Sets default temperature for a given floor.
+        Use 0 for basement and 1 for first floor and so on.'''
+        if floor == 0:
+            floor_name = "basement_temp"
+        elif floor == 1:
+            floor_name = "floor1_temp"
+        else:
+            floor_name = "floor2_temp"
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            f"""
+            UPDATE config
+                SET {floor_name} = ?
+            """, (temp,)
+        )
+        con.commit()
+
+    @staticmethod
+    def create_door_log(date:datetime, e_id:int, is_alert:int):
+        '''creates a new door log for opening doors'''
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """INSERT INTO door_logs(
+                date, e_id, is_alert
+                )
+                VALUES(?, ?, ?);""", (date, e_id, is_alert)
+        )
+        con.commit()
+
+    @staticmethod
     def get_log_string_array() -> list[str]:
         '''Returns a formatted string array of all database logs'''
         log_string_array = []
         sql_array = Database._get_logs_sql()
         for query in sql_array:
             if query[LogTypes.TYPE] == "door":
-                log_string_array.append(
-                    f"{query[LogTypes.DATE]}: "
-                    f"{query[LogTypes.NAME]} opened the door."
-                )
+                if query[LogTypes.IS_ALERT] == 0:
+                    log_string_array.append(
+                        f"{query[LogTypes.DATE]}: "
+                        f"{query[LogTypes.NAME]} opened the door."
+                    )
+                else:
+                    log_string_array.append(
+                        f"{query[LogTypes.DATE]}: "
+                        f"{query[LogTypes.NAME]} left the door open."
+                    )
             if query[LogTypes.TYPE] == "HVAC":
                 log_string_array.append(
                     f"{query[LogTypes.DATE]}: "
@@ -254,7 +295,7 @@ class Database:
         cur = con.cursor()
         res = cur.execute(
             """
-            SELECT e.name, d.date, NULL AS floor, NULL AS is_alert, NULL AS state, 'door' AS type
+            SELECT e.name, d.date, NULL AS floor, is_alert, NULL AS state, 'door' AS type
             FROM employees AS e, door_logs AS d
             WHERE d.e_id = e.id
 

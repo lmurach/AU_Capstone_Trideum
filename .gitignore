@@ -1,5 +1,5 @@
 #python caching files
-__pychache__/
+__pycache__/
 .vscode/
 
 #database related files
