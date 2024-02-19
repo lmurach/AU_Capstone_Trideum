@@ -32,9 +32,9 @@ class DBTemp:
     ]
 
     door_log_data = [
-        (sample_date_times[0], 2),
-        (sample_date_times[1], 1),
-        (sample_date_times[5], 2)
+        (sample_date_times[0], 2, 0),
+        (sample_date_times[1], 1, 0),
+        (sample_date_times[5], 2, 1)
     ]
 
     HVAC_log_data = [
