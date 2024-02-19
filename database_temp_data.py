@@ -19,9 +19,11 @@ class DBTemp:
         datetime.datetime(2024, 1, 16, 11, 24, 13),
         datetime.datetime(2024, 1, 18, 8, 24, 50),
         datetime.datetime(2024, 1, 25, 11, 24, 13),
-        datetime.datetime(2024, 2, 2, 8, 24, 50)
+        datetime.datetime(2024, 2, 2, 8, 24, 50),
+        datetime.datetime(2024, 2, 2, 8, 0, 0),
+        datetime.datetime(2024, 2, 2, 17, 0, 0)
     ]
-    
+
     employee_data = [
         ("John Johnman", 1),
         ("Dave Daveman", 1),
@@ -56,4 +58,8 @@ class DBTemp:
         (datetime.datetime.now(), 1, "arrived"),
         (datetime.datetime.now(), 2, "in-progress"),
         (datetime.datetime.now(), 2, "arrived")
+    ]
+
+    config_log_data = [
+        (68, 72, 73, sample_date_times[6], sample_date_times[7], 0)
     ]
