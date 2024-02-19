@@ -53,7 +53,7 @@ class Door:
             if Door._is_door_closed():
                 self._add_wait_time(0, 500)
                 self.state = "ready_to_close"
-                self._log_to_database(0)
+                self._log_to_database(0, "open")
             elif self.seconds_door_open >= 10 and not self.alert_sent:
                 self._alert_door_ajar()
             else:
@@ -68,6 +68,7 @@ class Door:
             return 1
         if self.state == "closed":
             self._clear_alert()
+            self._log_to_database(0, "close")
             self.state = "ready_to_open"
             return 0
 
@@ -84,7 +85,7 @@ class Door:
         to ensure that people are not holding the secure door open too long.'''
         self.alert_sent = True
         GPIO.output(self.pin, 1)
-        self._log_to_database(1)
+        self._log_to_database(1, "open")
 
     def _clear_alert(self):
         '''This function is called after the door is closed to finalize the alert
@@ -93,8 +94,8 @@ class Door:
         GPIO.output(self.pin, 0)
         print("door closed")
 
-    def _log_to_database(self, is_alert:int):
-        Database.create_door_log(datetime.now(), self.card_owner_id, is_alert)
+    def _log_to_database(self, is_alert:int, state:str):
+        Database.create_door_log(datetime.now(), self.card_owner_id, is_alert, state)
 
     @staticmethod
     def _open_lock():

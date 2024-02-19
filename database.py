@@ -85,6 +85,7 @@ class Database:
                 date INTEGER,
                 e_id INTEGER,
                 is_alert INTEGER,
+                state TEXT,
                 FOREIGN KEY(e_id) REFERENCES employees(id)
             );"""
         )
@@ -133,9 +134,9 @@ class Database:
         )
         cur.executemany(
             """INSERT INTO door_logs(
-                date, e_id, is_alert
+                date, e_id, is_alert, state
                 )
-                VALUES(?, ?, ?);""", DBTemp.door_log_data
+                VALUES(?, ?, ?, ?);""", DBTemp.door_log_data
         )
         cur.executemany(
             """INSERT INTO HVAC_logs(
@@ -223,15 +224,15 @@ class Database:
         con.commit()
 
     @staticmethod
-    def create_door_log(date:datetime, e_id:int, is_alert:int):
+    def create_door_log(date:datetime, e_id:int, is_alert:int, state:str):
         '''creates a new door log for opening doors'''
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
             """INSERT INTO door_logs(
-                date, e_id, is_alert
+                date, e_id, is_alert, state
                 )
-                VALUES(?, ?, ?);""", (date, e_id, is_alert)
+                VALUES(?, ?, ?, ?);""", (date, e_id, is_alert, state)
         )
         con.commit()
 
@@ -242,7 +243,12 @@ class Database:
         sql_array = Database._get_logs_sql()
         for query in sql_array:
             if query[LogTypes.TYPE] == "door":
-                if query[LogTypes.IS_ALERT] == 0:
+                if query[LogTypes.STATE] == "close":
+                    log_string_array.append(
+                        f"{query[LogTypes.DATE]}: "
+                        f"{query[LogTypes.NAME]} closed the door."
+                    )
+                elif query[LogTypes.IS_ALERT] == 0:
                     log_string_array.append(
                         f"{query[LogTypes.DATE]}: "
                         f"{query[LogTypes.NAME]} opened the door."
@@ -295,7 +301,7 @@ class Database:
         cur = con.cursor()
         res = cur.execute(
             """
-            SELECT e.name, d.date, NULL AS floor, is_alert, NULL AS state, 'door' AS type
+            SELECT e.name, d.date, NULL AS floor, is_alert, state, 'door' AS type
             FROM employees AS e, door_logs AS d
             WHERE d.e_id = e.id
 
