@@ -86,8 +86,8 @@ def setUpDoor(ui:Ui_MainWindow, aDoor:Door):
     ui.lock_door_button_4.clicked.connect(lambda: aDoor._close_lock())
     ui.unlock_door_button_4.clicked.connect(lambda: aDoor._open_lock())
 
-    ui.lock_door_button_4.clicked.connect(lambda: aDoor._log_to_database(0))
-    ui.unlock_door_button_4.clicked.connect(lambda: aDoor._log_to_database(0))
+    ui.lock_door_button_4.clicked.connect(lambda: aDoor._log_to_database(0, "close"))
+    ui.unlock_door_button_4.clicked.connect(lambda: aDoor._log_to_database(0, "open"))
 
     ui.lock_door_button_4.clicked.connect(lambda: set_up_logs(ui))
     ui.unlock_door_button_4.clicked.connect(lambda: set_up_logs(ui))
