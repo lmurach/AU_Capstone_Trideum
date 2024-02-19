@@ -24,6 +24,7 @@ Purpose : This file shows how to add some basic functionality
 from ui_5 import Ui_MainWindow
 from PyQt5 import QtWidgets
 from database import Database
+from door import Door
 from functools import partial
 
 def setUpDials(ui:Ui_MainWindow):
@@ -76,20 +77,27 @@ def setUpAlarm(ui:Ui_MainWindow):
     ui.arm_alarm_button_4.clicked.connect(lambda: print("Alarm Armed!")) 
     ui.disarm_alarm_button_4.clicked.connect(lambda: print("Alarm Disarmed!"))
 
-def setUpDoor(ui:Ui_MainWindow):
+def setUpDoor(ui:Ui_MainWindow, aDoor:Door):
     """ 
     This method connects the door buttons to their corresponding 
     functions. 
     """
 
-    ui.lock_door_button_4.clicked.connect(lambda: print("Door locked!"))
-    ui.unlock_door_button_4.clicked.connect(lambda: print("Door unlocked!"))
+    ui.lock_door_button_4.clicked.connect(lambda: aDoor._close_lock())
+    ui.unlock_door_button_4.clicked.connect(lambda: aDoor._open_lock())
+
+    ui.lock_door_button_4.clicked.connect(lambda: aDoor._log_to_database(0))
+    ui.unlock_door_button_4.clicked.connect(lambda: aDoor._log_to_database(0))
+
+    ui.lock_door_button_4.clicked.connect(lambda: set_up_logs(ui))
+    ui.unlock_door_button_4.clicked.connect(lambda: set_up_logs(ui))
 
 def set_up_logs(ui:Ui_MainWindow):
     """
     This method will query the database for new logs and update the list view. 
     """
 
+    ui.listWidget.clear()
     logs = Database.get_log_string_array()
 
     for log in logs:
@@ -116,11 +124,14 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     ui.stackedWidget.setCurrentWidget(ui.page_3)
+    
+    # Create a door that assoicates user id 3 with it... 
+    ourDoor = Door(3)
 
     # Configure Some Functionality on our UI object.
     setUpDials(ui)
     setUpAlarm(ui)
-    setUpDoor(ui)
+    setUpDoor(ui, ourDoor)
     set_up_logs(ui)
     setup_menus(ui)
 
