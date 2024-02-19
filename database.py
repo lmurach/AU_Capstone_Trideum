@@ -11,6 +11,7 @@ Purpose : The Database class handles all important logging to keep track of
 
 import sqlite3
 from enum import IntEnum
+import os
 
 from database_temp_data import DBTemp
 
@@ -35,11 +36,17 @@ class Database:
             Only call this function after the database has been dropped, 
             such as during debugging or massive database changes.'''
 
+        #does the database exist:
+        exists = os.path.isfile("database.db")
+
         con = sqlite3.connect("database.db")
         con.execute("PRAGMA foreign_keys = 1")
         cur = con.cursor()
-        Database._create_tables(cur)
-        Database._fill_tables_with_temp_data(cur)
+
+        # Don't re fill the database if exists
+        if not exists:
+            Database._create_tables(cur)
+            Database._fill_tables_with_temp_data(cur)
         con.commit()
 
     @staticmethod
@@ -145,8 +152,9 @@ class Database:
         con.commit()
 
     @staticmethod
-    def get_log_string_array(sqlArray):
+    def get_log_string_array():
         log_string_array = []
+        sqlArray = Database._get_logs_sql()
         for query in sqlArray:
             if query[LogTypes.TYPE] == "door":
                 log_string_array.append(
