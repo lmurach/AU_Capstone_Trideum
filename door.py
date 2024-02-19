@@ -94,7 +94,7 @@ class Door:
         print("door closed")
 
     def _log_to_database(self, is_alert:int):
-        Database.create_door_log(self.card_owner_id, datetime.now(), is_alert)
+        Database.create_door_log(datetime.now(), self.card_owner_id, is_alert)
 
     @staticmethod
     def _open_lock():

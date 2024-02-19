@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from database import Database
 
 
 class Ui_MainWindow(object):
@@ -26,6 +27,19 @@ class Ui_MainWindow(object):
                 self.stackedWidget.setCurrentWidget(self.page_3)
                 self.state = 1
                 self.logs_btn.setText("Logs")
+
+    def set_up_logs(self):
+        """
+        This method will query the database for new logs and update the list view. 
+        """
+        print("Setting up logs..")
+        self.listWidget.clear()
+        logs = Database.get_log_string_array()
+
+        for log in logs:
+            item = QtWidgets.QListWidgetItem()
+            item.setText(log)
+            self.listWidget.addItem(item)
 
     def setupUi(self, MainWindow):
 

@@ -96,9 +96,13 @@ def set_up_logs(ui:Ui_MainWindow):
     """
     This method will query the database for new logs and update the list view. 
     """
-
+    print("Setting up logs..")
     ui.listWidget.clear()
     logs = Database.get_log_string_array()
+    print("---")
+    for log in logs:
+        print(log)
+    print("---")
 
     for log in logs:
         item = QtWidgets.QListWidgetItem()
