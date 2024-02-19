@@ -205,8 +205,3 @@ class Database:
             """
         )
         return res.fetchall()
-
-Database.drop_db()
-Database.initialize_db()
-print(Database.get_log_string_array(Database._get_logs_sql()))
-
