@@ -20,8 +20,8 @@ Purpose : This file shows how to add some basic functionality
 """
 
 # Imports. Make sure PyQt5 is properly installed
-from ui_form import Ui_MainWindow
 from PyQt5 import QtWidgets
+from ui_form import Ui_MainWindow
 from database import Database
 
 def setUpDials(ui:Ui_MainWindow):
