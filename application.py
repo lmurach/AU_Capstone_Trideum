@@ -21,9 +21,10 @@ Purpose : This file shows how to add some basic functionality
 
 # Imports. Make sure PyQt5 is properly installed
 #from ui_form import Ui_MainWindow
-from ui_4 import Ui_MainWindow
+from ui_5 import Ui_MainWindow
 from PyQt5 import QtWidgets
 from database import Database
+from functools import partial
 
 def setUpDials(ui:Ui_MainWindow):
     """ 
@@ -31,6 +32,7 @@ def setUpDials(ui:Ui_MainWindow):
     and connects them to their corresponding functions for updating 
     the rest of the Ui. 
     """
+    temps = Database.get_config_temperature_array() # basement to top 
 
     # Set the range of the dials
     ui.top_floor_hvac_dial_4.setRange(0, 100)
@@ -38,14 +40,14 @@ def setUpDials(ui:Ui_MainWindow):
     ui.bottom_floor_hvac_dial_4.setRange(0, 100)
 
     # Set the initial text and value of the dials
-    ui.top_floor_activate_on_4.setText("Active on: 00.00")
-    ui.top_floor_hvac_dial_4.setValue(0)
+    ui.top_floor_activate_on_4.setText(f"Active on: {temps[2]}")
+    ui.top_floor_hvac_dial_4.setValue(temps[2])
 
-    ui.middle_floor_activate_on_4.setText("Active on: 00.00")
-    ui.middle_floor_hvac_dial_4.setValue(0)
+    ui.middle_floor_activate_on_4.setText(f"Active on: {temps[1]}")
+    ui.middle_floor_hvac_dial_4.setValue(temps[1])
 
-    ui.bottom_floor_activate_on_4.setText("Active on: 00.00")
-    ui.bottom_floor_hvac_dial_4.setValue(0)
+    ui.bottom_floor_activate_on_4.setText(f"Active on: {temps[0]}")
+    ui.bottom_floor_hvac_dial_4.setValue(temps[0])
 
     # Connect the dial value to the text label
     ui.top_floor_hvac_dial_4.valueChanged.connect(
@@ -80,8 +82,8 @@ def setUpDoor(ui:Ui_MainWindow):
     functions. 
     """
 
-    ui.lock_door_button_4.clicked.connect(lambda: print("Door unlocked!"))
-    ui.unlock_door_button_4.clicked.connect(lambda: print("Door locked!"))
+    ui.lock_door_button_4.clicked.connect(lambda: print("Door locked!"))
+    ui.unlock_door_button_4.clicked.connect(lambda: print("Door unlocked!"))
 
 def set_up_logs(ui:Ui_MainWindow):
     """
@@ -93,13 +95,11 @@ def set_up_logs(ui:Ui_MainWindow):
     for log in logs:
         item = QtWidgets.QListWidgetItem()
         item.setText(log)
-        ui.log_list.addItem(item)
+        ui.listWidget.addItem(item)
 
 def setup_menus(ui:Ui_MainWindow):
     """ Fill this out later wesley """
-
-    ui.logs_btn.clicked.connect(lambda: ui.stackedWidget.setCurrentWidget(ui.logs))
-    ui.home_btn.clicked.connect(lambda: ui.stackedWidget.setCurrentWidget(ui.home))
+    ui.logs_btn.clicked.connect(ui.click_change_page)
 
 if __name__ == "__main__":
     """ 
@@ -110,13 +110,12 @@ if __name__ == "__main__":
     to th
     """
     import sys
-
     Database.initialize_db()
-
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    ui.stackedWidget.setCurrentWidget(ui.page_3)
 
     # Configure Some Functionality on our UI object.
     setUpDials(ui)
