@@ -4,3 +4,5 @@ __pycache__/
 
 #database related files
 database.db
+private.pem
+receiver.pem
