@@ -23,9 +23,11 @@ Purpose : This file shows how to add some basic functionality
 #from ui_form import Ui_MainWindow
 from ui_5 import Ui_MainWindow
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QThread, QThreadPool
+from functools import partial
 from database import Database
 from door import Door
-from functools import partial
+from background_main import BackgroundMain
 
 def setUpDials(ui:Ui_MainWindow):
     """ 
@@ -113,6 +115,12 @@ def setup_menus(ui:Ui_MainWindow):
     """ Fill this out later wesley """
     ui.logs_btn.clicked.connect(ui.click_change_page)
 
+def initiate_background_thread():
+    ''' TODO: figure out why threading stuff makes this function blocking. 
+    It works perfectly in the __main__ fnction but not if this function has
+    those same 3 functions but are called through this'''
+    pass
+
 if __name__ == "__main__":
     """ 
     If this file is ran, it's __name__ variable will be '__main__'. 
@@ -129,8 +137,14 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     ui.stackedWidget.setCurrentWidget(ui.page_3)
     
-    # Create a door that assoicates user id 3 with it... 
+    # Create a door that assoicates user id 3 with it...
     ourDoor = Door(3)
+
+    # L: initial integration
+    # TODO: this does not work in a function and I don't know why!!
+    threadpool = QThreadPool()
+    bm = BackgroundMain()
+    threadpool.start(bm)
 
     # Configure Some Functionality on our UI object.
     setUpDials(ui)
