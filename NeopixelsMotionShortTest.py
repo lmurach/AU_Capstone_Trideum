@@ -26,7 +26,7 @@ starttime1 = 0
 sensetime1 = 0
 starttime2 = 0
 sensetime2 = 0
-timeDif = 300
+timeDif = 5
 #initializing timer variables.
 #the following code controls each floor based on motion sensor readings, with a delay of 5 minutes between changes in lighting. 
 #To test this easier, change timeDif to the number of seconds between changes you want.
@@ -139,4 +139,3 @@ while True:
     pixels.show()
     time.sleep(3)
 '''
-
