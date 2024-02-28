@@ -28,6 +28,7 @@ from datetime import datetime
 import sqlite3
 from enum import IntEnum
 import os
+from typing import List
 
 from database_temp_data import DBTemp
 
@@ -76,7 +77,8 @@ class Database:
             """CREATE TABLE IF NOT EXISTS employees(
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                 name TEXT,
-                door_perm INTEGER
+                door_perm INTEGER,
+                card_uid INTEGER
             );"""
         )
         cur.execute(
@@ -179,7 +181,7 @@ class Database:
         con.commit()
 
     @staticmethod
-    def get_config_temperature_array() -> list[int]:
+    def get_config_temperature_array() -> List[int]:
         '''Returns an array of temperature sensors in order from the basement
         to the top floor.'''
         con = sqlite3.connect("database.db")
@@ -237,7 +239,54 @@ class Database:
         con.commit()
 
     @staticmethod
-    def get_log_string_array() -> list[str]:
+    def does_employee_have_access(name:str) -> bool:
+        '''creates a new door log for opening doors'''
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """SELECT name 
+            FROM employees
+            WHERE name == ?
+            AND door_perm == 1;""", (name,)
+        )
+        result = cur.fetchone()
+        if result is None:
+            # User does not exist
+            return False
+        return True
+
+    @staticmethod
+    def add_employee_card_uid(name:str, uid:str):
+        ''''''
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """UPDATE employees
+            SET card_uid = ?
+            WHERE name == ?""", (uid, name)
+        )
+        con.commit()
+
+    @staticmethod
+    def does_employee_have_uid(name:str, uid:str) -> bool:
+        ''''''
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """SELECT name 
+            FROM employees
+            WHERE card_uid == ?
+            AND name == ?
+            AND door_perm == 1;""", (uid, name)
+        )
+        result = cur.fetchone()
+        if result is None:
+            # unscanned card
+            return False
+        return True
+
+    @staticmethod
+    def get_log_string_array() -> List[str]:
         '''Returns a formatted string array of all database logs'''
         log_string_array = []
         sql_array = Database._get_logs_sql()
@@ -324,3 +373,6 @@ class Database:
             """
         )
         return res.fetchall()
+    
+if __name__ == "__main__":
+    Database.initialize_db()
