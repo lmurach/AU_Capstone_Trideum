@@ -29,6 +29,7 @@ import sqlite3
 from enum import IntEnum
 import os
 from typing import List
+from PyQt5.QtCore import QMutex
 
 from database_temp_data import DBTemp
 
@@ -179,11 +180,15 @@ class Database:
         cur.execute("DROP TABLE IF EXISTS elevator_logs;")
         cur.execute("DROP TABLE IF EXISTS config;")
         con.commit()
+        con.close()
 
     @staticmethod
     def get_config_temperature_array() -> List[int]:
         '''Returns an array of temperature sensors in order from the basement
         to the top floor.'''
+
+        mutex = QMutex()
+        mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         res = cur.execute(
@@ -193,6 +198,8 @@ class Database:
             """
         )
         query_output = res.fetchall()
+        con.close()
+        mutex.unlock()
         # the output is a list of tuples. The tuple size is dependent on the
         # number of columns acessed. Since there is only one row of
         # configurations, then there is just one item in the list with a tuple
@@ -209,12 +216,14 @@ class Database:
     def set_temperature(floor:int, temp:int):
         '''Sets default temperature for a given floor.
         Use 0 for basement and 1 for first floor and so on.'''
+        mutex = QMutex()
         if floor == 0:
             floor_name = "basement_temp"
         elif floor == 1:
             floor_name = "floor1_temp"
         else:
             floor_name = "floor2_temp"
+        mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -224,10 +233,35 @@ class Database:
             """, (temp,)
         )
         con.commit()
+        print("temp set")
+        con.close()
+        mutex.unlock()
+
+    @staticmethod
+    def create_motion_log(floor:int, is_alert:bool):
+        '''Creates a motion log. Enter the floor using 0 for the basement, 1
+        for the 1st floor, and 2 for the top floor. Use 1 for red light mode
+        and 0 for normal light mode.'''
+        mutex = QMutex()
+        mutex.lock()
+        date = datetime.now()
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """INSERT INTO motion_logs(
+                date, floor, is_alert
+                )
+                VALUES(?, ?, ?);""", (date, floor, is_alert)
+        )
+        con.commit()
+        con.close()
+        mutex.unlock()
 
     @staticmethod
     def create_door_log(date:datetime, e_id:int, is_alert:int, state:str):
         '''creates a new door log for opening doors'''
+        mutex = QMutex()
+        mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -237,23 +271,29 @@ class Database:
                 VALUES(?, ?, ?, ?);""", (date, e_id, is_alert, state)
         )
         con.commit()
+        con.close()
+        mutex.unlock()
 
     @staticmethod
-    def does_employee_have_access(name:str) -> bool:
+    def does_employee_have_access(name:str) -> int:
         '''creates a new door log for opening doors'''
+        mutex = QMutex()
+        mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
-            """SELECT name 
+            """SELECT id 
             FROM employees
             WHERE name == ?
             AND door_perm == 1;""", (name,)
         )
         result = cur.fetchone()
+        con.close()
+        mutex.unlock()
         if result is None:
             # User does not exist
-            return False
-        return True
+            return 0
+        return result[0]
 
     @staticmethod
     def add_employee_card_uid(name:str, uid:str):
@@ -346,6 +386,8 @@ class Database:
         can be ordered by datetime.
         TODO: This function is extremely inefficient and needs to be reworked.
         The output should remain the same, just with a backend change.'''
+        mutex = QMutex()
+        mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         res = cur.execute(
@@ -372,7 +414,11 @@ class Database:
             ORDER BY date;
             """
         )
-        return res.fetchall()
+        logs = res.fetchall()
+        print("logs got")
+        con.close()
+        mutex.unlock()
+        return logs
     
 if __name__ == "__main__":
     Database.initialize_db()

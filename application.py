@@ -23,7 +23,7 @@ Purpose : This file shows how to add some basic functionality
 #from ui_form import Ui_MainWindow
 from ui_5 import Ui_MainWindow
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QThread, QThreadPool
+from PyQt5.QtCore import QThreadPool
 from functools import partial
 from database import Database
 from door import Door
@@ -138,7 +138,8 @@ if __name__ == "__main__":
     ui.stackedWidget.setCurrentWidget(ui.page_3)
     
     # Create a door that assoicates user id 3 with it...
-    ourDoor = Door(3)
+    ourDoor = Door()
+    ourDoor.card_owner_id = 3
 
     # L: initial integration
     # TODO: this does not work in a function and I don't know why!!

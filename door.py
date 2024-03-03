@@ -18,20 +18,19 @@ class Door:
     door is closed (active low). There is also a light and alert which is triggered 
     when the door is open too long.'''
 
-    def __init__(self, card_owner_id):
-        self.card_owner_id = card_owner_id
+    def __init__(self):
+        self.card_owner_id = None
         self.state:str = "ready_to_open"
         self.time_until_run:datetime = datetime.now()
         self.seconds_door_open:int = 0
         self.alert_sent:bool = False
-        self.pin = 27
+        self.pin = 17
 
     def GPIO_init(self):
         '''Initilaizes the correct GPIO board type and makes the pin for the 
         alert LED an output pin'''
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.OUT)
-        GPIO.output(self.pin, 0)
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     def handle_lock(self):
         '''The locking mechanism is normally blocking. To get around this, a 
@@ -41,36 +40,40 @@ class Door:
         used for these operations.
         
         The states are:
-                            V--┐
+                             V--┐
         ready_to_open ---> open ┘--> ready_to_close ---> closed --> ...'''
-        if self.state == "ready_to_open":
-            Door._open_lock()
-            self._add_wait_time(4, 0)
-            self.state = "open"
-            self.seconds_door_open += 4
-            return 1
-        if self.state == "open":
-            if Door._is_door_closed():
-                self._add_wait_time(0, 500)
-                self.state = "ready_to_close"
-                self._log_to_database(0, "open")
-            elif self.seconds_door_open >= 10 and not self.alert_sent:
-                self._alert_door_ajar()
-            else:
-                seconds_to_wait = 1
-                self._add_wait_time(seconds_to_wait, 0)
-                self.seconds_door_open += seconds_to_wait
-            return 1
-        if self.state == "ready_to_close":
-            Door._close_lock()
-            self._add_wait_time(1, 0)
-            self.state = "closed"
-            return 1
-        if self.state == "closed":
-            self._clear_alert()
-            self._log_to_database(0, "close")
-            self.state = "ready_to_open"
-            return 0
+        print(datetime.now())
+        print(self.time_until_run)
+        if datetime.now() > self.time_until_run:
+            if self.state == "ready_to_open":
+                Door._open_lock()
+                self._add_wait_time(4, 0)
+                self.state = "open"
+                self.seconds_door_open += 4
+                return
+            if self.state == "open":
+                if self._is_door_closed():
+                    self._add_wait_time(0, 500)
+                    self.state = "ready_to_close"
+                    self._log_to_database(0, "open")
+                elif self.seconds_door_open >= 10 and not self.alert_sent:
+                    self._alert_door_ajar()
+                else:
+                    seconds_to_wait = 1
+                    self._add_wait_time(seconds_to_wait, 0)
+                    self.seconds_door_open += seconds_to_wait
+                return
+            if self.state == "ready_to_close":
+                Door._close_lock()
+                self._add_wait_time(1, 0)
+                self.state = "closed"
+                return
+            if self.state == "closed":
+                self._clear_alert()
+                self._log_to_database(0, "close")
+                self.card_owner_id = None
+                self.state = "ready_to_open"
+                return
 
     def _add_wait_time(self, seconds:int, milliseconds:int):
         '''Adds a set amount of time to wait until the next state 
@@ -84,14 +87,12 @@ class Door:
         '''If the door is open too long, the alert is logged to the database
         to ensure that people are not holding the secure door open too long.'''
         self.alert_sent = True
-        GPIO.output(self.pin, 1)
         self._log_to_database(1, "open")
 
     def _clear_alert(self):
         '''This function is called after the door is closed to finalize the alert
         state by logging to the database again and turning off the lights'''
         self.alert_sent = False
-        GPIO.output(self.pin, 0)
         print("door closed")
 
     def _log_to_database(self, is_alert:int, state:str):
@@ -113,11 +114,8 @@ class Door:
         pwm = HardwarePWM(pwm_channel = 0, hz = 50, chip = 0)
         pwm.start(10)
 
-    @staticmethod
-    def _is_door_closed():
-        pin = 17
-        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        state = GPIO.input(pin)
+    def _is_door_closed(self):
+        state = GPIO.input(self.pin)
         # reed_switch = push_button.PushButton(21)
         # state = reed_switch.GetState()
         return state
