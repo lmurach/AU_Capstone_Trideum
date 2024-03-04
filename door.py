@@ -25,6 +25,7 @@ class Door:
         self.seconds_door_open:int = 0
         self.alert_sent:bool = False
         self.pin = 17
+        self.db = Database()
 
     def GPIO_init(self):
         '''Initilaizes the correct GPIO board type and makes the pin for the 
@@ -42,8 +43,6 @@ class Door:
         The states are:
                              V--┐
         ready_to_open ---> open ┘--> ready_to_close ---> closed --> ...'''
-        print(datetime.now())
-        print(self.time_until_run)
         if datetime.now() > self.time_until_run:
             if self.state == "ready_to_open":
                 Door._open_lock()
@@ -93,10 +92,11 @@ class Door:
         '''This function is called after the door is closed to finalize the alert
         state by logging to the database again and turning off the lights'''
         self.alert_sent = False
-        print("door closed")
 
     def _log_to_database(self, is_alert:int, state:str):
-        Database.create_door_log(datetime.now(), self.card_owner_id, is_alert, state)
+        '''logs opening of the door and an alert if the door is 
+        open too long.'''
+        self.db.create_door_log(datetime.now(), self.card_owner_id, is_alert, state)
 
     @staticmethod
     def _open_lock():

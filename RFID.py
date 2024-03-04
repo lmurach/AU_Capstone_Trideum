@@ -15,7 +15,6 @@ from datetime import datetime, timedelta
 from PIRC522.pirc522.rfid import RFID
 
 from database import Database
-from door import Door
 
 class RFIDSecurity(RFID):
     '''A class to handle signing and reading cards with calls to the database 
@@ -32,6 +31,7 @@ class RFIDSecurity(RFID):
         self.irq.clear()
         self.irq_flag = False
         self.util_obj = self.util()
+        self.db = Database()
 
     # @staticmethod
     # def generate_keys():
@@ -50,7 +50,9 @@ class RFIDSecurity(RFID):
     #     with open("receiver.pem", "wb") as f:
     #         f.write(public_key)
 
-    def is_card_there(self):
+    def is_card_there(self) -> bool:
+        '''Writes a command to the board and if an interrupt is sent back, then
+        the card is known to be there.'''
         self.init()
         self.irq.clear()
         self.dev_write(0x04, 0x00)
@@ -72,7 +74,7 @@ class RFIDSecurity(RFID):
             (name, uid) = self.read_card()
             if not name is None:
                 name = name.strip()
-                id = Database.does_employee_have_access(name)
+                id = self.db.does_employee_have_access(name)
                 if id != 0:
                     return (True, id)
         return (False, None)
@@ -86,15 +88,13 @@ class RFIDSecurity(RFID):
             timedelta(seconds=seconds, milliseconds=milliseconds)
 
 
-    def read_card(self):
+    def read_card(self) -> Tuple[str, str]:
+        '''Reads the error, data, and uid from the card and returns a tuple
+        with the name and uid,'''
         self.init()
         (error, data) = self.request()
         if not error:
-            print("\nDetected: " + format(data, "02x"))
             (error, uid) = self.anticoll()
-            s_uid = f"{uid[0]}{uid[1]}{uid[2]}{uid[3]}"
-            print(f"Card read UID: {s_uid}")
-
             # Setting tag
             self.util_obj.set_tag(uid)
             # Authorizing")

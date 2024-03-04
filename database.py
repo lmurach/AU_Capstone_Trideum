@@ -50,8 +50,10 @@ class LogTypes(IntEnum):
 class Database:
     '''A class to manage all database related calls using SQLite'''
 
-    @staticmethod
-    def initialize_db():
+    def __init__(self):
+        self.mutex = QMutex()
+
+    def initialize_db(self):
         '''Sets up the database with all sample data. 
         If the database exists then .'''
 
@@ -65,12 +67,13 @@ class Database:
 
         # Don't re fill the database if exists
         if not exists:
-            Database._create_tables(cur)
-            Database._fill_tables_with_temp_data(cur)
+            self._create_tables(cur)
+            self._fill_config_table(cur)
+            self._fill_tables_with_temp_data(cur)
         con.commit()
+        con.close()
 
-    @staticmethod
-    def _create_tables(cur: sqlite3.Cursor):
+    def _create_tables(self, cur: sqlite3.Cursor):
         '''Creates all tables on initialization, for testing purposes.
         To avoid any debugging problems, tables should be dropped first.'''
 
@@ -126,8 +129,17 @@ class Database:
             )"""
         )
 
-    @staticmethod
-    def _fill_tables_with_temp_data(cur: sqlite3.Cursor):
+    def _fill_config_table(self, cur: sqlite3.Cursor):
+        '''Fills only the config table as it is more critial'''
+        cur.executemany(
+            """INSERT INTO config(
+                basement_temp, floor1_temp, floor2_temp, opening_time, 
+                closing_time, is_dark_mode
+                )
+                VALUES(?, ?, ?, ?, ?, ?);""", DBTemp.config_log_data
+        )
+
+    def _fill_tables_with_temp_data(self, cur: sqlite3.Cursor):
         '''runs all necessary inserts of temporary data'''
         cur.executemany(
             """INSERT INTO employees(
@@ -159,16 +171,8 @@ class Database:
                 )
                 VALUES(?, ?, ?);""", DBTemp.elevator_log_data
         )
-        cur.executemany(
-            """INSERT INTO config(
-                basement_temp, floor1_temp, floor2_temp, opening_time, 
-                closing_time, is_dark_mode
-                )
-                VALUES(?, ?, ?, ?, ?, ?);""", DBTemp.config_log_data
-        )
 
-    @staticmethod
-    def drop_db():
+    def drop_db(self):
         '''Drops all tables. Used ONLY for testing purposes'''
 
         con = sqlite3.connect("database.db")
@@ -182,13 +186,11 @@ class Database:
         con.commit()
         con.close()
 
-    @staticmethod
-    def get_config_temperature_array() -> List[int]:
+    def get_config_temperature_array(self) -> List[int]:
         '''Returns an array of temperature sensors in order from the basement
         to the top floor.'''
 
-        mutex = QMutex()
-        mutex.lock()
+        self.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         res = cur.execute(
@@ -199,11 +201,13 @@ class Database:
         )
         query_output = res.fetchall()
         con.close()
-        mutex.unlock()
+        self.mutex.unlock()
         # the output is a list of tuples. The tuple size is dependent on the
         # number of columns acessed. Since there is only one row of
         # configurations, then there is just one item in the list with a tuple
         # of 3 elements.
+        if len(query_output) == 0:
+            return []
         temp_array = [
             query_output[0][0],
             query_output[0][1],
@@ -211,19 +215,16 @@ class Database:
         ]
         return temp_array
 
-
-    @staticmethod
-    def set_temperature(floor:int, temp:int):
+    def set_temperature(self, floor:int, temp:int):
         '''Sets default temperature for a given floor.
         Use 0 for basement and 1 for first floor and so on.'''
-        mutex = QMutex()
         if floor == 0:
             floor_name = "basement_temp"
         elif floor == 1:
             floor_name = "floor1_temp"
         else:
             floor_name = "floor2_temp"
-        mutex.lock()
+        self.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -233,17 +234,14 @@ class Database:
             """, (temp,)
         )
         con.commit()
-        print("temp set")
         con.close()
-        mutex.unlock()
+        self.mutex.unlock()
 
-    @staticmethod
-    def create_motion_log(floor:int, is_alert:bool):
+    def create_motion_log(self, floor:int, is_alert:bool):
         '''Creates a motion log. Enter the floor using 0 for the basement, 1
         for the 1st floor, and 2 for the top floor. Use 1 for red light mode
         and 0 for normal light mode.'''
-        mutex = QMutex()
-        mutex.lock()
+        self.mutex.lock()
         date = datetime.now()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
@@ -255,13 +253,11 @@ class Database:
         )
         con.commit()
         con.close()
-        mutex.unlock()
+        self.mutex.unlock()
 
-    @staticmethod
-    def create_door_log(date:datetime, e_id:int, is_alert:int, state:str):
-        '''creates a new door log for opening doors'''
-        mutex = QMutex()
-        mutex.lock()
+    def create_door_log(self, date:datetime, e_id:int, is_alert:int, state:str):
+        '''Creates a new door log for opening doors'''
+        self.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -272,13 +268,13 @@ class Database:
         )
         con.commit()
         con.close()
-        mutex.unlock()
+        self.mutex.unlock()
 
-    @staticmethod
-    def does_employee_have_access(name:str) -> int:
-        '''creates a new door log for opening doors'''
-        mutex = QMutex()
-        mutex.lock()
+    def does_employee_have_access(self, name:str) -> int:
+        '''Checks if the employee exists and if they have have door permissions.
+        An id of 0 is returned if the employee doesn't exist (this id is
+        impossible using the autoincrement property)'''
+        self.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -289,15 +285,17 @@ class Database:
         )
         result = cur.fetchone()
         con.close()
-        mutex.unlock()
+        self.mutex.unlock()
         if result is None:
             # User does not exist
             return 0
         return result[0]
 
-    @staticmethod
-    def add_employee_card_uid(name:str, uid:str):
-        ''''''
+    def add_employee_card_uid(self, name:str, uid:str):
+        '''Adds a uid to the employees database when writing a new card. This
+        is to help prevent cards from having different names rewritten on them.
+        When reading, the card should always check that the uid matches what
+        is in the database.'''
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -307,9 +305,9 @@ class Database:
         )
         con.commit()
 
-    @staticmethod
-    def does_employee_have_uid(name:str, uid:str) -> bool:
-        ''''''
+    def does_employee_have_uid(self, name:str, uid:str) -> bool:
+        '''Upon reading a card, validates that the uid matches the 
+        employee uid'''
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -325,11 +323,12 @@ class Database:
             return False
         return True
 
-    @staticmethod
-    def get_log_string_array() -> List[str]:
+    def get_log_string_array(self) -> List[str]:
         '''Returns a formatted string array of all database logs'''
         log_string_array = []
-        sql_array = Database._get_logs_sql()
+        sql_array = self._get_logs_sql()
+        if sql_array == []:
+            return []
         for query in sql_array:
             if query[LogTypes.TYPE] == "door":
                 if query[LogTypes.STATE] == "close":
@@ -379,15 +378,13 @@ class Database:
                     )
         return log_string_array
 
-    @staticmethod
-    def _get_logs_sql():
+    def _get_logs_sql(self):
         '''Returns a list of tuples to pass into the string array function. The
         tables are all unioned together into one resulting function so that they
         can be ordered by datetime.
         TODO: This function is extremely inefficient and needs to be reworked.
         The output should remain the same, just with a backend change.'''
-        mutex = QMutex()
-        mutex.lock()
+        self.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         res = cur.execute(
@@ -411,14 +408,18 @@ class Database:
             SELECT NULL AS name, date, floor, NULL AS is_alert, state, 'ele' AS type
             FROM elevator_logs
 
-            ORDER BY date;
+            ORDER BY date DESC
+            
+            LIMIT 45;
             """
         )
         logs = res.fetchall()
-        print("logs got")
         con.close()
-        mutex.unlock()
+        self.mutex.unlock()
+        if len(logs) == 0:
+            return []
         return logs
-    
+
 if __name__ == "__main__":
-    Database.initialize_db()
+    db = Database()
+    db.initialize_db()

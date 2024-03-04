@@ -60,7 +60,6 @@ class BackgroundMain(QRunnable):
             #     else:
             #         sensor.turn_off_lights()
             self._RFID_handler()
-            print(f"door state: {self.door.state}")
             self._door_handler()
             self._light_handler()
             time.sleep(0.1)

@@ -35,7 +35,8 @@ def setUpDials(ui:Ui_MainWindow):
     and connects them to their corresponding functions for updating 
     the rest of the Ui. 
     """
-    temps = Database.get_config_temperature_array() # basement to top 
+    db = Database()
+    temps = db.get_config_temperature_array() # basement to top
 
     # Set the range of the dials
     ui.top_floor_hvac_dial_4.setRange(0, 100)
@@ -100,7 +101,8 @@ def set_up_logs(ui:Ui_MainWindow):
     """
     print("Setting up logs..")
     ui.listWidget.clear()
-    logs = Database.get_log_string_array()
+    db = Database()
+    logs = db.get_log_string_array()
     print("---")
     for log in logs:
         print(log)
@@ -130,7 +132,8 @@ if __name__ == "__main__":
     to th
     """
     import sys
-    Database.initialize_db()
+    db = Database()
+    db.initialize_db()
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()

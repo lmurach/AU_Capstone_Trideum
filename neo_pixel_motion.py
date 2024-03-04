@@ -47,6 +47,10 @@ class NeoPixelMotion:
         #between changes you want.
         #in this example, floor 0 is pixels 0-9, floor 1 is pixels 10-19, 
         #and floor 2 is pixels 20-29
+
+        # L: added a database class instance here for all db calls
+        self.db = Database()
+
     def motion_is_detected(self):
         """Returns motion_detected"""
         return self.pir.motion_detected
@@ -62,7 +66,7 @@ class NeoPixelMotion:
                 for i in range(10):
                     self.pixels[i + (self.floor * 10)] = (255, 255, 255)      #lights turn white if motion is detected during open hours
             # L: added a database call here so that the motion alert is changed
-            Database.create_motion_log(self.floor, self.lockdown_state)
+            self.db.create_motion_log(self.floor, self.lockdown_state)
                        
             self.pixels.show()
         self.start_time = time.time()                     #updates the starttime0 variable to reset timer.
