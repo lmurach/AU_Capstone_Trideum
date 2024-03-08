@@ -77,14 +77,15 @@ class BackgroundMain(QRunnable):
     #     # while True:
     #     #     Database.set_temperature(0, 72)
     #     #     time.sleep(0.1)
-            
+
     def _RFID_handler(self):
         if self.rfid.is_card_there():
-            (validity, id) = self.rfid.handle_read_card()
+            (validity, e_id) = self.rfid.handle_read_card()
             for _ in range (0, 20):
                 self.rfid.is_card_there()
             if validity:
-                self.door.card_owner_id = id
+                self.door.card_owner_id = e_id
+
 
     def _door_handler(self):
         if self.door.card_owner_id is not None:

@@ -77,7 +77,7 @@ def setUpAlarm(ui:Ui_MainWindow):
     functions. 
     """
 
-    ui.arm_alarm_button_4.clicked.connect(lambda: print("Alarm Armed!")) 
+    ui.arm_alarm_button_4.clicked.connect(lambda: print("Alarm Armed!"))
     ui.disarm_alarm_button_4.clicked.connect(lambda: print("Alarm Disarmed!"))
 
 def setUpDoor(ui:Ui_MainWindow, aDoor:Door):

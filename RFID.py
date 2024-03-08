@@ -74,10 +74,17 @@ class RFIDSecurity(RFID):
             (name, uid) = self.read_card()
             if not name is None:
                 name = name.strip()
-                id = self.db.does_employee_have_access(name)
-                if id != 0:
-                    return (True, id)
-        return (False, None)
+                print(uid)
+                e_id = self.db.does_employee_have_access(name)
+                print(e_id)
+                if e_id != -1:
+                    print("has access")
+                    if self.db.does_employee_have_uid(e_id, uid):
+                        print("is authentic")
+                        return (True, e_id)
+                    print("is not authentic")
+                    return (False, 0)
+        return (False, 0)
 
     def _add_wait_time(self, seconds:int, milliseconds:int):
         '''Adds a set amount of time to wait until the next state 
@@ -95,6 +102,9 @@ class RFIDSecurity(RFID):
         (error, data) = self.request()
         if not error:
             (error, uid) = self.anticoll()
+            str_uid = ""
+            for num in uid:
+                str_uid += str(num)
             # Setting tag
             self.util_obj.set_tag(uid)
             # Authorizing")
@@ -107,7 +117,7 @@ class RFIDSecurity(RFID):
             self.util_obj.deauth()
             if not name is None:
                 self._add_wait_time(10,0)
-            return (name, uid)
+            return (name, str_uid)
         return (None, None)
 
     # @staticmethod

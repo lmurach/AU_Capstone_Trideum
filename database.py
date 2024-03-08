@@ -53,12 +53,13 @@ class Database:
     def __init__(self):
         self.mutex = QMutex()
 
-    def initialize_db(self):
+    @staticmethod
+    def initialize_db():
         '''Sets up the database with all sample data. 
         If the database exists then .'''
 
         #does the database exist:
-        exists = os.path.isfile("database.db")
+        file = os.path.isfile("database.db")
 
         con = sqlite3.connect("database.db")
         # strict database relations are off by defaut in sqlite, this turns it on
@@ -66,14 +67,15 @@ class Database:
         cur = con.cursor()
 
         # Don't re fill the database if exists
-        if not exists:
-            self._create_tables(cur)
-            self._fill_config_table(cur)
-            self._fill_tables_with_temp_data(cur)
+        if not file:
+            Database._create_tables(cur)
+            Database._fill_config_table(cur)
+            Database._fill_tables_with_temp_data(cur)
         con.commit()
         con.close()
 
-    def _create_tables(self, cur: sqlite3.Cursor):
+    @staticmethod
+    def _create_tables( cur: sqlite3.Cursor):
         '''Creates all tables on initialization, for testing purposes.
         To avoid any debugging problems, tables should be dropped first.'''
 
@@ -129,7 +131,8 @@ class Database:
             )"""
         )
 
-    def _fill_config_table(self, cur: sqlite3.Cursor):
+    @staticmethod
+    def _fill_config_table(cur: sqlite3.Cursor):
         '''Fills only the config table as it is more critial'''
         cur.executemany(
             """INSERT INTO config(
@@ -139,13 +142,14 @@ class Database:
                 VALUES(?, ?, ?, ?, ?, ?);""", DBTemp.config_log_data
         )
 
-    def _fill_tables_with_temp_data(self, cur: sqlite3.Cursor):
+    @staticmethod
+    def _fill_tables_with_temp_data(cur: sqlite3.Cursor):
         '''runs all necessary inserts of temporary data'''
         cur.executemany(
             """INSERT INTO employees(
-                    name, door_perm
+                    name, door_perm, card_uid
                 )
-                VALUES(?, ?);""", DBTemp.employee_data
+                VALUES(?, ?, ?);""", DBTemp.employee_data
         )
         cur.executemany(
             """INSERT INTO door_logs(
@@ -288,7 +292,7 @@ class Database:
         self.mutex.unlock()
         if result is None:
             # User does not exist
-            return 0
+            return -1
         return result[0]
 
     def add_employee_card_uid(self, name:str, uid:str):
@@ -305,17 +309,26 @@ class Database:
         )
         con.commit()
 
-    def does_employee_have_uid(self, name:str, uid:str) -> bool:
+    def does_employee_have_uid(self, e_id:int, uid:str) -> bool:
         '''Upon reading a card, validates that the uid matches the 
         employee uid'''
         con = sqlite3.connect("database.db")
         cur = con.cursor()
+        print(f"id is {e_id}")
+        cur.execute(
+            """SELECT card_uid 
+            FROM employees
+            WHERE id == 1
+            AND door_perm == 1;"""
+        )
+        print(f"scan uid: {uid}")
+        print(f"db uid: {cur.fetchone()}")
         cur.execute(
             """SELECT name 
             FROM employees
             WHERE card_uid == ?
-            AND name == ?
-            AND door_perm == 1;""", (uid, name)
+            AND id == ?
+            AND door_perm == 1;""", (uid, e_id)
         )
         result = cur.fetchone()
         if result is None:
@@ -421,5 +434,4 @@ class Database:
         return logs
 
 if __name__ == "__main__":
-    db = Database()
-    db.initialize_db()
+    Database.initialize_db()
