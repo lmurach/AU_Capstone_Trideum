@@ -23,7 +23,7 @@ Purpose : This file shows how to add some basic functionality
 #from ui_form import Ui_MainWindow
 from ui_5 import Ui_MainWindow
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QThread, QThreadPool
+from PyQt5.QtCore import QThreadPool
 from functools import partial
 from database import Database
 from door import Door
@@ -35,7 +35,8 @@ def setUpDials(ui:Ui_MainWindow):
     and connects them to their corresponding functions for updating 
     the rest of the Ui. 
     """
-    temps = Database.get_config_temperature_array() # basement to top 
+    db = Database()
+    temps = db.get_config_temperature_array() # basement to top
 
     # Set the range of the dials
     ui.top_floor_hvac_dial_4.setRange(0, 100)
@@ -76,7 +77,7 @@ def setUpAlarm(ui:Ui_MainWindow):
     functions. 
     """
 
-    ui.arm_alarm_button_4.clicked.connect(lambda: print("Alarm Armed!")) 
+    ui.arm_alarm_button_4.clicked.connect(lambda: print("Alarm Armed!"))
     ui.disarm_alarm_button_4.clicked.connect(lambda: print("Alarm Disarmed!"))
 
 def setUpDoor(ui:Ui_MainWindow, aDoor:Door):
@@ -100,7 +101,8 @@ def set_up_logs(ui:Ui_MainWindow):
     """
     print("Setting up logs..")
     ui.listWidget.clear()
-    logs = Database.get_log_string_array()
+    db = Database()
+    logs = db.get_log_string_array()
     print("---")
     for log in logs:
         print(log)
@@ -130,7 +132,8 @@ if __name__ == "__main__":
     to th
     """
     import sys
-    Database.initialize_db()
+    db = Database()
+    db.initialize_db()
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
@@ -138,7 +141,8 @@ if __name__ == "__main__":
     ui.stackedWidget.setCurrentWidget(ui.page_3)
     
     # Create a door that assoicates user id 3 with it...
-    ourDoor = Door(3)
+    ourDoor = Door()
+    ourDoor.card_owner_id = 3
 
     # L: initial integration
     # TODO: this does not work in a function and I don't know why!!

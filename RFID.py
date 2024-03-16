@@ -9,13 +9,12 @@ import time
 import RPi.GPIO as GPIO
 
 from datetime import datetime, timedelta
-from Crypto.PublicKey import RSA
-from Crypto.Signature import pkcs1_15
-from Crypto.Hash import SHA256
+# from Crypto.PublicKey import RSA
+# from Crypto.Signature import pkcs1_15
+# from Crypto.Hash import SHA256
 from PIRC522.pirc522.rfid import RFID
 
 from database import Database
-from door import Door
 
 class RFIDSecurity(RFID):
     '''A class to handle signing and reading cards with calls to the database 
@@ -25,30 +24,35 @@ class RFIDSecurity(RFID):
     cryptography toolkit standard'''
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(pin_mode=GPIO.BCM, pin_rst=27, pin_irq=22)
+        # original RFID library is in BOARD, but it MUST be in BCM to play nice
+        # with the Adafruit neopixel library
         self.time_until_run:datetime = datetime.now()
         self.irq.clear()
         self.irq_flag = False
         self.util_obj = self.util()
+        self.db = Database()
 
-    @staticmethod
-    def generate_keys():
-        '''Public and private keys are generated in seperate files.
-        These are to NEVER be posted on github and only ever accessed
-        by these read file functions. The .pem file extension is necessary
-        for Cryptographic signatures encoding convention rules
-        https://serverfault.com/questions/9708/what-is-a-pem-file-and-how-does-it-differ-from-other-openssl-generated-key-file'''
+    # @staticmethod
+    # def generate_keys():
+    #     '''Public and private keys are generated in seperate files.
+    #     These are to NEVER be posted on github and only ever accessed
+    #     by these read file functions. The .pem file extension is necessary
+    #     for Cryptographic signatures encoding convention rules
+    #     https://serverfault.com/questions/9708/what-is-a-pem-file-and-how-does-it-differ-from-other-openssl-generated-key-file'''
 
-        key = RSA.generate(2048)
-        private_key = key.export_key()
-        with open("private.pem", "wb") as f:
-            f.write(private_key)
+    #     key = RSA.generate(2048)
+    #     private_key = key.export_key()
+    #     with open("private.pem", "wb") as f:
+    #         f.write(private_key)
 
-        public_key = key.publickey().export_key()
-        with open("receiver.pem", "wb") as f:
-            f.write(public_key)
+    #     public_key = key.publickey().export_key()
+    #     with open("receiver.pem", "wb") as f:
+    #         f.write(public_key)
 
-    def is_card_there(self):
+    def is_card_there(self) -> bool:
+        '''Writes a command to the board and if an interrupt is sent back, then
+        the card is known to be there.'''
         self.init()
         self.irq.clear()
         self.dev_write(0x04, 0x00)
@@ -62,15 +66,25 @@ class RFIDSecurity(RFID):
             return True
         return False
 
-    def handle_read_card(self):
+    def handle_read_card(self) -> Tuple[bool, int]:
+        '''Reads the card and returns a tuple. The first value being a 
+        boolean designating if the employee has access or not. The second value
+        is the employee database id (if it valid).'''
         if self.time_until_run < datetime.now():
             (name, uid) = self.read_card()
             if not name is None:
                 name = name.strip()
-                if Database.does_employee_have_access(name):
-                    print("Employee has access")
-                else:
-                    print("Employee does not have access")
+                print(uid)
+                e_id = self.db.does_employee_have_access(name)
+                print(e_id)
+                if e_id != -1:
+                    print("has access")
+                    if self.db.does_employee_have_uid(e_id, uid):
+                        print("is authentic")
+                        return (True, e_id)
+                    print("is not authentic")
+                    return (False, 0)
+        return (False, 0)
 
     def _add_wait_time(self, seconds:int, milliseconds:int):
         '''Adds a set amount of time to wait until the next state 
@@ -81,17 +95,16 @@ class RFIDSecurity(RFID):
             timedelta(seconds=seconds, milliseconds=milliseconds)
 
 
-    def read_card(self):
+    def read_card(self) -> Tuple[str, str]:
+        '''Reads the error, data, and uid from the card and returns a tuple
+        with the name and uid,'''
         self.init()
         (error, data) = self.request()
-        print(error)
-        print(data)
         if not error:
-            print("\nDetected: " + format(data, "02x"))
             (error, uid) = self.anticoll()
-            s_uid = f"{uid[0]}{uid[1]}{uid[2]}{uid[3]}"
-            print(f"Card read UID: {s_uid}")
-
+            str_uid = ""
+            for num in uid:
+                str_uid += str(num)
             # Setting tag
             self.util_obj.set_tag(uid)
             # Authorizing")
@@ -104,7 +117,7 @@ class RFIDSecurity(RFID):
             self.util_obj.deauth()
             if not name is None:
                 self._add_wait_time(10,0)
-            return (name, uid)
+            return (name, str_uid)
         return (None, None)
 
     # @staticmethod
@@ -198,32 +211,3 @@ if __name__ == "__main__":
             for x in range (0, 20):
                 rfid.is_card_there()
         time.sleep(0.25)
-
-    # rdr = RFIDSecurity()
-    # util = rdr.util()
-    # util.debug = True
-
-    # print("Starting")
-    # while not rdr.is_card_there():
-    #     time.sleep(0.5)
-    # print("Card!")
-    # time.sleep(2)
-    # (error, data) = rdr.request()
-    # print(error)
-    # print(data)
-    # if not error:
-    #     print("\nDetected: " + format(data, "02x"))
-
-    # (error, uid) = rdr.anticoll()
-    # if not error:
-    #     print("Card read UID: "+str(uid[0])+","+str(uid[1])+","+str(uid[2])+","+str(uid[3]))
-
-    #     print("Setting tag")
-    #     util.set_tag(uid)
-    #     print("\nAuthorizing")
-    #     #util.auth(rdr.auth_a, [0x12, 0x34, 0x56, 0x78, 0x96, 0x92])
-    #     util.auth(rdr.auth_b, [0x74, 0x00, 0x52, 0x35, 0x00, 0xFF])
-    #     print("\nReading")
-    #     util.read_out(4)
-    #     print("\nDeauthorizing")
-    #     util.deauth()
