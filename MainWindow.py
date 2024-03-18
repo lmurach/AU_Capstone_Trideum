@@ -72,22 +72,22 @@ class OurMainWindow():
         self.ui.bottom_floor_hvac_dial_split.setRange(0, 100)
 
         # Set the initial text and value of the dials
-        self.ui.top_floor_activate_on.setText(f"Active on: {temps[2]}")
+        self.ui.top_floor_activate_on.setText(f"Cool to: {temps[2]}")
         self.ui.top_floor_hvac_dial.setValue(temps[2])
 
-        self.ui.top_floor_activate_on_split.setText(f"Active on: {temps[2]}")
+        self.ui.top_floor_activate_on_split.setText(f"{temps[2]}")
         self.ui.top_floor_hvac_dial_split.setValue(temps[2])
 
-        self.ui.middle_floor_activate_on.setText(f"Active on: {temps[1]}")
+        self.ui.middle_floor_activate_on.setText(f"Cool to: {temps[1]}")
         self.ui.middle_floor_hvac_dial.setValue(temps[1])
 
-        self.ui.middle_floor_activate_on_split.setText(f"Active on: {temps[1]}")
+        self.ui.middle_floor_activate_on_split.setText(f"{temps[1]}")
         self.ui.middle_floor_hvac_dial_split.setValue(temps[1])
 
-        self.ui.bottom_floor_activate_on.setText(f"Active on: {temps[0]}")
+        self.ui.bottom_floor_activate_on.setText(f"Cool to: {temps[0]}")
         self.ui.bottom_floor_hvac_dial.setValue(temps[0])
         
-        self.ui.bottom_floor_activate_on_split.setText(f"Active on: {temps[0]}")
+        self.ui.bottom_floor_activate_on_split.setText(f"{temps[0]}")
         self.ui.bottom_floor_hvac_dial_split.setValue(temps[0])
 
         # Connect the dial value to the text label
