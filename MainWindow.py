@@ -146,4 +146,8 @@ class OurMainWindow():
             item = QtWidgets.QListWidgetItem()
             item.setText(log)
             self.ui.logs_list.addItem(item)
+
+        for log in logs:
+            item = QtWidgets.QListWidgetItem()
+            item.setText(log)
             self.ui.logs_list_split.addItem(item)
