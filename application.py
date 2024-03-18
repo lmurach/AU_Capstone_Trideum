@@ -22,96 +22,13 @@ Purpose : This file shows how to add some basic functionality
 # Imports. Make sure PyQt5 is properly installed
 #from ui_form import Ui_MainWindow
 from main_form import Ui_MainWindow
+from MainWindow import OurMainWindow
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QThreadPool
 from functools import partial
 from database import Database
 from door import Door
 from background_main import BackgroundMain
-
-def setUpDials(ui:Ui_MainWindow):
-    """ 
-    This method configures the dials with a proper range
-    and connects them to their corresponding functions for updating 
-    the rest of the Ui. 
-    """
-    db = Database()
-    temps = db.get_config_temperature_array() # basement to top
-
-    # Set the range of the dials
-    ui.top_floor_hvac_dial.setRange(0, 100)
-    ui.middle_floor_hvac_dial.setRange(0, 100)
-    ui.bottom_floor_hvac_dial.setRange(0, 100)
-
-    # Set the initial text and value of the dials
-    ui.top_floor_activate_on.setText(f"Active on: {temps[2]}")
-    ui.top_floor_hvac_dial.setValue(temps[2])
-
-    ui.middle_floor_activate_on.setText(f"Active on: {temps[1]}")
-    ui.middle_floor_hvac_dial.setValue(temps[1])
-
-    ui.bottom_floor_activate_on.setText(f"Active on: {temps[0]}")
-    ui.bottom_floor_hvac_dial.setValue(temps[0])
-
-    # Connect the dial value to the text label
-    ui.top_floor_hvac_dial.valueChanged.connect(
-    lambda: ui.top_floor_activate_on.setText(
-    f"Active on: {ui.top_floor_hvac_dial.value()}"))
-
-    ui.middle_floor_hvac_dial.valueChanged.connect(
-    lambda: ui.middle_floor_activate_on.setText(
-    f"Active on: {ui.middle_floor_hvac_dial.value()}"))
-
-    ui.bottom_floor_hvac_dial.valueChanged.connect(
-    lambda: ui.bottom_floor_activate_on.setText(
-    f"Active on: {ui.bottom_floor_hvac_dial.value()}"))
-
-    # Debuggin print statements
-    # ui.top_floor_hvac_dial.valueChanged.connect(lambda: print(f"Active on: {ui.top_floor_hvac_dial.value()}"))
-    # ui.middle_floor_hvac_dial.valueChanged.connect(lambda: print(f"Active on: {ui.middle_floor_hvac_dial.value()}"))
-    # ui.bottom_floor_hvac_dial.valueChanged.connect(lambda: print(f"Active on: {ui.bottom_floor_hvac_dial.value()}"))
-
-def setUpAlarm(ui:Ui_MainWindow):
-    """ 
-    This method connects the alarm buttons to their corresponding 
-    functions. 
-    """
-
-    ui.arm_alarm_button.clicked.connect(lambda: print("Alarm Armed!"))
-    ui.disarm_alarm_button.clicked.connect(lambda: print("Alarm Disarmed!"))
-
-def setUpDoor(ui:Ui_MainWindow, aDoor:Door):
-    """ 
-    This method connects the door buttons to their corresponding 
-    functions. 
-    """
-
-    ui.lock_door_button.clicked.connect(lambda: aDoor._close_lock())
-    ui.unlock_door_button.clicked.connect(lambda: aDoor._open_lock())
-
-    ui.lock_door_button.clicked.connect(lambda: aDoor._log_to_database(0, "close"))
-    ui.unlock_door_button.clicked.connect(lambda: aDoor._log_to_database(0, "open"))
-
-    ui.lock_door_button.clicked.connect(lambda: set_up_logs(ui))
-    ui.unlock_door_button.clicked.connect(lambda: set_up_logs(ui))
-
-def set_up_logs(ui:Ui_MainWindow):
-    """
-    This method will query the database for new logs and update the list view. 
-    """
-    print("Setting up logs..")
-    ui.logs_list.clear()
-    db = Database()
-    logs = db.get_log_string_array()
-    print("---")
-    for log in logs:
-        print(log)
-    print("---")
-
-    for log in logs:
-        item = QtWidgets.QListWidgetItem()
-        item.setText(log)
-        ui.logs_list.addItem(item)
 
 def initiate_background_thread():
     ''' TODO: figure out why threading stuff makes this function blocking. 
@@ -131,14 +48,12 @@ if __name__ == "__main__":
     import sys
     db = Database()
     db.initialize_db()
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
     
     # Create a door that assoicates user id 3 with it...
     ourDoor = Door()
     ourDoor.card_owner_id = 3
+
+    ourMainWindow = OurMainWindow(ourDoor, db)
 
     # L: initial integration
     # TODO: this does not work in a function and I don't know why!!
@@ -147,10 +62,5 @@ if __name__ == "__main__":
     threadpool.start(bm)
 
     # Configure Some Functionality on our UI object.
-    setUpDials(ui)
-    setUpAlarm(ui)
-    setUpDoor(ui, ourDoor)
-    set_up_logs(ui)
 
-    MainWindow.show()
-    sys.exit(app.exec_()) 
+    ourMainWindow.show()
