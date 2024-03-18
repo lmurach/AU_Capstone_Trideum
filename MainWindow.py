@@ -1,10 +1,12 @@
 from main_form import Ui_MainWindow
 from PyQt5 import QtWidgets
+from database import Database
+from door import Door
 import sys
 
 class OurMainWindow():
 
-    def __init__(self, adoor, adb):
+    def __init__(self, adoor:Door, adb: Database):
 
         self.app = QtWidgets.QApplication(sys.argv)
         self.MainWindow = QtWidgets.QMainWindow()
@@ -29,8 +31,28 @@ class OurMainWindow():
     
     def update_top_floor_dials_split(self):
         self.ui.top_floor_activate_on.setText(f"Cool to: {self.ui.top_floor_hvac_dial_split.value()}")
-        self.ui.top_floor_activate_on.setText(f"{self.ui.top_floor_hvac_dial_split.value()}")
+        self.ui.top_floor_activate_on_split.setText(f"{self.ui.top_floor_hvac_dial_split.value()}")
         self.ui.top_floor_hvac_dial.setValue(self.ui.top_floor_hvac_dial_split.value())
+
+    def update_mid_floor_dials(self):
+        self.ui.middle_floor_activate_on.setText(f"Cool to: {self.ui.middle_floor_hvac_dial.value()}")
+        self.ui.middle_floor_activate_on_split.setText(f"{self.ui.middle_floor_hvac_dial.value()}")
+        self.ui.middle_floor_hvac_dial_split.setValue(self.ui.middle_floor_hvac_dial.value())
+    
+    def update_mid_floor_dials_split(self):
+        self.ui.middle_floor_activate_on.setText(f"Cool to: {self.ui.middle_floor_hvac_dial_split.value()}")
+        self.ui.middle_floor_activate_on_split.setText(f"{self.ui.middle_floor_hvac_dial_split.value()}")
+        self.ui.middle_floor_hvac_dial.setValue(self.ui.middle_floor_hvac_dial_split.value())
+    
+    def update_bot_floor_dials(self):
+        self.ui.bottom_floor_activate_on.setText(f"Cool to: {self.ui.bottom_floor_hvac_dial.value()}")
+        self.ui.bottom_floor_activate_on_split.setText(f"{self.ui.bottom_floor_hvac_dial.value()}")
+        self.ui.bottom_floor_hvac_dial_split.setValue(self.ui.bottom_floor_hvac_dial.value())
+    
+    def update_bot_floor_dials_split(self):
+        self.ui.bottom_floor_activate_on.setText(f"Cool to: {self.ui.bottom_floor_hvac_dial_split.value()}")
+        self.ui.bottom_floor_activate_on_split.setText(f"{self.ui.bottom_floor_hvac_dial_split.value()}")
+        self.ui.bottom_floor_hvac_dial.setValue(self.ui.bottom_floor_hvac_dial_split.value())
 
     def setUpDials(self):
         """ 
@@ -72,13 +94,11 @@ class OurMainWindow():
         self.ui.top_floor_hvac_dial.valueChanged.connect(lambda: self.update_top_floor_dials())
         self.ui.top_floor_hvac_dial_split.valueChanged.connect(lambda: self.update_top_floor_dials_split())
 
-        self.ui.middle_floor_hvac_dial.valueChanged.connect(
-        lambda: self.ui.middle_floor_activate_on.setText(
-        f"Cool to: {self.ui.middle_floor_hvac_dial.value()}"))
+        self.ui.middle_floor_hvac_dial.valueChanged.connect(lambda: self.update_mid_floor_dials())
+        self.ui.middle_floor_hvac_dial_split.valueChanged.connect(lambda: self.update_mid_floor_dials_split())
 
-        self.ui.bottom_floor_hvac_dial.valueChanged.connect(
-        lambda: self.ui.bottom_floor_activate_on.setText(
-        f"Cool to: {self.ui.bottom_floor_hvac_dial.value()}"))
+        self.ui.bottom_floor_hvac_dial.valueChanged.connect(lambda: self.update_bot_floor_dials())
+        self.ui.bottom_floor_hvac_dial.valueChanged.connect(lambda: self.update_bot_floor_dials_split())
 
         # Debuggin print statements
         # ui.top_floor_hvac_dial.valueChanged.connect(lambda: print(f"Active on: {ui.top_floor_hvac_dial.value()}"))
@@ -115,6 +135,7 @@ class OurMainWindow():
         """
         print("Setting up logs..")
         self.ui.logs_list.clear()
+        self.ui.logs_list_split.clear()
         logs = self.db.get_log_string_array()
         print("---")
         for log in logs:
@@ -125,3 +146,4 @@ class OurMainWindow():
             item = QtWidgets.QListWidgetItem()
             item.setText(log)
             self.ui.logs_list.addItem(item)
+            self.ui.logs_list_split.addItem(item)
