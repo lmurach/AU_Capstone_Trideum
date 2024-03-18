@@ -14,10 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1380, 778)
+        MainWindow.resize(1675, 919)
         MainWindow.setMinimumSize(QtCore.QSize(1380, 778))
         MainWindow.setMaximumSize(QtCore.QSize(1920, 1080))
-        MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -609,7 +608,7 @@ class Ui_MainWindow(object):
         self.bottom_floor_temp_split.setObjectName("bottom_floor_temp_split")
         self.gridLayout_5.addWidget(self.bottom_floor_temp_split, 7, 1, 1, 1)
         self.horizontalLayout_2.addLayout(self.gridLayout_5)
-        self.logs_list_split = QtWidgets.QListView(self.split)
+        self.logs_list_split = QtWidgets.QListWidget(self.split)
         self.logs_list_split.setObjectName("logs_list_split")
         self.horizontalLayout_2.addWidget(self.logs_list_split)
         self.tabWidget.addTab(self.split, "")
@@ -620,7 +619,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
