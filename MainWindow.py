@@ -98,7 +98,7 @@ class OurMainWindow():
         self.ui.middle_floor_hvac_dial_split.valueChanged.connect(lambda: self.update_mid_floor_dials_split())
 
         self.ui.bottom_floor_hvac_dial.valueChanged.connect(lambda: self.update_bot_floor_dials())
-        self.ui.bottom_floor_hvac_dial.valueChanged.connect(lambda: self.update_bot_floor_dials_split())
+        self.ui.bottom_floor_hvac_dial_split.valueChanged.connect(lambda: self.update_bot_floor_dials_split())
 
         # Debuggin print statements
         # ui.top_floor_hvac_dial.valueChanged.connect(lambda: print(f"Active on: {ui.top_floor_hvac_dial.value()}"))
