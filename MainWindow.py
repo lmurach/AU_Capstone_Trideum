@@ -163,12 +163,20 @@ class OurMainWindow():
             self.ui.middle_floor_temp_split.setText(str(temp))
 
             if (temp > self.ui.middle_floor_hvac_dial.value()):
-                self.ui.middle_floor_motion.setStyleSheet("border: 3px solid green;\n"
+                self.ui.middle_floor_temp.setStyleSheet("border: 3px solid green;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: lightGreen;\n"
+                    "")
+                self.ui.middle_floor_temp_split.setStyleSheet("border: 3px solid green;\n"
                     "border-radius: 40px;\n"
                     "background-color: lightGreen;\n"
                     "")
             elif (temp <= self.ui.middle_floor_hvac_dial.value()):
-                self.ui.middle_floor_motion.setStyleSheet("border: 3px solid red;\n"
+                self.ui.middle_floor_temp.setStyleSheet("border: 3px solid red;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: pink;\n"
+                    "")
+                self.ui.middle_floor_temp_split.setStyleSheet("border: 3px solid red;\n"
                     "border-radius: 40px;\n"
                     "background-color: pink;\n"
                     "")
@@ -178,12 +186,20 @@ class OurMainWindow():
             self.ui.top_floor_temp_split.setText(str(temp))
 
             if (temp > self.ui.top_floor_hvac_dial.value()):
-                self.ui.top_floor_motion.setStyleSheet("border: 3px solid green;\n"
+                self.ui.top_floor_temp.setStyleSheet("border: 3px solid green;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: lightGreen;\n"
+                    "")
+                self.ui.top_floor_temp_split.setStyleSheet("border: 3px solid green;\n"
                     "border-radius: 40px;\n"
                     "background-color: lightGreen;\n"
                     "")
             elif (temp <= self.ui.top_floor_hvac_dial.value()):
-                self.ui.top_floor_motion.setStyleSheet("border: 3px solid red;\n"
+                self.ui.top_floor_temp.setStyleSheet("border: 3px solid red;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: pink;\n"
+                    "")
+                self.ui.top_floor_temp_split.setStyleSheet("border: 3px solid red;\n"
                     "border-radius: 40px;\n"
                     "background-color: pink;\n"
                     "")
