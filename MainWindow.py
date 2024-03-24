@@ -167,6 +167,6 @@ class OurMainWindow():
             self.ui.bottom_floor_temp.setText(temp)
             self.ui.bottom_floor_temp_split.setText(temp)
 
-    @QtCore.pyqtSlot(int)
+    @QtCore.pyqtSlot(str)
     def detect_card(self, text):
         print(text)
