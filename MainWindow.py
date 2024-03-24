@@ -152,7 +152,6 @@ class OurMainWindow():
             item.setText(log)
             self.ui.logs_list_split.addItem(item)
 
-    @QtCore.pyqtSlot(int)
     def get_temp(self, floor, temp):
         print(f"floor: {floor} is at {temp} degrees.")
 
@@ -167,6 +166,5 @@ class OurMainWindow():
             self.ui.bottom_floor_temp.setText(temp)
             self.ui.bottom_floor_temp_split.setText(temp)
 
-    @QtCore.pyqtSlot(str)
     def detect_card(self, text):
         print(text)

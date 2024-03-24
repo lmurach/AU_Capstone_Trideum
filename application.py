@@ -36,6 +36,25 @@ def initiate_background_thread():
     those same 3 functions but are called through this'''
     pass
 
+### 
+@QtCore.pyqtSlot(int)
+def get_temp(self, floor, temp):
+    print(f"floor: {floor} is at {temp} degrees.")
+    ourMainWindow.get_temp(floor, temp)
+
+@QtCore.pyqtSlot(str)
+def detect_card(self, text):
+    print(text)
+    ourMainWindow.detect_card(text)
+
+### GLOBAL VARS ### 
+# Create a door that assoicates user id 3 with it...
+db = Database()
+db.initialize_db()
+ourDoor = Door()
+ourDoor.card_owner_id = 3
+ourMainWindow = OurMainWindow(ourDoor, db)
+
 if __name__ == "__main__":
     """ 
     If this file is ran, it's __name__ variable will be '__main__'. 
@@ -46,15 +65,8 @@ if __name__ == "__main__":
     """
 
     import sys
-    db = Database()
-    db.initialize_db()
+
     
-    # Create a door that assoicates user id 3 with it...
-    ourDoor = Door()
-    ourDoor.card_owner_id = 3
-
-    ourMainWindow = OurMainWindow(ourDoor, db)
-
     # L: initial integration
     # TODO: this does not work in a function and I don't know why!!
     ## 
@@ -69,3 +81,5 @@ if __name__ == "__main__":
     # Configure Some Functionality on our UI object.
 
     ourMainWindow.show()
+
+  
