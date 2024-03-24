@@ -162,9 +162,31 @@ class OurMainWindow():
             self.ui.middle_floor_temp.setText(str(temp))
             self.ui.middle_floor_temp_split.setText(str(temp))
 
+            if (temp > self.ui.middle_floor_activate_on):
+                self.ui.middle_floor_motion.setStyleSheet("border: 3px solid green;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: lightGreen;\n"
+                    "")
+            elif (temp <= self.ui.middle_floor_activate_on):
+                self.ui.middle_floor_motion.setStyleSheet("border: 3px solid red;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: pink;\n"
+                    "")
+
         elif (floor == 2): 
             self.ui.top_floor_temp.setText(str(temp))
             self.ui.top_floor_temp_split.setText(str(temp))
+
+            if (temp > self.ui.top_floor_activate_on):
+                self.ui.top_floor_motion.setStyleSheet("border: 3px solid green;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: lightGreen;\n"
+                    "")
+            elif (temp <= self.ui.top_floor_activate_on):
+                self.ui.top_floor_motion.setStyleSheet("border: 3px solid red;\n"
+                    "border-radius: 40px;\n"
+                    "background-color: pink;\n"
+                    "")
 
     def detect_card(self, text):
         print(text)
