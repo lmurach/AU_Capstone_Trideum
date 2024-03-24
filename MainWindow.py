@@ -1,5 +1,5 @@
 from main_form import Ui_MainWindow
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from database import Database
 from door import Door
 import sys
@@ -151,3 +151,22 @@ class OurMainWindow():
             item = QtWidgets.QListWidgetItem()
             item.setText(log)
             self.ui.logs_list_split.addItem(item)
+
+    @QtCore.pyqtSlot(int)
+    def get_temp(self, floor, temp):
+        print(f"floor: {floor} is at {temp} degrees.")
+
+        if (floor == 0):
+            print("How'd you get here?")
+
+        elif (floor == 1):
+            self.ui.middle_floor_temp.setText(temp)
+            self.ui.middle_floor_temp_split.setText(temp)
+
+        elif (floor == 2): 
+            self.ui.bottom_floor_temp.setText(temp)
+            self.ui.bottom_floor_temp_split.setText(temp)
+
+    @QtCore.pyqtSlot(int)
+    def detect_card(self, text):
+        print(text)

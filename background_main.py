@@ -6,14 +6,15 @@ Purpose : This is the main class to operate as a scheduler. Later in time
 """
 import time
 from typing import Tuple, List
-from PyQt5.QtCore import QRunnable, pyqtSlot
+from PyQt5.QtCore import QRunnable, pyqtSlot, pyqtSignal, QObject, QThread
 
 from RFID import RFIDSecurity
 from neo_pixel_motion import NeoPixelMotion
 from door import Door
 from database import Database
+from tempSensor import TempControl
 
-class BackgroundMain(QRunnable):
+class BackgroundMain(QObject):
     '''This serves as the "main" function for everything that is not the GUI.
     Another file keeps all the threading functions related to the background 
     processes for seperation of concerns.
@@ -23,46 +24,38 @@ class BackgroundMain(QRunnable):
     threads could lead to long delays and a high possibility of a non-responsive
     GUI (if 4 threads activate so the GUI is put on the queue)'''
 
+    card_detected = pyqtSignal(str)
+    temp_signal = pyqtSignal(int, int)
+
+    rfid = RFIDSecurity()
+    door = Door()
+    door.GPIO_init()
+    temp_sensor = TempControl()
+
     def __init__(self):
         super().__init__()
-        self.rfid = RFIDSecurity()
-        self.door = Door()
-        self.door.GPIO_init()
         self.motion_sensor_0 = NeoPixelMotion(0, 23)
         self.motion_sensor_1 = NeoPixelMotion(1, 24)
         self.motion_sensor_2 = NeoPixelMotion(2, 25)
-        self.motionsensors = [self.motion_sensor_0, self.motion_sensor_1, self.motion_sensor_2]
+        self.motionsensors = [
+            self.motion_sensor_0,
+            self.motion_sensor_1,
+            self.motion_sensor_2
+        ]
+        self.temp_sesors = [
+            self.temp_sensor.floor1_address,
+            self.temp_sensor.floor2_address
+        ]
 
-    @pyqtSlot()
     def run(self):
         '''Main thread'''
-        # rfid = RFIDSecurity()
-        # door = Door()
-        # motion_sensor_0 = NeoPixelMotion(0, 23)
-        # motion_sensor_1 = NeoPixelMotion(1, 24)
-        # motion_sensor_2 = NeoPixelMotion(2, 25)
-        # motionsensors = [motion_sensor_0, motion_sensor_1, motion_sensor_2]
 
         while True:
-            # All door and RFID code is here
-            # if rfid.is_card_there():
-            #     (validity, id) = rfid.handle_read_card()
-            #     for _ in range (0, 20):
-            #         rfid.is_card_there()
-            #     if validity:
-            #         door.card_owner_id = id
-
-            # if door.card_owner_id is not None:
-            #     door.handle_lock()
-            # for sensor in motionsensors:
-            #     if sensor.motion_is_detected():
-            #         sensor.turn_on_lights()
-            #     else:
-            #         sensor.turn_off_lights()
             self._RFID_handler()
             self._door_handler()
             self._light_handler()
-            time.sleep(0.1)
+            self._temp_handler()
+            time.sleep(0.2)
 
     # @pyqtSlot()
     # def run(self):
@@ -85,7 +78,7 @@ class BackgroundMain(QRunnable):
                 self.rfid.is_card_there()
             if validity:
                 self.door.card_owner_id = e_id
-
+                self.card_detected.emit("Hello?")
 
     def _door_handler(self):
         if self.door.card_owner_id is not None:
@@ -97,3 +90,9 @@ class BackgroundMain(QRunnable):
                 sensor.turn_on_lights()
             else:
                 sensor.turn_off_lights()
+
+    def _temp_handler(self):
+        temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)
+        self.temp_signal.emit(1, temp)
+        temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor2_address)
+        self.temp_signal.emit(2, temp)

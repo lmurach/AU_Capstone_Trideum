@@ -24,7 +24,7 @@ Purpose : This file shows how to add some basic functionality
 from main_form import Ui_MainWindow
 from MainWindow import OurMainWindow
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import QThread
 from functools import partial
 from database import Database
 from door import Door
@@ -57,9 +57,14 @@ if __name__ == "__main__":
 
     # L: initial integration
     # TODO: this does not work in a function and I don't know why!!
-    threadpool = QThreadPool()
+    ## 
     bm = BackgroundMain()
-    threadpool.start(bm)
+    thread = QThread()
+    bm.moveToThread(thread)
+    thread.started.connect(bm.run)
+    bm.card_detected.connect(ourMainWindow.detect_card)
+    bm.temp_signal.connect(ourMainWindow.get_temp)
+    thread.start()
 
     # Configure Some Functionality on our UI object.
 
