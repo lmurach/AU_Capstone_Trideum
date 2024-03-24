@@ -22,8 +22,8 @@ Purpose : This file shows how to add some basic functionality
 # Imports. Make sure PyQt5 is properly installed
 #from ui_form import Ui_MainWindow
 from ui_5 import Ui_MainWindow
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QThreadPool
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import QThread
 from functools import partial
 from database import Database
 from door import Door
@@ -117,6 +117,14 @@ def setup_menus(ui:Ui_MainWindow):
     """ Fill this out later wesley """
     ui.logs_btn.clicked.connect(ui.click_change_page)
 
+@QtCore.pyqtSlot(int)
+def get_temp(floor, temp):
+    print(f"floor: {floor} is at {temp} degrees.")
+
+@QtCore.pyqtSlot(int)
+def detect_card(text):
+    print(text)
+
 def initiate_background_thread():
     ''' TODO: figure out why threading stuff makes this function blocking. 
     It works perfectly in the __main__ fnction but not if this function has
@@ -146,9 +154,13 @@ if __name__ == "__main__":
 
     # L: initial integration
     # TODO: this does not work in a function and I don't know why!!
-    threadpool = QThreadPool()
     bm = BackgroundMain()
-    threadpool.start(bm)
+    thread = QThread()
+    bm.moveToThread(thread)
+    thread.started.connect(bm.run)
+    bm.card_detected.connect(detect_card)
+    bm.temp_signal.connect(get_temp)
+    thread.start()
 
     # Configure Some Functionality on our UI object.
     setUpDials(ui)
