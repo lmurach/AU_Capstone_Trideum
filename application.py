@@ -38,14 +38,18 @@ def initiate_background_thread():
 
 ### 
 @QtCore.pyqtSlot(int)
-def get_temp(self, floor, temp):
+def get_temp(floor, temp):
     print(f"floor: {floor} is at {temp} degrees.")
     ourMainWindow.get_temp(floor, temp)
 
 @QtCore.pyqtSlot(str)
-def detect_card(self, text):
+def detect_card(text):
     print(text)
     ourMainWindow.detect_card(text)
+
+@QtCore.pyqtSlot(int, str)
+def detect_motion(num, state):
+    ourMainWindow.detect_motion(num, state)
 
 ### GLOBAL VARS ### 
 # Create a door that assoicates user id 3 with it...

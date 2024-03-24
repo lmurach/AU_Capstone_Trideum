@@ -19,6 +19,9 @@ class OurMainWindow():
         self.setUpAlarm()
         self.setUpDoor()
         self.set_up_logs()
+
+        self.GREEN = "border: 3px solid green;\nborder-radius: 40px;\nbackground-color: lightGreen;\n"
+        self.RED   = "border: 3px solid red;\nborder-radius: 40px;\nbackground-color: pink;\n"
     
     def show(self):
         self.MainWindow.show()
@@ -163,46 +166,65 @@ class OurMainWindow():
             self.ui.middle_floor_temp_split.setText(str(temp))
 
             if (temp > self.ui.middle_floor_hvac_dial.value()):
-                self.ui.middle_floor_temp.setStyleSheet("border: 3px solid green;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: lightGreen;\n"
-                    "")
-                self.ui.middle_floor_temp_split.setStyleSheet("border: 3px solid green;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: lightGreen;\n"
-                    "")
+                self.ui.middle_floor_temp.setStyleSheet(self.GREEN)
+                self.ui.middle_floor_temp_split.setStyleSheet(self.GREEN)
+
             elif (temp <= self.ui.middle_floor_hvac_dial.value()):
-                self.ui.middle_floor_temp.setStyleSheet("border: 3px solid red;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: pink;\n"
-                    "")
-                self.ui.middle_floor_temp_split.setStyleSheet("border: 3px solid red;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: pink;\n"
-                    "")
+                self.ui.middle_floor_temp.setStyleSheet(self.RED)
+                self.ui.middle_floor_temp_split.setStyleSheet(self.RED)
 
         elif (floor == 2): 
             self.ui.top_floor_temp.setText(str(temp))
             self.ui.top_floor_temp_split.setText(str(temp))
 
             if (temp > self.ui.top_floor_hvac_dial.value()):
-                self.ui.top_floor_temp.setStyleSheet("border: 3px solid green;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: lightGreen;\n"
-                    "")
-                self.ui.top_floor_temp_split.setStyleSheet("border: 3px solid green;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: lightGreen;\n"
-                    "")
+                self.ui.top_floor_temp.setStyleSheet(self.GREEN)
+                self.ui.top_floor_temp_split.setStyleSheet(self.GREEN)
+
             elif (temp <= self.ui.top_floor_hvac_dial.value()):
-                self.ui.top_floor_temp.setStyleSheet("border: 3px solid red;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: pink;\n"
-                    "")
-                self.ui.top_floor_temp_split.setStyleSheet("border: 3px solid red;\n"
-                    "border-radius: 40px;\n"
-                    "background-color: pink;\n"
-                    "")
+                self.ui.top_floor_temp.setStyleSheet(self.RED)
+                self.ui.top_floor_temp_split.setStyleSheet(self.RED)
 
     def detect_card(self, text):
         print(text)
+    
+    def detect_motion(self, num, state):
+
+        if (num == 2):
+            if state == "off":
+                self.ui.top_floor_motion_split.setStyleSheet(self.RED)
+                self.ui.top_floor_motion.setStyleSheet(self.RED)
+                self.ui.top_floor_motion.setText("NO MOTION")
+                self.ui.top_floor_motion_split.setText("NONE")
+
+            elif state == "on":
+                self.ui.top_floor_motion.setStyleSheet(self.GREEN)
+                self.ui.top_floor_motion_split.setStyleSheet(self.GREEN)
+                self.ui.top_floor_motion.setText("MOTION DETECTED")
+                self.ui.top_floor_motion_split.setText("MOTION")
+        
+        elif (num == 1):
+            if state == "off":
+                self.ui.middle_floor_motion_split.setStyleSheet(self.RED)
+                self.ui.middle_floor_motion.setStyleSheet(self.RED)
+                self.ui.middle_floor_motion.setText("NO MOTION")
+                self.ui.middle_floor_motion_split.setText("NONE")
+
+            elif state == "on":
+                self.ui.middle_floor_motion.setStyleSheet(self.GREEN)
+                self.ui.middle_floor_motion_split.setStyleSheet(self.GREEN)
+                self.ui.middle_floor_motion.setText("MOTION DETECTED")
+                self.ui.middle_floor_motion_split.setText("MOTION")
+        
+        elif (num == 0):
+            if state == "off":
+                self.ui.bottom_floor_motion_split.setStyleSheet(self.RED)
+                self.ui.bottom_floor_motion.setStyleSheet(self.RED)
+                self.ui.bottom_floor_motion.setText("NO MOTION")
+                self.ui.bottom_floor_motion_split.setText("NONE")
+
+            elif state == "on":
+                self.ui.bottom_floor_motion.setStyleSheet(self.GREEN)
+                self.ui.bottom_floor_motion_split.setStyleSheet(self.GREEN)
+                self.ui.bottom_floor_motion.setText("MOTION DETECTED")
+                self.ui.bottom_floor_motion_split.setText("MOTION")

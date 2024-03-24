@@ -26,6 +26,7 @@ class BackgroundMain(QObject):
 
     card_detected = pyqtSignal(str)
     temp_signal = pyqtSignal(int, int)
+    motion_signal = pyqtSignal()
 
     rfid = RFIDSecurity()
     door = Door()
@@ -85,11 +86,13 @@ class BackgroundMain(QObject):
             self.door.handle_lock()
 
     def _light_handler(self):
-        for sensor in self.motionsensors:
+        for num, sensor in enumerate(self.motionsensors):
             if sensor.motion_is_detected():
                 sensor.turn_on_lights()
+                self.motion_signal.emit(num, "on")
             else:
                 sensor.turn_off_lights()
+                self.motion_signal.emit(num, "off")
 
     def _temp_handler(self):
         temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)
