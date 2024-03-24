@@ -159,12 +159,12 @@ class OurMainWindow():
             print("How'd you get here?")
 
         elif (floor == 1):
-            self.ui.middle_floor_temp.setText(temp)
-            self.ui.middle_floor_temp_split.setText(temp)
+            self.ui.middle_floor_temp.setText(str(temp))
+            self.ui.middle_floor_temp_split.setText(str(temp))
 
         elif (floor == 2): 
-            self.ui.bottom_floor_temp.setText(temp)
-            self.ui.bottom_floor_temp_split.setText(temp)
+            self.ui.bottom_floor_temp.setText(str(temp))
+            self.ui.bottom_floor_temp_split.setText(str(temp))
 
     def detect_card(self, text):
         print(text)

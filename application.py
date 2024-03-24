@@ -23,7 +23,7 @@ Purpose : This file shows how to add some basic functionality
 #from ui_form import Ui_MainWindow
 from main_form import Ui_MainWindow
 from MainWindow import OurMainWindow
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import QThread
 from functools import partial
 from database import Database
