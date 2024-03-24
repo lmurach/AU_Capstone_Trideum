@@ -26,7 +26,7 @@ class BackgroundMain(QObject):
 
     card_detected = pyqtSignal(str)
     temp_signal = pyqtSignal(int, int)
-    motion_signal = pyqtSignal()
+    motion_signal = pyqtSignal(int, str)
 
     rfid = RFIDSecurity()
     door = Door()

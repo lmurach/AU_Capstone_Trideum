@@ -78,8 +78,9 @@ if __name__ == "__main__":
     thread = QThread()
     bm.moveToThread(thread)
     thread.started.connect(bm.run)
-    bm.card_detected.connect(ourMainWindow.detect_card)
-    bm.temp_signal.connect(ourMainWindow.get_temp)
+    bm.card_detected.connect(detect_card)
+    bm.temp_signal.connect(get_temp)
+    bm.motion_signal.connect(detect_motion)
     thread.start()
 
     # Configure Some Functionality on our UI object.
