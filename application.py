@@ -118,8 +118,14 @@ def setup_menus(ui:Ui_MainWindow):
     ui.logs_btn.clicked.connect(ui.click_change_page)
 
 @QtCore.pyqtSlot(int)
-def get_temp(floor, temp):
+def get_temp(floor:int, temp:int, ui:Ui_MainWindow):
     print(f"floor: {floor} is at {temp} degrees.")
+    if (floor == 0):
+        pass
+    if (floor == 1):
+        ui.middle_floor_temp_4.setText(_translate("MainWindow", "xx.xx"))
+    if (floor == 2):
+        pass
 
 @QtCore.pyqtSlot(int)
 def detect_card(text):

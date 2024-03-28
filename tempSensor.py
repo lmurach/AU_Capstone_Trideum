@@ -30,7 +30,7 @@ class TempControl:
     
     def read_fake_temp(self, sensor_address) -> int:
         '''ONLY FOR TESTING INTEGRATION FOR WHEN THE HARDWARE IS GONE. 
-        Returns a random integer between 70 and 79'''
+        Returns a random integer between 70 and 80 (inclusive)'''
         return self.rand.randint(70, 80)
 
     # '''The following loop is to demonstrate the temperature readings and will 
