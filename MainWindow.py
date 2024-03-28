@@ -2,6 +2,7 @@ from main_form import Ui_MainWindow
 from PyQt5 import QtWidgets, QtCore
 from database import Database
 from door import Door
+from background_main import BackgroundMain
 import sys
 
 class OurMainWindow():
@@ -14,6 +15,7 @@ class OurMainWindow():
         self.ui.setupUi(self.MainWindow)
         self.door = adoor
         self.db = adb
+        self.bg_task_manager = BackgroundMain()
 
         self.setUpDials()
         self.setUpAlarm()
@@ -114,8 +116,8 @@ class OurMainWindow():
         functions. 
         """
 
-        self.ui.arm_alarm_button.clicked.connect(lambda: print("Alarm Armed!"))
-        self.ui.disarm_alarm_button.clicked.connect(lambda: print("Alarm Disarmed!"))
+        self.ui.arm_alarm_button.clicked.connect(self.arm_alarm)
+        self.ui.disarm_alarm_button.clicked.connect(self.disarm_alarm)
 
     def setUpDoor(self):
         """ 
@@ -136,14 +138,9 @@ class OurMainWindow():
         """
         This method will query the database for new logs and update the list view. 
         """
-        print("Setting up logs..")
         self.ui.logs_list.clear()
         self.ui.logs_list_split.clear()
         logs = self.db.get_log_string_array()
-        print("---")
-        for log in logs:
-            print(log)
-        print("---")
 
         for log in logs:
             item = QtWidgets.QListWidgetItem()
@@ -155,42 +152,54 @@ class OurMainWindow():
             item.setText(log)
             self.ui.logs_list_split.addItem(item)
 
-    def get_temp(self, floor, temp):
-        print(f"floor: {floor} is at {temp} degrees.")
+    def arm_alarm(self) -> None:
+        '''Changes all floors to display red lights and alert of intruders
+        until the alarm is disarmed.'''
+        for sensor in self.bg_task_manager.motionsensors:
+            sensor.lockdown_state = True
 
-        if (floor == 0):
-            print("How'd you get here?")
+    def disarm_alarm(self) -> None:
+        '''Removes alarm status so that all floors to display white lights 
+        and do not log intrusion alerts.'''
+        for sensor in self.bg_task_manager.motionsensors:
+            sensor.lockdown_state = False
 
-        elif (floor == 1):
+    def set_temp(self, floor:int, temp:int) -> None:
+        '''A background process calls this function and sets the floor and temp 
+        whenever a temperature is changed. Then the UI is changed 
+        accordingly.'''
+
+        if floor == 0:
+            pass
+
+        elif floor == 1:
             self.ui.middle_floor_temp.setText(str(temp))
             self.ui.middle_floor_temp_split.setText(str(temp))
 
-            if (temp > self.ui.middle_floor_hvac_dial.value()):
+            if temp > self.ui.middle_floor_hvac_dial.value():
                 self.ui.middle_floor_temp.setStyleSheet(self.GREEN)
                 self.ui.middle_floor_temp_split.setStyleSheet(self.GREEN)
 
-            elif (temp <= self.ui.middle_floor_hvac_dial.value()):
+            elif temp <= self.ui.middle_floor_hvac_dial.value():
                 self.ui.middle_floor_temp.setStyleSheet(self.RED)
                 self.ui.middle_floor_temp_split.setStyleSheet(self.RED)
 
-        elif (floor == 2): 
+        elif floor == 2:
             self.ui.top_floor_temp.setText(str(temp))
             self.ui.top_floor_temp_split.setText(str(temp))
 
-            if (temp > self.ui.top_floor_hvac_dial.value()):
+            if temp > self.ui.top_floor_hvac_dial.value():
                 self.ui.top_floor_temp.setStyleSheet(self.GREEN)
                 self.ui.top_floor_temp_split.setStyleSheet(self.GREEN)
 
-            elif (temp <= self.ui.top_floor_hvac_dial.value()):
+            elif temp <= self.ui.top_floor_hvac_dial.value():
                 self.ui.top_floor_temp.setStyleSheet(self.RED)
                 self.ui.top_floor_temp_split.setStyleSheet(self.RED)
-
-    def detect_card(self, text):
-        print(text)
     
-    def detect_motion(self, num, state):
-
-        if (num == 2):
+    def detect_motion(self, floor:int, state:str):
+        '''A background process calls this function with the floor and state and
+        the UI is updated with the correct colors and text'''
+        if floor == 2:
             if state == "off":
                 self.ui.top_floor_motion_split.setStyleSheet(self.RED)
                 self.ui.top_floor_motion.setStyleSheet(self.RED)
@@ -203,7 +212,7 @@ class OurMainWindow():
                 self.ui.top_floor_motion.setText("MOTION DETECTED")
                 self.ui.top_floor_motion_split.setText("MOTION")
         
-        elif (num == 1):
+        elif floor == 1:
             if state == "off":
                 self.ui.middle_floor_motion_split.setStyleSheet(self.RED)
                 self.ui.middle_floor_motion.setStyleSheet(self.RED)
@@ -216,7 +225,7 @@ class OurMainWindow():
                 self.ui.middle_floor_motion.setText("MOTION DETECTED")
                 self.ui.middle_floor_motion_split.setText("MOTION")
         
-        elif (num == 0):
+        elif floor == 0:
             if state == "off":
                 self.ui.bottom_floor_motion_split.setStyleSheet(self.RED)
                 self.ui.bottom_floor_motion.setStyleSheet(self.RED)

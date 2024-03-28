@@ -55,10 +55,16 @@ class NeoPixelMotion:
         """Returns motion_detected"""
         return self.pir.motion_detected
 
+    def is_time(self) -> bool:
+        '''Returns true if enough time has passed for the lights to turn on
+        or off'''
+        if self.sense_time - self.start_time >= self.time_dif:
+            return True
+        return False
+
     def turn_on_lights(self):
         """Function activiating lights on the target floor"""
-        self.sense_time = time.time()                     #updates the sensetime0 variable to perform a comparison with starttime0
-        if (self.sense_time - self.start_time >= self.time_dif):     #only activates if timeDif's value in seconds has passed since the last update
+        if self.is_time():     #only activates if timeDif's value in seconds has passed since the last update
             if self.lockdown_state:
                 for i in range(10):
                     self.pixels[i + (self.floor * 10)] = (255, 0, 0)          #lights turn red if motion is detected during a lockdown
@@ -66,14 +72,14 @@ class NeoPixelMotion:
                 for i in range(10):
                     self.pixels[i + (self.floor * 10)] = (255, 255, 255)      #lights turn white if motion is detected during open hours
             # L: added a database call here so that the motion alert is changed
-            self.db.create_motion_log(self.floor, self.lockdown_state)
-                       
+            self.db.create_motion_log(self.floor, self.lockdown_state)          
             self.pixels.show()
         self.start_time = time.time()                     #updates the starttime0 variable to reset timer.
+
     def turn_off_lights(self):
         """Function for determining if lights should turn off in the target floor"""
         self.sense_time = time.time()                     #updates the sensetime0 variable to perform a comparison with starttime0
-        if (self.sense_time - self.start_time >= self.time_dif):     #only activates if timeDif's value in seconds has passed since the last update
+        if self.is_time():     #only activates if timeDif's value in seconds has passed since the last update
             for i in range(10):
                 self.pixels[i + (self.floor * 10)] = (0, 0, 0)                #lights turn off if motion is not detected for 5 minutes
             self.pixels.show()                            #does not update starttime0, since if motion is detected again lights should turn on

@@ -36,16 +36,15 @@ def initiate_background_thread():
     those same 3 functions but are called through this'''
     pass
 
-### 
+###
+@QtCore.pyqtSlot()
+def update_logs():
+    ourMainWindow.set_up_logs()
+
 @QtCore.pyqtSlot(int)
 def get_temp(floor, temp):
     print(f"floor: {floor} is at {temp} degrees.")
-    ourMainWindow.get_temp(floor, temp)
-
-@QtCore.pyqtSlot(str)
-def detect_card(text):
-    print(text)
-    ourMainWindow.detect_card(text)
+    ourMainWindow.set_temp(floor, temp)
 
 @QtCore.pyqtSlot(int, str)
 def detect_motion(num, state):
@@ -74,13 +73,13 @@ if __name__ == "__main__":
     # L: initial integration
     # TODO: this does not work in a function and I don't know why!!
     ## 
-    bm = BackgroundMain()
+    bm = ourMainWindow.bg_task_manager
     thread = QThread()
     bm.moveToThread(thread)
     thread.started.connect(bm.run)
-    bm.card_detected.connect(detect_card)
     bm.temp_signal.connect(get_temp)
     bm.motion_signal.connect(detect_motion)
+    bm.logs_changed.connect(update_logs)
     thread.start()
 
     # Configure Some Functionality on our UI object.

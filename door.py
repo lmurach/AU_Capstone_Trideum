@@ -33,7 +33,7 @@ class Door:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-    def handle_lock(self):
+    def handle_lock(self) -> bool:
         '''The locking mechanism is normally blocking. To get around this, a 
         state machine is used. The class manages state and performs very short
         tasks and then allows the Pi to run other code until a certain time is
@@ -42,37 +42,42 @@ class Door:
         
         The states are:
                              V--┐
-        ready_to_open ---> open ┘--> ready_to_close ---> closed --> ...'''
+        ready_to_open ---> open ┘--> ready_to_close ---> closed --> ...
+        
+        It returns true if a state has changed, requiring the logging object
+        to be changed'''
         if datetime.now() > self.time_until_run:
             if self.state == "ready_to_open":
                 Door._open_lock()
                 self._add_wait_time(4, 0)
                 self.state = "open"
+                self._log_to_database(0, "open")
                 self.seconds_door_open += 4
-                return
+                return True
             if self.state == "open":
                 if self._is_door_closed():
                     self._add_wait_time(0, 500)
                     self.state = "ready_to_close"
-                    self._log_to_database(0, "open")
-                elif self.seconds_door_open >= 10 and not self.alert_sent:
+                    return False
+                if self.seconds_door_open >= 10 and not self.alert_sent:
                     self._alert_door_ajar()
-                else:
-                    seconds_to_wait = 1
-                    self._add_wait_time(seconds_to_wait, 0)
-                    self.seconds_door_open += seconds_to_wait
-                return
+                    return True
+                seconds_to_wait = 1
+                self._add_wait_time(seconds_to_wait, 0)
+                self.seconds_door_open += seconds_to_wait
+                return False
             if self.state == "ready_to_close":
                 Door._close_lock()
                 self._add_wait_time(1, 0)
                 self.state = "closed"
-                return
+                return False
             if self.state == "closed":
                 self._clear_alert()
                 self._log_to_database(0, "close")
                 self.card_owner_id = None
                 self.state = "ready_to_open"
-                return
+                return True
+        return False
 
     def _add_wait_time(self, seconds:int, milliseconds:int):
         '''Adds a set amount of time to wait until the next state 

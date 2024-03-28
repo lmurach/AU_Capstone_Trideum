@@ -402,26 +402,26 @@ class Database:
         cur = con.cursor()
         res = cur.execute(
             """
-            SELECT e.name, d.date, NULL AS floor, is_alert, state, 'door' AS type
+            SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
             FROM employees AS e, door_logs AS d
             WHERE d.e_id = e.id
 
             UNION ALL
 
-            SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
+            SELECT NULL AS name, time(date), floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
             FROM HVAC_logs
 
             UNION ALL
 
-            SELECT NULL AS name, date, floor, is_alert, NULL AS state, 'motion' AS type
+            SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
             FROM motion_logs
 
             UNION ALL
 
-            SELECT NULL AS name, date, floor, NULL AS is_alert, state, 'ele' AS type
+            SELECT NULL AS name, time(date), floor, NULL AS is_alert, state, 'ele' AS type
             FROM elevator_logs
 
-            ORDER BY date DESC
+            ORDER BY time(date) DESC
             
             LIMIT 45;
             """

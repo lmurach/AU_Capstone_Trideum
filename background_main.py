@@ -24,7 +24,7 @@ class BackgroundMain(QObject):
     threads could lead to long delays and a high possibility of a non-responsive
     GUI (if 4 threads activate so the GUI is put on the queue)'''
 
-    card_detected = pyqtSignal(str)
+    logs_changed = pyqtSignal()
     temp_signal = pyqtSignal(int, int)
     motion_signal = pyqtSignal(int, str)
 
@@ -79,17 +79,19 @@ class BackgroundMain(QObject):
                 self.rfid.is_card_there()
             if validity:
                 self.door.card_owner_id = e_id
-                self.card_detected.emit("Hello?")
 
     def _door_handler(self):
         if self.door.card_owner_id is not None:
-            self.door.handle_lock()
+            if self.door.handle_lock():
+                self.logs_changed.emit()
 
     def _light_handler(self):
         for num, sensor in enumerate(self.motionsensors):
             if sensor.motion_is_detected():
-                sensor.turn_on_lights()
-                self.motion_signal.emit(num, "on")
+                if sensor.is_time():
+                    sensor.turn_on_lights()
+                    self.motion_signal.emit(num, "on")
+                    self.logs_changed.emit()
             else:
                 sensor.turn_off_lights()
                 self.motion_signal.emit(num, "off")
