@@ -125,8 +125,8 @@ class OurMainWindow():
         functions. 
         """
 
-        self.ui.lock_door_button.clicked.connect(self.door._close_lock)
-        self.ui.unlock_door_button.clicked.connect(self.door._open_lock)
+        self.ui.lock_door_button.clicked.connect(self.door.close_lock)
+        self.ui.unlock_door_button.clicked.connect(self.door.open_lock)
 
         self.ui.lock_door_button.clicked.connect(lambda: self.door._log_to_database(0, "close"))
         self.ui.unlock_door_button.clicked.connect(lambda: self.door._log_to_database(0, "open"))

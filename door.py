@@ -48,7 +48,7 @@ class Door:
         to be changed'''
         if datetime.now() > self.time_until_run:
             if self.state == "ready_to_open":
-                Door._open_lock()
+                Door.open_lock()
                 self._add_wait_time(4, 0)
                 self.state = "open"
                 self._log_to_database(0, "open")
@@ -67,7 +67,7 @@ class Door:
                 self.seconds_door_open += seconds_to_wait
                 return False
             if self.state == "ready_to_close":
-                Door._close_lock()
+                Door.close_lock()
                 self._add_wait_time(1, 0)
                 self.state = "closed"
                 return False
@@ -104,7 +104,7 @@ class Door:
         self.db.create_door_log(datetime.now(), self.card_owner_id, is_alert, state)
 
     @staticmethod
-    def _open_lock():
+    def open_lock():
         '''The servomotor accepts a 50hz signal with a 1-2 ms pulse,
         so this function generates a duty cycle of 5% (1ms) for
         a degree of 0 turn (open)'''
@@ -112,7 +112,7 @@ class Door:
         pwm.start(5)
 
     @staticmethod
-    def _close_lock():
+    def close_lock():
         '''The servomotor accepts a 50hz signal with a 1-2 ms pulse,
         so this function generates a duty cycle of 10% (2ms) for
         a degree of 90 turn (closed)'''

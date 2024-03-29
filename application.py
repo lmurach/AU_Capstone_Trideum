@@ -43,7 +43,6 @@ def update_logs():
 
 @QtCore.pyqtSlot(int)
 def get_temp(floor, temp):
-    print(f"floor: {floor} is at {temp} degrees.")
     ourMainWindow.set_temp(floor, temp)
 
 @QtCore.pyqtSlot(int, str)
