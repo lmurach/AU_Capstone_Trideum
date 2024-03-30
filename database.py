@@ -43,6 +43,16 @@ class LogTypes(IntEnum):
     STATE = 4
     TYPE = 5
 
+class AlertTypes(IntEnum):
+    '''Alert types passed from the GUI in an array format. This is so that
+    various alerts can be turned on and off.'''
+    MOTION = 0,
+    MOTION_ALERT = 1,
+    ELEVATOR = 2,
+    HVAC = 3,
+    DOOR = 4,
+    DOOR_ALERTS = 5
+
 # Note when generating test data: ids start at 1.
 # Do not use an id of 0 or a foreign key constrain error
 # will occur.
@@ -50,8 +60,8 @@ class LogTypes(IntEnum):
 class Database:
     '''A class to manage all database related calls using SQLite'''
 
-    def __init__(self):
-        self.mutex = QMutex()
+    mutex = QMutex()
+    log_filtering_is_on = [False] * 6
 
     @staticmethod
     def initialize_db():
@@ -70,6 +80,7 @@ class Database:
         if not file:
             Database._create_tables(cur)
             Database._fill_config_table(cur)
+            Database._fill_employees_table(cur)
             Database._fill_tables_with_temp_data(cur)
         con.commit()
         con.close()
@@ -143,14 +154,17 @@ class Database:
         )
 
     @staticmethod
-    def _fill_tables_with_temp_data(cur: sqlite3.Cursor):
-        '''runs all necessary inserts of temporary data'''
+    def _fill_employees_table(cur: sqlite3.Cursor):
         cur.executemany(
             """INSERT INTO employees(
                     name, door_perm, card_uid
                 )
                 VALUES(?, ?, ?);""", DBTemp.employee_data
         )
+
+    @staticmethod
+    def _fill_tables_with_temp_data(cur: sqlite3.Cursor):
+        '''runs all necessary inserts of temporary data'''
         cur.executemany(
             """INSERT INTO door_logs(
                 date, e_id, is_alert, state
@@ -194,7 +208,7 @@ class Database:
         '''Returns an array of temperature sensors in order from the basement
         to the top floor.'''
 
-        self.mutex.lock()
+        Database.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         res = cur.execute(
@@ -205,7 +219,7 @@ class Database:
         )
         query_output = res.fetchall()
         con.close()
-        self.mutex.unlock()
+        Database.mutex.unlock()
         # the output is a list of tuples. The tuple size is dependent on the
         # number of columns acessed. Since there is only one row of
         # configurations, then there is just one item in the list with a tuple
@@ -228,7 +242,7 @@ class Database:
             floor_name = "floor1_temp"
         else:
             floor_name = "floor2_temp"
-        self.mutex.lock()
+        Database.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -239,13 +253,13 @@ class Database:
         )
         con.commit()
         con.close()
-        self.mutex.unlock()
+        Database.mutex.unlock()
 
     def create_motion_log(self, floor:int, is_alert:bool):
         '''Creates a motion log. Enter the floor using 0 for the basement, 1
         for the 1st floor, and 2 for the top floor. Use 1 for red light mode
         and 0 for normal light mode.'''
-        self.mutex.lock()
+        Database.mutex.lock()
         date = datetime.now()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
@@ -257,11 +271,11 @@ class Database:
         )
         con.commit()
         con.close()
-        self.mutex.unlock()
+        Database.mutex.unlock()
 
     def create_door_log(self, date:datetime, e_id:int, is_alert:int, state:str):
         '''Creates a new door log for opening doors'''
-        self.mutex.lock()
+        Database.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -272,13 +286,13 @@ class Database:
         )
         con.commit()
         con.close()
-        self.mutex.unlock()
+        Database.mutex.unlock()
 
     def does_employee_have_access(self, name:str) -> int:
         '''Checks if the employee exists and if they have have door permissions.
         An id of 0 is returned if the employee doesn't exist (this id is
         impossible using the autoincrement property)'''
-        self.mutex.lock()
+        Database.mutex.lock()
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
@@ -289,7 +303,7 @@ class Database:
         )
         result = cur.fetchone()
         con.close()
-        self.mutex.unlock()
+        Database.mutex.unlock()
         if result is None:
             # User does not exist
             return -1
@@ -340,8 +354,8 @@ class Database:
         '''Returns a formatted string array of all database logs'''
         log_string_array = []
         sql_array = self._get_logs_sql()
-        if sql_array == []:
-            return []
+        if sql_array.count == 0:
+            return log_string_array
         for query in sql_array:
             if query[LogTypes.TYPE] == "door":
                 if query[LogTypes.STATE] == "close":
@@ -397,38 +411,87 @@ class Database:
         can be ordered by datetime.
         TODO: This function is extremely inefficient and needs to be reworked.
         The output should remain the same, just with a backend change.'''
-        self.mutex.lock()
+        Database.mutex.lock()
         con = sqlite3.connect("database.db")
+        query_list = []
+        if (Database.log_filtering_is_on[AlertTypes.MOTION] and
+            Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]):
+            query_list.append("""
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state,
+                    'motion' AS type
+                FROM motion_logs
+                """)
+        elif Database.log_filtering_is_on[AlertTypes.MOTION]:
+            query_list.append("""
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state,
+                    'motion' AS type
+                FROM motion_logs
+                WHERE is_alert = 0
+                """)
+        elif Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]:
+            query_list.append("""
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state,
+                    'motion' AS type
+                FROM motion_logs
+                WHERE is_alert = 1
+                """)
+        if (Database.log_filtering_is_on[AlertTypes.DOOR] and
+            Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]):
+            query_list.append("""
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state,
+                    'door' AS type
+                FROM employees AS e, door_logs AS d
+                WHERE d.e_id = e.id
+                """)
+        elif Database.log_filtering_is_on[AlertTypes.DOOR]:
+            query_list.append("""
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state,
+                    'door' AS type
+                FROM employees AS e, door_logs AS d
+                WHERE d.e_id = e.id
+                AND is_alert = 0
+                """)
+        elif Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]:
+            query_list.append("""
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state,
+                    'door' AS type
+                FROM employees AS e, door_logs AS d
+                WHERE d.e_id = e.id
+                AND is_alert = 1
+                """)
+        if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
+            query_list.append("""
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert, state,
+                    'ele' AS type
+                FROM elevator_logs
+                """)
+        if Database.log_filtering_is_on[AlertTypes.HVAC]:
+            query_list.append("""
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert,
+                    NULL AS state, 'HVAC' AS type
+                FROM HVAC_logs
+                """)
+        query_string = ""
+        for index, query in enumerate(query_list):
+            print(f"{index} and len of query list {len(query_list)}")
+            if (index != 0 and index < len(query_list)):
+                query_string += """
+                    UNION ALL
+
+                    """
+            query_string += query
+        if len(query_list) != 0:
+            query_string += """
+                ORDER BY time(date) DESC
+                
+                LIMIT 45;
+                """
+        print(query_string)
         cur = con.cursor()
-        res = cur.execute(
-            """
-            SELECT e.name, d.date, NULL AS floor, is_alert, state, 'door' AS type
-            FROM employees AS e, door_logs AS d
-            WHERE d.e_id = e.id
-
-            UNION ALL
-
-            SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
-            FROM HVAC_logs
-
-            UNION ALL
-
-            SELECT NULL AS name, date, floor, is_alert, NULL AS state, 'motion' AS type
-            FROM motion_logs
-
-            UNION ALL
-
-            SELECT NULL AS name, date, floor, NULL AS is_alert, state, 'ele' AS type
-            FROM elevator_logs
-
-            ORDER BY date DESC
-            
-            LIMIT 45;
-            """
-        )
+        res = cur.execute(query_string)
         logs = res.fetchall()
         con.close()
-        self.mutex.unlock()
+        Database.mutex.unlock()
         if len(logs) == 0:
             return []
         return logs
