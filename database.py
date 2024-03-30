@@ -59,7 +59,7 @@ class Database:
     '''A class to manage all database related calls using SQLite'''
 
     mutex = QMutex()
-    log_filtering_is_on = [True] * 6
+    log_filtering_is_on = [False] * 6
 
     @staticmethod
     def initialize_db():
@@ -467,11 +467,12 @@ class Database:
                 SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
                 FROM HVAC_logs
                 """
-        query += """
-            ORDER BY time(date) DESC
-            
-            LIMIT 45;
-            """
+        if len(query) == 0:
+            query += """
+                ORDER BY time(date) DESC
+                
+                LIMIT 45;
+                """
         print(query)
         cur = con.cursor()
         res = cur.execute(query)
