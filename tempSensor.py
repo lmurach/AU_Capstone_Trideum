@@ -4,7 +4,7 @@ Date    : 03/15/2024
 Purpose : Turns HVAC system on and off depending on the temperature the floor is set too.(current code only reads temp)
 """
 
-import smbus
+import smbus2
 import time
 from random import Random
 
@@ -19,7 +19,7 @@ class TempControl:
     floor2_address = 0x4D  # Address of the TC74A5
 
     # Initialize I2C bus
-    bus = smbus.SMBus(bus_number)
+    bus = smbus2.SMBus(bus_number)
 
     '''The purpose of the following function is to return the 
     temperature of a requested Floor's sensor'''
