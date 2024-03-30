@@ -526,6 +526,12 @@ background-color: lightGreen;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
             <property name="text">
              <string>F3</string>
             </property>
@@ -539,6 +545,12 @@ background-color: lightGreen;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
             <property name="text">
              <string>F1</string>
             </property>
@@ -551,6 +563,12 @@ background-color: lightGreen;
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
             </property>
             <property name="text">
              <string>F2</string>
@@ -1003,6 +1021,12 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
             <property name="text">
              <string>F3</string>
             </property>
@@ -1016,6 +1040,12 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
             <property name="text">
              <string>F2</string>
             </property>
@@ -1028,6 +1058,12 @@ background-color: lightGrey;
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
             </property>
             <property name="text">
              <string>F1</string>

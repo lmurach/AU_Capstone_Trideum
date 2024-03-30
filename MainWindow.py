@@ -41,9 +41,9 @@ class OurMainWindow():
         self.set_up_logs()
 
         # These are style sheets that we swap between for colors.
-        self.GREEN = "border: 3px solid green;\nborder-radius: 40px;\nbackground-color: lightGreen;\n"
-        self.RED   = "border: 3px solid red;\nborder-radius: 40px;\nbackground-color: pink;\n"
-        self.GREY  = "border: 3px solid grey;\nborder-radius: 40px;\nbackground-color: lightGrey;\n"
+        self.GREEN = "border: 3px solid green;\nbackground-color: lightGreen;\n"
+        self.RED   = "border: 3px solid red;\nbackground-color: pink;\n"
+        self.GREY  = "border: 3px solid grey;\nbackground-color: lightGrey;\n"
 
     def show(self):
         """ This method will start the QApplication and present the user with the GUI. """
