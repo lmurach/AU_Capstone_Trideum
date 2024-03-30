@@ -1166,7 +1166,7 @@ background-color: lightGrey;
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Door Logs</string>
+             <string>Door Access Logs</string>
             </property>
            </widget>
           </item>
@@ -1227,7 +1227,7 @@ background-color: lightGrey;
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>After Hour Door Logs</string>
+             <string>Door Left Open Alerts</string>
             </property>
            </widget>
           </item>
