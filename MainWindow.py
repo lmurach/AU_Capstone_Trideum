@@ -5,56 +5,97 @@ from door import Door
 import sys
 
 class OurMainWindow():
+    """ 
+    This object sets up the UI elements and has control over all updates
+    that are displayed on the UI.
+    """
 
     def __init__(self, adoor:Door, adb: Database):
+        """
+        Constructor. Our UI needs a Door object and a Database object.
+        The door object will give us updates for the RFID door. 
+        The database object will allow us to pull information from our database and 
+        store new data there.
+        """
 
+        # Create a QApplication using Pyqt5
         self.app = QtWidgets.QApplication(sys.argv)
         self.MainWindow = QtWidgets.QMainWindow()
+
+        # Load the UI class that is generated from piuic5
         self.ui = Ui_MainWindow()
+
+        # Allow the UI to use our QMainWindow object
         self.ui.setupUi(self.MainWindow)
+
+        # Keep the door and database as class members.
         self.door = adoor
         self.db = adb
 
+        # Set up functionality for the dials, alarm, door, and logs.
         self.setUpDials()
         self.setUpAlarm()
         self.setUpDoor()
         self.set_up_logs()
 
+        # These are style sheets that we swap between for colors.
         self.GREEN = "border: 3px solid green;\nborder-radius: 40px;\nbackground-color: lightGreen;\n"
         self.RED   = "border: 3px solid red;\nborder-radius: 40px;\nbackground-color: pink;\n"
-    
+        self.GREY  = "border: 3px solid grey;\nborder-radius: 40px;\nbackground-color: lightGrey;\n"
+
     def show(self):
+        """ This method will start the QApplication and present the user with the GUI. """
         self.MainWindow.show()
         sys.exit(self.app.exec_())
 
     def update_top_floor_dials(self):
-        self.ui.top_floor_activate_on.setText(f"Cool to: {self.ui.top_floor_hvac_dial.value()}")
-        self.ui.top_floor_activate_on_split.setText(f"{self.ui.top_floor_hvac_dial.value()}")
+        """ This method will activate when a user rotates the top dial from the control view."""
+        
+        # Update the text with the new value for the control and split views.
+        self.ui.top_floor_activate_on.setText(f"Cool to: {self.ui.top_floor_hvac_dial.value()}°F")
+        self.ui.top_floor_activate_on_split.setText(f"{self.ui.top_floor_hvac_dial.value()}°F")
+        # Set the split view dial to the same value.
         self.ui.top_floor_hvac_dial_split.setValue(self.ui.top_floor_hvac_dial.value())
     
     def update_top_floor_dials_split(self):
+        """ This method will activate when a user rotates the top dial from the split view."""
+
+        # Update the text with the new values for the control and split views.
         self.ui.top_floor_activate_on.setText(f"Cool to: {self.ui.top_floor_hvac_dial_split.value()}")
         self.ui.top_floor_activate_on_split.setText(f"{self.ui.top_floor_hvac_dial_split.value()}")
+        # Set the control view dial to the same value.
         self.ui.top_floor_hvac_dial.setValue(self.ui.top_floor_hvac_dial_split.value())
 
     def update_mid_floor_dials(self):
+        """ This method will activate when a user rotates the middle dial from the control view."""
+        # Update the text with the new values for the control and split views.
         self.ui.middle_floor_activate_on.setText(f"Cool to: {self.ui.middle_floor_hvac_dial.value()}")
         self.ui.middle_floor_activate_on_split.setText(f"{self.ui.middle_floor_hvac_dial.value()}")
+        # Set the split view dial to the same value. 
         self.ui.middle_floor_hvac_dial_split.setValue(self.ui.middle_floor_hvac_dial.value())
     
     def update_mid_floor_dials_split(self):
+        """ This method will activate when a user rotates the middle dial from the split view."""
+        # Update the text with the new values for the control and split views.
         self.ui.middle_floor_activate_on.setText(f"Cool to: {self.ui.middle_floor_hvac_dial_split.value()}")
         self.ui.middle_floor_activate_on_split.setText(f"{self.ui.middle_floor_hvac_dial_split.value()}")
+        # Set the control view dial to the same value.
         self.ui.middle_floor_hvac_dial.setValue(self.ui.middle_floor_hvac_dial_split.value())
     
     def update_bot_floor_dials(self):
+        """ This method will activate when a user rotates the bottom dial from the control view."""
+        # Update the text with the new values for the control and split views.
         self.ui.bottom_floor_activate_on.setText(f"Cool to: {self.ui.bottom_floor_hvac_dial.value()}")
         self.ui.bottom_floor_activate_on_split.setText(f"{self.ui.bottom_floor_hvac_dial.value()}")
+        # Set the split view dial to the same value.
         self.ui.bottom_floor_hvac_dial_split.setValue(self.ui.bottom_floor_hvac_dial.value())
     
     def update_bot_floor_dials_split(self):
+        """ This method activates when a user rotates the bottom dial from the split view."""
+        # Update the text with the new values for the control and split views.
         self.ui.bottom_floor_activate_on.setText(f"Cool to: {self.ui.bottom_floor_hvac_dial_split.value()}")
         self.ui.bottom_floor_activate_on_split.setText(f"{self.ui.bottom_floor_hvac_dial_split.value()}")
+        # Set the control view dial to the same value.
         self.ui.bottom_floor_hvac_dial.setValue(self.ui.bottom_floor_hvac_dial_split.value())
 
     def setUpDials(self):
@@ -156,44 +197,56 @@ class OurMainWindow():
             self.ui.logs_list_split.addItem(item)
 
     def get_temp(self, floor, temp):
+        """
+        This method is called when a temperature sensor emits a signal for the GUI to update. 
+        """
         print(f"floor: {floor} is at {temp} degrees.")
 
         if (floor == 0):
+            # This sensor is disconnected and should never emit a signal.
             print("How'd you get here?")
 
         elif (floor == 1):
-            self.ui.middle_floor_temp.setText(str(temp))
-            self.ui.middle_floor_temp_split.setText(str(temp))
-
+        
+            # If the temperature is above the "Cool To Temperature"
             if (temp > self.ui.middle_floor_hvac_dial.value()):
+                # Set the text on the control and split view.
+                self.ui.middle_floor_temp.setText(f"{str(temp)}°F ON")
+                self.ui.middle_floor_temp_split.setText(f"{str(temp)}°F")
+                # Change the Style Sheet
                 self.ui.middle_floor_temp.setStyleSheet(self.GREEN)
                 self.ui.middle_floor_temp_split.setStyleSheet(self.GREEN)
-
+            # If the temperature is less than or at the "Cool To Temperature"
             elif (temp <= self.ui.middle_floor_hvac_dial.value()):
-                self.ui.middle_floor_temp.setStyleSheet(self.RED)
-                self.ui.middle_floor_temp_split.setStyleSheet(self.RED)
+                # Set the text on the control and split view.
+                self.ui.middle_floor_temp.setText(f"{str(temp)}°F OFF")
+                self.ui.middle_floor_temp_split.setText(f"{str(temp)}°F")
+                # Change the Style Sheet
+                self.ui.middle_floor_temp.setStyleSheet(self.GREY)
+                self.ui.middle_floor_temp_split.setStyleSheet(self.GREY)
 
-        elif (floor == 2): 
-            self.ui.top_floor_temp.setText(str(temp))
-            self.ui.top_floor_temp_split.setText(str(temp))
+        elif (floor == 2):
 
             if (temp > self.ui.top_floor_hvac_dial.value()):
+                self.ui.top_floor_temp.setText(f"{str(temp)}°F ON")
+                self.ui.top_floor_temp_split.setText(f"{str(temp)}°F")
                 self.ui.top_floor_temp.setStyleSheet(self.GREEN)
                 self.ui.top_floor_temp_split.setStyleSheet(self.GREEN)
 
             elif (temp <= self.ui.top_floor_hvac_dial.value()):
-                self.ui.top_floor_temp.setStyleSheet(self.RED)
-                self.ui.top_floor_temp_split.setStyleSheet(self.RED)
+                self.ui.top_floor_temp.setText(f"{str(temp)}°F OFF")
+                self.ui.top_floor_temp_split.setText(f"{str(temp)}°F")
+                self.ui.top_floor_temp.setStyleSheet(self.GREY)
+                self.ui.top_floor_temp_split.setStyleSheet(self.GREY)
 
     def detect_card(self, text):
         print(text)
     
     def detect_motion(self, num, state):
-
         if (num == 2):
             if state == "off":
-                self.ui.top_floor_motion_split.setStyleSheet(self.RED)
-                self.ui.top_floor_motion.setStyleSheet(self.RED)
+                self.ui.top_floor_motion_split.setStyleSheet(self.GREY)
+                self.ui.top_floor_motion.setStyleSheet(self.GREY)
                 self.ui.top_floor_motion.setText("NO MOTION")
                 self.ui.top_floor_motion_split.setText("NONE")
 
@@ -205,8 +258,8 @@ class OurMainWindow():
         
         elif (num == 1):
             if state == "off":
-                self.ui.middle_floor_motion_split.setStyleSheet(self.RED)
-                self.ui.middle_floor_motion.setStyleSheet(self.RED)
+                self.ui.middle_floor_motion_split.setStyleSheet(self.GREY)
+                self.ui.middle_floor_motion.setStyleSheet(self.GREY)
                 self.ui.middle_floor_motion.setText("NO MOTION")
                 self.ui.middle_floor_motion_split.setText("NONE")
 
@@ -218,8 +271,8 @@ class OurMainWindow():
         
         elif (num == 0):
             if state == "off":
-                self.ui.bottom_floor_motion_split.setStyleSheet(self.RED)
-                self.ui.bottom_floor_motion.setStyleSheet(self.RED)
+                self.ui.bottom_floor_motion_split.setStyleSheet(self.GREY)
+                self.ui.bottom_floor_motion.setStyleSheet(self.GREY)
                 self.ui.bottom_floor_motion.setText("NO MOTION")
                 self.ui.bottom_floor_motion_split.setText("NONE")
 
