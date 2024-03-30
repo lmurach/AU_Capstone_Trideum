@@ -453,12 +453,12 @@ class Database:
                 """)
         if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
             query_list.append("""
-                SELECT NULL AS name, date, floor, NULL AS is_alert, state, 'ele' AS type
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert, state, 'ele' AS type
                 FROM elevator_logs
                 """)
         if Database.log_filtering_is_on[AlertTypes.HVAC]:
             query_list.append("""
-                SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
                 FROM HVAC_logs
                 """)
         query_string = ""
