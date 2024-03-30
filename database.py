@@ -411,71 +411,74 @@ class Database:
         The output should remain the same, just with a backend change.'''
         Database.mutex.lock()
         con = sqlite3.connect("database.db")
-        query = """
-                """
+        query_list = []
         if (Database.log_filtering_is_on[AlertTypes.MOTION] and
             Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]):
-            query += """
+            query_list.append("""
                 SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
                 FROM motion_logs
-                """
+                """)
         elif Database.log_filtering_is_on[AlertTypes.MOTION]:
-            query += """
+            query_list.append("""
                 SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
                 FROM motion_logs
                 WHERE is_alert = 0
-                """
+                """)
         elif Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]:
-            query += """
+            query_list.append("""
                 SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
                 FROM motion_logs
                 WHERE is_alert = 1
-                """
+                """)
         if (Database.log_filtering_is_on[AlertTypes.DOOR] and
             Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]):
-            query += """
-                UNION ALL
+            query_list.append("""
                 SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
                 FROM employees AS e, door_logs AS d
                 WHERE d.e_id = e.id
-                """
+                """)
         elif Database.log_filtering_is_on[AlertTypes.DOOR]:
-            query += """
-                UNION ALL
+            query_list.append("""
                 SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
                 FROM employees AS e, door_logs AS d
                 WHERE d.e_id = e.id
                 AND is_alert = 0
-                """
+                """)
         elif Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]:
-            query += """
-                UNION ALL
+            query_list.append("""
                 SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
                 FROM employees AS e, door_logs AS d
                 WHERE d.e_id = e.id
                 AND is_alert = 1
-                """
+                """)
         if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
-            query += """
-                UNION ALL
+            query_list.append("""
                 SELECT NULL AS name, date, floor, NULL AS is_alert, state, 'ele' AS type
                 FROM elevator_logs
-                """
+                """)
         if Database.log_filtering_is_on[AlertTypes.HVAC]:
-            query += """
-                UNION ALL
+            query_list.append("""
                 SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
                 FROM HVAC_logs
-                """
-        if len(query) == 0:
-            query += """
+                """)
+        query_string = ""
+        for index, query in enumerate(query_list):
+            print(f"{index} and len of query list {len(query_list)}")
+            if (index != 0 and index < len(query_list)):
+                query_string += """
+                    UNION ALL
+
+                    """
+            query_string += query
+        if len(query_list) != 0:
+            query_string += """
                 ORDER BY time(date) DESC
                 
                 LIMIT 45;
                 """
-        print(query)
+        print(query_string)
         cur = con.cursor()
-        res = cur.execute(query)
+        res = cur.execute(query_string)
         logs = res.fetchall()
         con.close()
         Database.mutex.unlock()
