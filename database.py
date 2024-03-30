@@ -44,6 +44,8 @@ class LogTypes(IntEnum):
     TYPE = 5
 
 class AlertTypes(IntEnum):
+    '''Alert types passed from the GUI in an array format. This is so that
+    various alerts can be turned on and off.'''
     MOTION = 0,
     MOTION_ALERT = 1,
     ELEVATOR = 2,
@@ -415,50 +417,58 @@ class Database:
         if (Database.log_filtering_is_on[AlertTypes.MOTION] and
             Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]):
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state,
+                    'motion' AS type
                 FROM motion_logs
                 """)
         elif Database.log_filtering_is_on[AlertTypes.MOTION]:
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state,
+                    'motion' AS type
                 FROM motion_logs
                 WHERE is_alert = 0
                 """)
         elif Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]:
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state,
+                    'motion' AS type
                 FROM motion_logs
                 WHERE is_alert = 1
                 """)
         if (Database.log_filtering_is_on[AlertTypes.DOOR] and
             Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]):
             query_list.append("""
-                SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state,
+                    'door' AS type
                 FROM employees AS e, door_logs AS d
                 WHERE d.e_id = e.id
                 """)
         elif Database.log_filtering_is_on[AlertTypes.DOOR]:
             query_list.append("""
-                SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state,
+                    'door' AS type
                 FROM employees AS e, door_logs AS d
                 WHERE d.e_id = e.id
                 AND is_alert = 0
                 """)
         elif Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]:
             query_list.append("""
-                SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state,
+                    'door' AS type
                 FROM employees AS e, door_logs AS d
                 WHERE d.e_id = e.id
                 AND is_alert = 1
                 """)
         if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, NULL AS is_alert, state, 'ele' AS type
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert, state,
+                    'ele' AS type
                 FROM elevator_logs
                 """)
         if Database.log_filtering_is_on[AlertTypes.HVAC]:
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert,
+                    NULL AS state, 'HVAC' AS type
                 FROM HVAC_logs
                 """)
         query_string = ""

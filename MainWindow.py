@@ -46,6 +46,12 @@ class OurMainWindow():
         self.RED   = "border: 3px solid red;\nbackground-color: pink;\n"
         self.GREY  = "border: 3px solid grey;\nbackground-color: lightGrey;\n"
 
+    def closeEvent(self, event):
+        """Override the window exit function to save settings and turn off 
+        lights."""
+        print("exiting")
+        event.accept() # let the window close
+
     def show(self):
         """ This method will start the QApplication and present the user with the GUI. """
         self.MainWindow.show()
