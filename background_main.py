@@ -97,7 +97,13 @@ class BackgroundMain(QObject):
                 self.motion_signal.emit(num, "off")
 
     def _temp_handler(self):
-        temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)
+        temp = self.temp_sensor.read_temperature(self.temp_sensor.floor1_address)
         self.temp_signal.emit(1, temp)
-        temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor2_address)
+        temp = self.temp_sensor.read_temperature(self.temp_sensor.floor2_address)
         self.temp_signal.emit(2, temp)
+
+        # Fake Data:
+        # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)
+        # self.temp_signal.emit(1, temp)
+        # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor2_address)
+        # self.temp_signal.emit(2, temp)
