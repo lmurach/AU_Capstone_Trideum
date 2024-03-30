@@ -39,6 +39,7 @@ class OurMainWindow():
         self.setUpAlarm()
         self.setUpDoor()
         self.set_up_logs()
+        self.setUpCheckBoxes()
 
         # These are style sheets that we swap between for colors.
         self.GREEN = "border: 3px solid green;\nbackground-color: lightGreen;\n"
@@ -288,3 +289,24 @@ class OurMainWindow():
                 self.ui.bottom_floor_motion_split.setStyleSheet(self.GREEN)
                 self.ui.bottom_floor_motion.setText("MOTION DETECTED")
                 self.ui.bottom_floor_motion_split.setText("MOTION")
+    
+    def setUpCheckBoxes(self):
+
+        self.ui.DoorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+        self.ui.HVAC_CheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+        self.ui.ElevatorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+        self.ui.MotionSensorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+        self.ui.AfterHoursDoorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+        self.ui.AfterHoursMotionCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+    
+    def logFilteringStateChanged(self):
+        
+        self.states = [
+        self.ui.MotionSensorCheckBox.isChecked(),
+        self.ui.AfterHoursMotionCheckBox.isChecked(),
+        self.ui.ElevatorCheckBox.isChecked(),
+        self.ui.HVAC_CheckBox.isChecked(),
+        self.ui.DoorCheckBox.isChecked(),
+        self.ui.AfterHoursDoorCheckBox.isChecked()]
+        print(self.states)
+        Database.log_filterting_is_on = self.states
