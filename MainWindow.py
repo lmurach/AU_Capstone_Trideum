@@ -310,4 +310,4 @@ class OurMainWindow():
         self.ui.AfterHoursDoorCheckBox.isChecked()]
         print(self.states)
 
-        self.db.log_filterting_is_on = self.states
+        Database.log_filtering_is_on = self.states
