@@ -24,7 +24,7 @@ class TempControl:
     '''The purpose of the following function is to return the 
     temperature of a requested Floor's sensor'''
     def read_temperature(self, sensor_address):
-        temperature_data = bus.read_byte_data(sensor_address, 0x00) # Read temperature register (0x00)
+        temperature_data = TempControl.bus.read_byte_data(sensor_address, 0x00) # Read temperature register (0x00)
         temperature_fahrenheit = temperature_data * 9/5 + 32 # Read temp data and convert it to F, (each LSB represents 1 degree Celsius)
         return temperature_fahrenheit
     
