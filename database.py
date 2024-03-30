@@ -43,6 +43,14 @@ class LogTypes(IntEnum):
     STATE = 4
     TYPE = 5
 
+class AlertTypes(IntEnum):
+    MOTION = 0,
+    MOTION_ALERT = 1,
+    ELEVATOR = 2,
+    HVAC = 3,
+    DOOR = 4,
+    DOOR_ALERTS = 5
+
 # Note when generating test data: ids start at 1.
 # Do not use an id of 0 or a foreign key constrain error
 # will occur.
@@ -51,6 +59,7 @@ class Database:
     '''A class to manage all database related calls using SQLite'''
 
     mutex = QMutex()
+    log_filtering_is_on = [True] * 6
 
     @staticmethod
     def initialize_db():
@@ -70,7 +79,7 @@ class Database:
             Database._create_tables(cur)
             Database._fill_config_table(cur)
             Database._fill_employees_table(cur)
-            # Database._fill_tables_with_temp_data(cur)
+            Database._fill_tables_with_temp_data(cur)
         con.commit()
         con.close()
 
@@ -402,33 +411,70 @@ class Database:
         The output should remain the same, just with a backend change.'''
         Database.mutex.lock()
         con = sqlite3.connect("database.db")
-        cur = con.cursor()
-        res = cur.execute(
-            """
-            SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
-            FROM employees AS e, door_logs AS d
-            WHERE d.e_id = e.id
-
-            UNION ALL
-
-            SELECT NULL AS name, time(date), floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
-            FROM HVAC_logs
-
-            UNION ALL
-
-            SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
-            FROM motion_logs
-
-            UNION ALL
-
-            SELECT NULL AS name, time(date), floor, NULL AS is_alert, state, 'ele' AS type
-            FROM elevator_logs
-
+        query = """
+                """
+        if (Database.log_filtering_is_on[AlertTypes.MOTION] and
+            Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]):
+            query += """
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
+                FROM motion_logs
+                """
+        elif Database.log_filtering_is_on[AlertTypes.MOTION]:
+            query += """
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
+                FROM motion_logs
+                WHERE is_alert = 0
+                """
+        elif Database.log_filtering_is_on[AlertTypes.MOTION_ALERT]:
+            query += """
+                SELECT NULL AS name, time(date), floor, is_alert, NULL AS state, 'motion' AS type
+                FROM motion_logs
+                WHERE is_alert = 1
+                """
+        if (Database.log_filtering_is_on[AlertTypes.DOOR] and
+            Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]):
+            query += """
+                UNION ALL
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
+                FROM employees AS e, door_logs AS d
+                WHERE d.e_id = e.id
+                """
+        elif Database.log_filtering_is_on[AlertTypes.DOOR]:
+            query += """
+                UNION ALL
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
+                FROM employees AS e, door_logs AS d
+                WHERE d.e_id = e.id
+                AND is_alert = 0
+                """
+        elif Database.log_filtering_is_on[AlertTypes.DOOR_ALERTS]:
+            query += """
+                UNION ALL
+                SELECT e.name, time(d.date), NULL AS floor, is_alert, state, 'door' AS type
+                FROM employees AS e, door_logs AS d
+                WHERE d.e_id = e.id
+                AND is_alert = 1
+                """
+        if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
+            query += """
+                UNION ALL
+                SELECT NULL AS name, date, floor, NULL AS is_alert, state, 'ele' AS type
+                FROM elevator_logs
+                """
+        if Database.log_filtering_is_on[AlertTypes.HVAC]:
+            query += """
+                UNION ALL
+                SELECT NULL AS name, date, floor, NULL AS is_alert, NULL AS state, 'HVAC' AS type
+                FROM HVAC_logs
+                """
+        query += """
             ORDER BY time(date) DESC
             
             LIMIT 45;
             """
-        )
+        print(query)
+        cur = con.cursor()
+        res = cur.execute(query)
         logs = res.fetchall()
         con.close()
         Database.mutex.unlock()
