@@ -683,8 +683,16 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.MotionSensorCheckBox.sizePolicy().hasHeightForWidth())
         self.MotionSensorCheckBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(24)
+        self.MotionSensorCheckBox.setFont(font)
         self.MotionSensorCheckBox.setMouseTracking(False)
         self.MotionSensorCheckBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.MotionSensorCheckBox.setStyleSheet("QCheckBox::indicator {\n"
+"                               width :40px;\n"
+"                               height : 40px;\n"
+"                               }")
         self.MotionSensorCheckBox.setObjectName("MotionSensorCheckBox")
         self.verticalLayout_5.addWidget(self.MotionSensorCheckBox)
         self.DoorCheckBox = QtWidgets.QCheckBox(self.logFiltering)
@@ -693,8 +701,16 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.DoorCheckBox.sizePolicy().hasHeightForWidth())
         self.DoorCheckBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(24)
+        self.DoorCheckBox.setFont(font)
         self.DoorCheckBox.setMouseTracking(False)
         self.DoorCheckBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.DoorCheckBox.setStyleSheet("QCheckBox::indicator {\n"
+"                               width :40px;\n"
+"                               height : 40px;\n"
+"                               }")
         self.DoorCheckBox.setObjectName("DoorCheckBox")
         self.verticalLayout_5.addWidget(self.DoorCheckBox)
         self.ElevatorCheckBox = QtWidgets.QCheckBox(self.logFiltering)
@@ -703,8 +719,16 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.ElevatorCheckBox.sizePolicy().hasHeightForWidth())
         self.ElevatorCheckBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(24)
+        self.ElevatorCheckBox.setFont(font)
         self.ElevatorCheckBox.setMouseTracking(False)
         self.ElevatorCheckBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.ElevatorCheckBox.setStyleSheet("QCheckBox::indicator {\n"
+"                               width :40px;\n"
+"                               height : 40px;\n"
+"                               }")
         self.ElevatorCheckBox.setObjectName("ElevatorCheckBox")
         self.verticalLayout_5.addWidget(self.ElevatorCheckBox)
         self.horizontalLayout_3.addLayout(self.verticalLayout_5)
@@ -716,8 +740,16 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.AfterHoursMotionCheckBox.sizePolicy().hasHeightForWidth())
         self.AfterHoursMotionCheckBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(24)
+        self.AfterHoursMotionCheckBox.setFont(font)
         self.AfterHoursMotionCheckBox.setMouseTracking(False)
         self.AfterHoursMotionCheckBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.AfterHoursMotionCheckBox.setStyleSheet("QCheckBox::indicator {\n"
+"                               width :40px;\n"
+"                               height : 40px;\n"
+"                               }")
         self.AfterHoursMotionCheckBox.setObjectName("AfterHoursMotionCheckBox")
         self.verticalLayout.addWidget(self.AfterHoursMotionCheckBox)
         self.AfterHoursDoorCheckBox = QtWidgets.QCheckBox(self.logFiltering)
@@ -726,8 +758,16 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.AfterHoursDoorCheckBox.sizePolicy().hasHeightForWidth())
         self.AfterHoursDoorCheckBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(24)
+        self.AfterHoursDoorCheckBox.setFont(font)
         self.AfterHoursDoorCheckBox.setMouseTracking(False)
         self.AfterHoursDoorCheckBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.AfterHoursDoorCheckBox.setStyleSheet("QCheckBox::indicator {\n"
+"                               width :40px;\n"
+"                               height : 40px;\n"
+"                               }")
         self.AfterHoursDoorCheckBox.setObjectName("AfterHoursDoorCheckBox")
         self.verticalLayout.addWidget(self.AfterHoursDoorCheckBox)
         self.HVAC_CheckBox = QtWidgets.QCheckBox(self.logFiltering)
@@ -736,8 +776,16 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.HVAC_CheckBox.sizePolicy().hasHeightForWidth())
         self.HVAC_CheckBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(24)
+        self.HVAC_CheckBox.setFont(font)
         self.HVAC_CheckBox.setMouseTracking(False)
         self.HVAC_CheckBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.HVAC_CheckBox.setStyleSheet("QCheckBox::indicator {\n"
+"                               width :40px;\n"
+"                               height : 40px;\n"
+"                               }")
         self.HVAC_CheckBox.setObjectName("HVAC_CheckBox")
         self.verticalLayout.addWidget(self.HVAC_CheckBox)
         self.horizontalLayout_3.addLayout(self.verticalLayout)
@@ -810,9 +858,9 @@ class Ui_MainWindow(object):
         self.logs_list_split.setSortingEnabled(__sortingEnabled)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.split), _translate("MainWindow", "Split View"))
         self.MotionSensorCheckBox.setText(_translate("MainWindow", "Motion Sensor Logs"))
-        self.DoorCheckBox.setText(_translate("MainWindow", "Door Logs"))
+        self.DoorCheckBox.setText(_translate("MainWindow", "Door Access Logs"))
         self.ElevatorCheckBox.setText(_translate("MainWindow", "Elevator Logs"))
         self.AfterHoursMotionCheckBox.setText(_translate("MainWindow", "After Hour Motion Alerts"))
-        self.AfterHoursDoorCheckBox.setText(_translate("MainWindow", "After Hour Door Logs"))
+        self.AfterHoursDoorCheckBox.setText(_translate("MainWindow", "Door Left Open Alerts"))
         self.HVAC_CheckBox.setText(_translate("MainWindow", "HVAC Logs"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.logFiltering), _translate("MainWindow", "Log Filtering"))

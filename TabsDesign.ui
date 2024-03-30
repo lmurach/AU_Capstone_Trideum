@@ -1140,11 +1140,23 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+                               width :40px;
+                               height : 40px;
+                               }</string>
             </property>
             <property name="text">
              <string>Motion Sensor Logs</string>
@@ -1159,14 +1171,26 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+                               width :40px;
+                               height : 40px;
+                               }</string>
+            </property>
             <property name="text">
-             <string>Door Logs</string>
+             <string>Door Access Logs</string>
             </property>
            </widget>
           </item>
@@ -1178,11 +1202,23 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+                               width :40px;
+                               height : 40px;
+                               }</string>
             </property>
             <property name="text">
              <string>Elevator Logs</string>
@@ -1201,11 +1237,23 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+                               width :40px;
+                               height : 40px;
+                               }</string>
             </property>
             <property name="text">
              <string>After Hour Motion Alerts</string>
@@ -1220,14 +1268,26 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+                               width :40px;
+                               height : 40px;
+                               }</string>
+            </property>
             <property name="text">
-             <string>After Hour Door Logs</string>
+             <string>Door Left Open Alerts</string>
             </property>
            </widget>
           </item>
@@ -1239,11 +1299,23 @@ background-color: lightGrey;
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QCheckBox::indicator {
+                               width :40px;
+                               height : 40px;
+                               }</string>
             </property>
             <property name="text">
              <string>HVAC Logs</string>

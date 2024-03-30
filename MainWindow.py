@@ -311,3 +311,4 @@ class OurMainWindow():
         print(self.states)
 
         Database.log_filtering_is_on = self.states
+        self.set_up_logs()
