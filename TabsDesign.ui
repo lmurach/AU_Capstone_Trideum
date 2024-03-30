@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1380</width>
-    <height>778</height>
+    <width>1675</width>
+    <height>919</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,9 +24,6 @@
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -90,11 +87,17 @@
         <pointsize>24</pointsize>
        </font>
       </property>
+      <property name="mouseTracking">
+       <bool>false</bool>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
       <property name="tabShape">
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="control">
        <attribute name="title">
@@ -106,170 +109,10 @@
           <property name="sizeConstraint">
            <enum>QLayout::SetMaximumSize</enum>
           </property>
-          <item row="7" column="2">
-           <widget class="QPushButton" name="bottom_floor_motion">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid red;
-border-radius: 40px;
-background-color: pink;
-</string>
-            </property>
-            <property name="text">
-             <string>NO MOTION</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="middle_floor_activate_on">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Cool To: xx.xx</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="top_floor_motion">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid green;
-border-radius: 40px;
-background-color: lightGreen;
-</string>
-            </property>
-            <property name="text">
-             <string>MOTION DETECTED</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="3">
-           <widget class="QPushButton" name="bottom_floor_elevator_request">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Request Elevator</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QPushButton" name="middle_floor_temp">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid green;
-border-radius: 40px;
-background-color: lightGreen;
-</string>
-            </property>
-            <property name="text">
-             <string>xx.xx</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="top_floor_activate_on">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Cool To:  xx.xx</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QDial" name="middle_floor_hvac_dial">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="1">
-           <widget class="QLabel" name="bottom_floor_activate_on">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Cool To: xx.xx</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
-           <widget class="QDial" name="bottom_floor_hvac_dial">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QPushButton" name="middle_floor_elevator_request">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Request Elevator</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="3">
            <widget class="QPushButton" name="top_floor_elevator">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -282,7 +125,6 @@ background-color: lightGreen;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid yellow;
-border-radius: 40px;
 background-color: lightYellow;
 </string>
             </property>
@@ -291,10 +133,10 @@ background-color: lightYellow;
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QPushButton" name="middle_floor_motion">
+          <item row="8" column="1">
+           <widget class="QLabel" name="bottom_floor_activate_on">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -305,120 +147,25 @@ background-color: lightYellow;
               <pointsize>24</pointsize>
              </font>
             </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid green;
-border-radius: 40px;
-background-color: lightGreen;
-</string>
-            </property>
             <property name="text">
-             <string>MOTION DETECTED</string>
+             <string>Cool To: xx°F</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="3">
-           <widget class="QPushButton" name="bottom_floor_elevator">
+          <item row="6" column="1">
+           <widget class="QDial" name="middle_floor_hvac_dial">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid red;
-border-radius: 40px;
-background-color: pink
-;
-</string>
-            </property>
-            <property name="text">
-             <string>Not Here</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QPushButton" name="bottom_floor_temp">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid red;
-border-radius: 40px;
-background-color: pink;
-</string>
-            </property>
-            <property name="text">
-             <string>xx.xx</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QDial" name="top_floor_hvac_dial">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QPushButton" name="top_floor_elevator_request">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Request Elevator</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QPushButton" name="middle_floor_elevator">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid green;
-border-radius: 40px;
-background-color: lightGreen;
-</string>
-            </property>
-            <property name="text">
-             <string>Here</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="motion_column_label">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -437,8 +184,7 @@ background-color: lightGreen;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid black;
-border-radius: 20px;
-background-color: lightGrey;
+background-color: aliceblue;
 
 </string>
             </property>
@@ -450,7 +196,7 @@ background-color: lightGrey;
           <item row="0" column="1">
            <widget class="QPushButton" name="hvac_column_label">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -469,8 +215,7 @@ background-color: lightGrey;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid black;
-border-radius: 20px;
-background-color: lightGrey;
+background-color: aliceblue;
 
 
 </string>
@@ -480,41 +225,10 @@ background-color: lightGrey;
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="elevator_column_label">
+          <item row="4" column="2">
+           <widget class="QPushButton" name="middle_floor_motion">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>125</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>24</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 3px solid black;
-border-radius: 20px;
-background-color: lightGrey;
-</string>
-            </property>
-            <property name="text">
-             <string>ELEVATOR</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="top_floor_temp">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -527,12 +241,379 @@ background-color: lightGrey;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid green;
-border-radius: 40px;
 background-color: lightGreen;
 </string>
             </property>
             <property name="text">
-             <string>xx.xx</string>
+             <string>MOTION DETECTED</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="3">
+           <widget class="QPushButton" name="bottom_floor_elevator_request">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Request Elevator</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <widget class="QPushButton" name="middle_floor_elevator_request">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Request Elevator</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QPushButton" name="top_floor_elevator_request">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Request Elevator</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="top_floor_activate_on">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Cool To: xx°F</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="middle_floor_temp">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;
+</string>
+            </property>
+            <property name="text">
+             <string>xx°F OFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDial" name="top_floor_hvac_dial">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="middle_floor_activate_on">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Cool To: xx°F</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="2">
+           <widget class="QPushButton" name="bottom_floor_motion">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;</string>
+            </property>
+            <property name="text">
+             <string>NO MOTION</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1">
+           <widget class="QDial" name="bottom_floor_hvac_dial">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="top_floor_motion">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid green;
+background-color: lightGreen;
+</string>
+            </property>
+            <property name="text">
+             <string>MOTION DETECTED</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="3">
+           <widget class="QPushButton" name="bottom_floor_elevator">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;</string>
+            </property>
+            <property name="text">
+             <string>Not Here</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="top_floor_temp">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid green;
+background-color: lightGreen;
+</string>
+            </property>
+            <property name="text">
+             <string>xx°F ON</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QPushButton" name="bottom_floor_temp">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;
+</string>
+            </property>
+            <property name="text">
+             <string>Not Connected</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="elevator_column_label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>125</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid black;
+background-color: aliceblue;
+</string>
+            </property>
+            <property name="text">
+             <string>ELEVATOR</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QPushButton" name="middle_floor_elevator">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border: 3px solid green;
+background-color: lightGreen;
+</string>
+            </property>
+            <property name="text">
+             <string>Here</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>F3</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>F1</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>F2</string>
             </property>
            </widget>
           </item>
@@ -588,11 +669,8 @@ background-color: lightGreen;
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 3px solid red;
-border-radius: 40px;
-background-color: pink
-;
-</string>
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;</string>
             </property>
             <property name="text">
              <string>NOT HERE</string>
@@ -621,8 +699,7 @@ background-color: pink
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid black;
-border-radius: 20px;
-background-color: lightGrey;
+background-color: aliceblue;
 </string>
             </property>
             <property name="text">
@@ -645,13 +722,13 @@ background-color: lightGrey;
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 3px solid green;
-border-radius: 40px;
-background-color: lightGreen;
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;
+
 </string>
             </property>
             <property name="text">
-             <string>xx.xx</string>
+             <string>xx°F</string>
             </property>
            </widget>
           </item>
@@ -671,7 +748,6 @@ background-color: lightGreen;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid green;
-border-radius: 40px;
 background-color: lightGreen;
 </string>
             </property>
@@ -696,12 +772,11 @@ background-color: lightGreen;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid green;
-border-radius: 40px;
 background-color: lightGreen;
 </string>
             </property>
             <property name="text">
-             <string>xx.xx</string>
+             <string>xx°F</string>
             </property>
            </widget>
           </item>
@@ -731,7 +806,6 @@ background-color: lightGreen;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid green;
-border-radius: 40px;
 background-color: lightGreen;
 </string>
             </property>
@@ -756,7 +830,6 @@ background-color: lightGreen;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid green;
-border-radius: 40px;
 background-color: lightGreen;
 </string>
             </property>
@@ -774,7 +847,7 @@ background-color: lightGreen;
              </font>
             </property>
             <property name="text">
-             <string>xx.xx</string>
+             <string>xx°F</string>
             </property>
            </widget>
           </item>
@@ -816,10 +889,8 @@ background-color: lightGreen;
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 3px solid red;
-border-radius: 40px;
-background-color: pink;
-</string>
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;</string>
             </property>
             <property name="text">
              <string>NONE</string>
@@ -848,8 +919,7 @@ background-color: pink;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid black;
-border-radius: 20px;
-background-color: lightGrey;
+background-color: aliceblue;
 
 </string>
             </property>
@@ -880,7 +950,7 @@ background-color: lightGrey;
              </font>
             </property>
             <property name="text">
-             <string>xx.xx</string>
+             <string>xx°F</string>
             </property>
            </widget>
           </item>
@@ -893,7 +963,7 @@ background-color: lightGrey;
              </font>
             </property>
             <property name="text">
-             <string>xx.xx</string>
+             <string>xx°F</string>
             </property>
            </widget>
           </item>
@@ -923,7 +993,6 @@ background-color: lightGrey;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid yellow;
-border-radius: 40px;
 background-color: lightYellow;
 </string>
             </property>
@@ -954,8 +1023,7 @@ background-color: lightYellow;
             </property>
             <property name="styleSheet">
              <string notr="true">border: 3px solid black;
-border-radius: 20px;
-background-color: lightGrey;
+background-color: aliceblue;
 </string>
             </property>
             <property name="text">
@@ -978,20 +1046,211 @@ background-color: lightGrey;
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 3px solid red;
-border-radius: 40px;
-background-color: pink;
+             <string notr="true">border: 3px solid grey;
+background-color: lightGrey;
 </string>
             </property>
             <property name="text">
-             <string>xx.xx</string>
+             <string>NC</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>F3</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>F2</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>F1</string>
             </property>
            </widget>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QListView" name="logs_list_split"/>
+         <widget class="QListWidget" name="logs_list_split">
+          <item>
+           <property name="text">
+            <string>Sample</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="logFiltering">
+       <attribute name="title">
+        <string>Log Filtering</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QCheckBox" name="MotionSensorCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Motion Sensor Logs</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="DoorCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Door Logs</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="ElevatorCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Elevator Logs</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QCheckBox" name="AfterHoursMotionCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>After Hour Motion Alerts</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="AfterHoursDoorCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>After Hour Door Logs</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="HVAC_CheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>HVAC Logs</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
