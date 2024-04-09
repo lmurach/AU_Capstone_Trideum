@@ -126,13 +126,13 @@ class OurMainWindow():
         temps = self.db.get_config_temperature_array() # basement to top
 
         # Set the range of the dials
-        self.ui.top_floor_hvac_dial.setRange(0, 100)
-        self.ui.middle_floor_hvac_dial.setRange(0, 100)
-        self.ui.bottom_floor_hvac_dial.setRange(0, 100)
+        self.ui.top_floor_hvac_dial.setRange(50, 90)
+        self.ui.middle_floor_hvac_dial.setRange(50, 90)
+        self.ui.bottom_floor_hvac_dial.setRange(5, 90)
         
-        self.ui.top_floor_hvac_dial_split.setRange(0, 100)
-        self.ui.middle_floor_hvac_dial_split.setRange(0, 100)
-        self.ui.bottom_floor_hvac_dial_split.setRange(0, 100)
+        self.ui.top_floor_hvac_dial_split.setRange(50, 90)
+        self.ui.middle_floor_hvac_dial_split.setRange(50, 90)
+        self.ui.bottom_floor_hvac_dial_split.setRange(50, 90)
 
         # Set the initial text and value of the dials
         self.ui.top_floor_activate_on.setText(f"Cool to: {temps[2]}°F")
