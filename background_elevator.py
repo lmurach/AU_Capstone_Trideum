@@ -35,4 +35,4 @@ class BGElevator(QObject):
                 end = self.ser.readline().decode('utf-8').rstrip()
 
                 if (end == "E"):
-                    self.button_signal.emit([bs1, bs2, bs3])
+                    self.button_signal.emit([int(bs1), int(bs2), int(bs3)])
