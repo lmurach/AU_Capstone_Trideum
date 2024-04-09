@@ -329,9 +329,9 @@ class OurMainWindow():
         Database.log_filtering_is_on = self.states
         self.set_up_logs()
     
-    def update_elevator_buttons(self, bs1, bs2, bs3):
+    def update_elevator_buttons(self, bsList):
 
-        if (bs1 == 1):
+        if (bsList[0] == 1):
             self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
 
@@ -345,7 +345,7 @@ class OurMainWindow():
             self.ui.bottom_floor_elevator.setText("Not Here")
             self.ui.bottom_floor_elevator_split.setText("Not Here")
         
-        if (bs2 == 1):
+        if (bsList[2] == 1):
             self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
 
@@ -358,7 +358,7 @@ class OurMainWindow():
             self.ui.middle_floor_elevator.setText("Not Here")
             self.ui.middle_floor_elevator_split.setText("Not Here")
         
-        if (bs3 == 1):
+        if (bsList[3] == 1):
             self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
 

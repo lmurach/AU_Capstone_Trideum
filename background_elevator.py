@@ -9,7 +9,7 @@ import serial
 
 class BGElevator(QObject):
 
-    button_signal = pyqtSignal(int, int, int)
+    button_signal = pyqtSignal(list)
     
     def __init__(self):
         super().__init__()
@@ -35,4 +35,4 @@ class BGElevator(QObject):
                 end = self.ser.readline().decode('utf-8').rstrip()
 
                 if (end == "E"):
-                    self.button_signal.emit(bs1, bs2, bs3)
+                    self.button_signal.emit([bs1, bs2, bs3])

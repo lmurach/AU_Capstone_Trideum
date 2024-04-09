@@ -49,9 +49,9 @@ def get_temp(floor, temp):
 def detect_motion(num, state):
     ourMainWindow.detect_motion(num, state)
 
-@QtCore.pyqtSlot(int, int, int)
-def update_elevator_buttons(bs1, bs2, bs3):
-    ourMainWindow.update_elevator_buttons(bs1, bs2, bs3)
+@QtCore.pyqtSlot(list)
+def update_elevator_buttons(bsList):
+    ourMainWindow.update_elevator_buttons(bsList)
 
 ### GLOBAL VARS ### 
 # Create a door that assoicates user id 3 with it...
