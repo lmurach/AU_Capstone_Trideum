@@ -3,7 +3,9 @@ from PyQt5 import QtWidgets, QtCore
 from database import Database
 from door import Door
 from background_main import BackgroundMain
+from background_elevator import BGElevator
 import sys
+import RPi.GPIO as GPIO
 
 class OurMainWindow():
     """ 
@@ -33,6 +35,7 @@ class OurMainWindow():
         self.door = adoor
         self.db = adb
         self.bg_task_manager = BackgroundMain()
+        self.bg_elevator     = BGElevator()
 
         # Set up functionality for the dials, alarm, door, and logs.
         self.setUpDials()
@@ -42,9 +45,10 @@ class OurMainWindow():
         self.setUpCheckBoxes()
 
         # These are style sheets that we swap between for colors.
-        self.GREEN = "border: 3px solid green;\nbackground-color: lightGreen;\n"
-        self.RED   = "border: 3px solid red;\nbackground-color: pink;\n"
-        self.GREY  = "border: 3px solid grey;\nbackground-color: lightGrey;\n"
+        self.GREEN  = "border: 3px solid green;\nbackground-color: lightGreen;\n"
+        self.RED    = "border: 3px solid red;\nbackground-color: pink;\n"
+        self.GREY   = "border: 3px solid grey;\nbackground-color: lightGrey;\n"
+        self.YELLOW = "border: 3px solid yellow;\nbackground-color: lightYellow;\n"
 
     def closeEvent(self, event):
         """Override the window exit function to save settings and turn off 
@@ -55,7 +59,13 @@ class OurMainWindow():
     def show(self):
         """ This method will start the QApplication and present the user with the GUI. """
         self.MainWindow.show()
-        sys.exit(self.app.exec_())
+        sys.exit(self.appExec())
+
+    def appExec(self):
+        self.app.exec_()
+        print("After Close")
+        GPIO.cleanup()
+        input()
 
     def update_top_floor_dials(self):
         """ This method will activate when a user rotates the top dial from the control view."""
@@ -318,3 +328,45 @@ class OurMainWindow():
 
         Database.log_filtering_is_on = self.states
         self.set_up_logs()
+    
+    def updated_elevator_buttons(self, bs1, bs2, bs3):
+
+        if (bs1 == 1):
+            self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
+            self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+            self.ui.bottom_floor_elevator.setText("Requested")
+            self.ui.bottom_floor_elevator_split.setText("REQ")
+            
+        else:
+            self.ui.bottom_floor_elevator.setStyleSheet(self.GREY)
+            self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREY)
+            
+            self.ui.bottom_floor_elevator.setText("Not Here")
+            self.ui.bottom_floor_elevator_split.setText("Not Here")
+        
+        if (bs2 == 1):
+            self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
+            self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+            self.ui.middle_floor_elevator.setText("Requested")
+            self.ui.middle_floor_elevator_split.setText("REQ")
+        else:
+            self.ui.middle_floor_elevator.setStyleSheet(self.GREY)
+            self.ui.middle_floor_elevator_split.setStyleSheet(self.GREY)
+
+            self.ui.middle_floor_elevator.setText("Not Here")
+            self.ui.middle_floor_elevator_split.setText("Not Here")
+        
+        if (bs3 == 1):
+            self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
+            self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+            self.ui.top_floor_elevator.setText("Requested")
+            self.ui.top_floor_elevator_split.setText("REQ")
+        else:
+            self.ui.top_floor_elevator.setStyleSheet(self.GREY)
+            self.ui.top_floor_elevator_split.setStyleSheet(self.GREY)
+
+            self.ui.top_floor_elevator.setText("Not Here")
+            self.ui.top_floor_elevator_split.setText("Not Here")

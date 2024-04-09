@@ -49,6 +49,10 @@ def get_temp(floor, temp):
 def detect_motion(num, state):
     ourMainWindow.detect_motion(num, state)
 
+@QtCore.pyqtslot(int, int, int)
+def update_elevator_buttons():
+    ourMainWindow.update_elevator_buttons()
+
 ### GLOBAL VARS ### 
 # Create a door that assoicates user id 3 with it...
 db = Database()
@@ -79,7 +83,16 @@ if __name__ == "__main__":
     bm.temp_signal.connect(get_temp)
     bm.motion_signal.connect(detect_motion)
     bm.logs_changed.connect(update_logs)
+
+    bge = ourMainWindow.bg_elevator
+    eThread = QThread()
+    bge.moveToThread(eThread)
+    eThread.started.connect(bge.run)
+    bge.button_signal.connect(update_elevator_buttons)
+
+
     thread.start()
+    eThread.start()
 
     # Configure Some Functionality on our UI object.
 
