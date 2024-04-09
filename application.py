@@ -42,8 +42,15 @@ def update_logs():
     ourMainWindow.set_up_logs()
 
 @QtCore.pyqtSlot(int)
-def get_temp(floor, temp):
-    ourMainWindow.set_temp(floor, temp)
+def get_temp(floor:int, temp:int, is_connected:bool):
+    if not is_connected:
+        ourMainWindow.set_temp_text(
+            floor,
+            "Not Connected",
+            ourMainWindow.GREY,
+            "")
+    else:
+        ourMainWindow.set_temp(floor, temp)
 
 @QtCore.pyqtSlot(int, str)
 def detect_motion(num, state):
