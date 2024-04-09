@@ -856,17 +856,17 @@ class Ui_MainWindow(object):
 "                               }")
         self.HVAC_CheckBox.setObjectName("HVAC_CheckBox")
         self.verticalLayout.addWidget(self.HVAC_CheckBox)
-        self.checkBox = QtWidgets.QCheckBox(self.logFiltering)
+        self.HardwareAlertsCheckBox = QtWidgets.QCheckBox(self.logFiltering)
         font = QtGui.QFont()
         font.setFamily("Consolas")
         font.setPointSize(18)
-        self.checkBox.setFont(font)
-        self.checkBox.setStyleSheet("QCheckBox::indicator {\n"
+        self.HardwareAlertsCheckBox.setFont(font)
+        self.HardwareAlertsCheckBox.setStyleSheet("QCheckBox::indicator {\n"
 "                               width :40px;\n"
 "                               height : 40px;\n"
 "                               }")
-        self.checkBox.setObjectName("checkBox")
-        self.verticalLayout.addWidget(self.checkBox)
+        self.HardwareAlertsCheckBox.setObjectName("HardwareAlertsCheckBox")
+        self.verticalLayout.addWidget(self.HardwareAlertsCheckBox)
         self.horizontalLayout_3.addLayout(self.verticalLayout)
         self.tabWidget.addTab(self.logFiltering, "")
         self.horizontalLayout.addWidget(self.tabWidget)
@@ -876,7 +876,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -942,5 +942,5 @@ class Ui_MainWindow(object):
         self.AfterHoursMotionCheckBox.setText(_translate("MainWindow", "After Hour Motion Alerts"))
         self.AfterHoursDoorCheckBox.setText(_translate("MainWindow", "Door Left Open Alerts"))
         self.HVAC_CheckBox.setText(_translate("MainWindow", "HVAC Logs"))
-        self.checkBox.setText(_translate("MainWindow", "Hardware Alerts"))
+        self.HardwareAlertsCheckBox.setText(_translate("MainWindow", "Hardware Alerts"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.logFiltering), _translate("MainWindow", "Log Filtering"))

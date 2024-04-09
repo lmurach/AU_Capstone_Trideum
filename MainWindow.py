@@ -314,6 +314,7 @@ class OurMainWindow():
         self.ui.MotionSensorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
         self.ui.AfterHoursDoorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
         self.ui.AfterHoursMotionCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+        self.ui.HardwareAlertsCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
     
     def logFilteringStateChanged(self):
         
@@ -323,7 +324,8 @@ class OurMainWindow():
         self.ui.ElevatorCheckBox.isChecked(),
         self.ui.HVAC_CheckBox.isChecked(),
         self.ui.DoorCheckBox.isChecked(),
-        self.ui.AfterHoursDoorCheckBox.isChecked()]
+        self.ui.AfterHoursDoorCheckBox.isChecked(),
+        self.ui.HardwareAlertsCheckBox.isChecked()]
         print(self.states)
 
         Database.log_filtering_is_on = self.states

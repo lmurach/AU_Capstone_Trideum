@@ -103,7 +103,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="control">
        <attribute name="title">
@@ -1473,7 +1473,7 @@ background-color: lightGrey;
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="HardwareAlertsCheckBox">
             <property name="font">
              <font>
               <family>Consolas</family>
