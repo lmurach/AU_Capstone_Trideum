@@ -345,7 +345,7 @@ class OurMainWindow():
             self.ui.bottom_floor_elevator.setText("Not Here")
             self.ui.bottom_floor_elevator_split.setText("Not Here")
         
-        if (bsList[2] == 1):
+        if (bsList[1] == 1):
             self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
 
@@ -358,7 +358,7 @@ class OurMainWindow():
             self.ui.middle_floor_elevator.setText("Not Here")
             self.ui.middle_floor_elevator_split.setText("Not Here")
         
-        if (bsList[3] == 1):
+        if (bsList[2] == 1):
             self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
 
