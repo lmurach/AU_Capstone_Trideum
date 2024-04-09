@@ -38,11 +38,11 @@ class DBTemp:
     ]
 
     HVAC_log_data = [
-        (sample_date_times[0], 1),
-        (sample_date_times[1], 2),
-        (sample_date_times[2], 3),
-        (sample_date_times[3], 1),
-        (sample_date_times[4], 2),
+        (sample_date_times[0], 1, 0, 0),
+        (sample_date_times[1], 2, 0, 0),
+        (sample_date_times[2], 3, 0, 0),
+        (sample_date_times[3], 1, 1, 1),
+        (sample_date_times[4], 2, 1, 1),
     ]
 
     motion_log_data = [
