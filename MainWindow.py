@@ -44,6 +44,8 @@ class OurMainWindow():
         self.set_up_logs()
         self.setUpCheckBoxes()
 
+        self.ui.tabWidget.setCurrentIndex(0)
+
         # These are style sheets that we swap between for colors.
         self.GREEN  = "border: 3px solid green;\nbackground-color: lightGreen;\n"
         self.RED    = "border: 3px solid red;\nbackground-color: pink;\n"

@@ -523,6 +523,7 @@ class Ui_MainWindow(object):
         self.bottom_floor_hvac_dial_split.setFont(font)
         self.bottom_floor_hvac_dial_split.setMinimum(50)
         self.bottom_floor_hvac_dial_split.setMaximum(90)
+        self.bottom_floor_hvac_dial_split.setNotchTarget(5.0)
         self.bottom_floor_hvac_dial_split.setNotchesVisible(True)
         self.bottom_floor_hvac_dial_split.setObjectName("bottom_floor_hvac_dial_split")
         self.gridLayout_5.addWidget(self.bottom_floor_hvac_dial_split, 9, 1, 1, 1)
@@ -581,6 +582,7 @@ class Ui_MainWindow(object):
         self.middle_floor_hvac_dial_split.setFont(font)
         self.middle_floor_hvac_dial_split.setMinimum(50)
         self.middle_floor_hvac_dial_split.setMaximum(90)
+        self.middle_floor_hvac_dial_split.setNotchTarget(5.0)
         self.middle_floor_hvac_dial_split.setNotchesVisible(True)
         self.middle_floor_hvac_dial_split.setObjectName("middle_floor_hvac_dial_split")
         self.gridLayout_5.addWidget(self.middle_floor_hvac_dial_split, 6, 1, 1, 1)
@@ -647,6 +649,7 @@ class Ui_MainWindow(object):
         self.top_floor_hvac_dial_split.setFont(font)
         self.top_floor_hvac_dial_split.setMinimum(50)
         self.top_floor_hvac_dial_split.setMaximum(90)
+        self.top_floor_hvac_dial_split.setNotchTarget(5.0)
         self.top_floor_hvac_dial_split.setNotchesVisible(True)
         self.top_floor_hvac_dial_split.setObjectName("top_floor_hvac_dial_split")
         self.gridLayout_5.addWidget(self.top_floor_hvac_dial_split, 3, 1, 1, 1)
@@ -876,7 +879,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
