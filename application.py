@@ -49,7 +49,7 @@ def get_temp(floor, temp):
 def detect_motion(num, state):
     ourMainWindow.detect_motion(num, state)
 
-@QtCore.pyqtslot(int, int, int)
+@QtCore.pyqtSlot(int, int, int)
 def update_elevator_buttons():
     ourMainWindow.update_elevator_buttons()
 
