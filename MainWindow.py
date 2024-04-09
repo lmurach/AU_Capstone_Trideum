@@ -329,7 +329,7 @@ class OurMainWindow():
         Database.log_filtering_is_on = self.states
         self.set_up_logs()
     
-    def updated_elevator_buttons(self, bs1, bs2, bs3):
+    def update_elevator_buttons(self, bs1, bs2, bs3):
 
         if (bs1 == 1):
             self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)

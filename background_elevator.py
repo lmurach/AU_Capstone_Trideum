@@ -13,7 +13,7 @@ class BGElevator(QObject):
     
     def __init__(self):
         super().__init__()
-        self.ser = serial.Serial('/dev/tty/ACM0', 9600, timeout=1)
+        self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
         self.ser.reset_input_buffer()
 
     def run(self):
