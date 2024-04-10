@@ -335,7 +335,7 @@ class OurMainWindow():
     
     def update_elevator_buttons(self, bsList):
 
-        if (bsList[0] == 1):
+        if (0 in bsList):
             self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
 
@@ -349,7 +349,7 @@ class OurMainWindow():
             self.ui.bottom_floor_elevator.setText("Not Here")
             self.ui.bottom_floor_elevator_split.setText("Not Here")
         
-        if (bsList[1] == 1):
+        if (1 in bsList):
             self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
 
@@ -362,7 +362,7 @@ class OurMainWindow():
             self.ui.middle_floor_elevator.setText("Not Here")
             self.ui.middle_floor_elevator_split.setText("Not Here")
         
-        if (bsList[2] == 1):
+        if (2 in bsList):
             self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
             self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
 
