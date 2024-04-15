@@ -1,3 +1,4 @@
+# Auto Generated UI File from TabsDesign.ui
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'TabsDesign.ui'
