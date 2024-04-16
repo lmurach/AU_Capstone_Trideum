@@ -398,13 +398,13 @@ class Database:
                         log_string_array.append(
                             f"{query[LogTypes.DATE]}: "
                             f"Temperature sensor reconnected "
-                            f"on {query[LogTypes.FLOOR]}."
+                            f"on floor {query[LogTypes.FLOOR]}."
                         )
                     if query[LogTypes.STATE] == 0:
                         log_string_array.append(
                             f"{query[LogTypes.DATE]}: "
                             f"Temperature sensor disconnected "
-                            f"on {query[LogTypes.FLOOR]}."
+                            f"on floor {query[LogTypes.FLOOR]}."
                         )
                 if query[LogTypes.IS_ALERT] == 0:
                     log_string_array.append(
@@ -491,6 +491,13 @@ class Database:
                 FROM employees AS e, door_logs AS d
                 WHERE d.e_id = e.id
                 AND is_alert = 1
+                              
+                UNION ALL
+                              
+                SELECT NULL AS name, time(date), floor, is_alert, state,
+                    'HVAC' AS type
+                FROM HVAC_logs
+                WHERE is_alert = 1
                 """)
         if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
             query_list.append("""
@@ -505,13 +512,13 @@ class Database:
                 FROM HVAC_logs
                 WHERE is_alert = 0
                 """)
-        if Database.log_filtering_is_on[AlertTypes.IO_ALERTS]:
-            query_list.append("""
-                SELECT NULL AS name, time(date), floor, is_alert, state,
-                    'HVAC' AS type
-                FROM HVAC_logs
-                WHERE is_alert = 1
-                """)
+        # if Database.log_filtering_is_on[AlertTypes.IO_ALERTS]:
+        #     query_list.append("""
+        #         SELECT NULL AS name, time(date), floor, is_alert, state,
+        #             'HVAC' AS type
+        #         FROM HVAC_logs
+        #         WHERE is_alert = 1
+        #         """)
         query_string = ""
         for index, query in enumerate(query_list):
             if (index != 0 and index < len(query_list)):

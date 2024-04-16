@@ -47,6 +47,7 @@ class BackgroundMain(QObject):
             self.temp_sensor_1,
             self.temp_sensor_2
         ]
+        self.temp_sensor_turn = 1
 
     def run(self):
         '''Main thread'''
@@ -56,6 +57,8 @@ class BackgroundMain(QObject):
             self._door_handler()
             self._light_handler()
             self._temp_handler()
+            # self.temp_sensor_1.test_temps()
+            # self.temp_sensor_2.test_temps()
             time.sleep(0.2)
 
     # @pyqtSlot()
@@ -105,6 +108,10 @@ class BackgroundMain(QObject):
                 self.temp_signal.emit(sensor.floor, 0, False)
             else:
                 self.temp_signal.emit(sensor.floor, temp, True)
+        if TempControl.servo_busy_counter == 0:
+            TempControl.servo_turn = (TempControl.servo_turn % 2) + 1
+        else:
+            TempControl.servo_busy_counter -= 1
 
         # Fake Data:
         # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)
