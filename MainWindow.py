@@ -3,7 +3,9 @@ from PyQt5 import QtWidgets, QtCore
 from database import Database
 from door import Door
 from background_main import BackgroundMain
+from background_elevator import BGElevator
 import sys
+import RPi.GPIO as GPIO
 
 class OurMainWindow():
     """ 
@@ -33,6 +35,7 @@ class OurMainWindow():
         self.door = adoor
         self.db = adb
         self.bg_task_manager = BackgroundMain()
+        self.bg_elevator     = BGElevator()
 
         # Set up functionality for the dials, alarm, door, and logs.
         self.setUpDials()
@@ -41,21 +44,24 @@ class OurMainWindow():
         self.set_up_logs()
         self.setUpCheckBoxes()
 
-        # These are style sheets that we swap between for colors.
-        self.GREEN = "border: 3px solid green;\nbackground-color: lightGreen;\n"
-        self.RED   = "border: 3px solid red;\nbackground-color: pink;\n"
-        self.GREY  = "border: 3px solid grey;\nbackground-color: lightGrey;\n"
+        self.ui.tabWidget.setCurrentIndex(0)
 
-    def closeEvent(self, event):
-        """Override the window exit function to save settings and turn off 
-        lights."""
-        print("exiting")
-        event.accept() # let the window close
+        # These are style sheets that we swap between for colors.
+        self.GREEN  = "border: 3px solid green;\nbackground-color: lightGreen;\n"
+        self.RED    = "border: 3px solid red;\nbackground-color: pink;\n"
+        self.GREY   = "border: 3px solid grey;\nbackground-color: lightGrey;\n"
+        self.YELLOW = "border: 3px solid yellow;\nbackground-color: lightYellow;\n"
 
     def show(self):
         """ This method will start the QApplication and present the user with the GUI. """
         self.MainWindow.show()
-        sys.exit(self.app.exec_())
+        sys.exit(self.appExec())
+
+    def appExec(self):
+        self.app.exec_()
+        print("After Close")
+        GPIO.cleanup()
+        input()
 
     def update_top_floor_dials(self):
         """ This method will activate when a user rotates the top dial from the control view."""
@@ -118,13 +124,13 @@ class OurMainWindow():
             temps = [70, 70, 70]
 
         # Set the range of the dials
-        self.ui.top_floor_hvac_dial.setRange(0, 100)
-        self.ui.middle_floor_hvac_dial.setRange(0, 100)
-        self.ui.bottom_floor_hvac_dial.setRange(0, 100)
+        self.ui.top_floor_hvac_dial.setRange(50, 90)
+        self.ui.middle_floor_hvac_dial.setRange(50, 90)
+        self.ui.bottom_floor_hvac_dial.setRange(5, 90)
         
-        self.ui.top_floor_hvac_dial_split.setRange(0, 100)
-        self.ui.middle_floor_hvac_dial_split.setRange(0, 100)
-        self.ui.bottom_floor_hvac_dial_split.setRange(0, 100)
+        self.ui.top_floor_hvac_dial_split.setRange(50, 90)
+        self.ui.middle_floor_hvac_dial_split.setRange(50, 90)
+        self.ui.bottom_floor_hvac_dial_split.setRange(50, 90)
 
         # Set the initial text and value of the dials
         self.ui.top_floor_activate_on.setText(f"Cool to: {temps[2]}°F")
@@ -188,10 +194,15 @@ class OurMainWindow():
         """
         This method will query the database for new logs and update the list view. 
         """
+
+        # Cleaer the old logs
         self.ui.logs_list.clear()
         self.ui.logs_list_split.clear()
+
+        # Get the new logs
         logs = self.db.get_log_string_array()
 
+        # Set the logs
         for log in logs:
             item = QtWidgets.QListWidgetItem()
             item.setText(log)
@@ -203,21 +214,27 @@ class OurMainWindow():
             self.ui.logs_list_split.addItem(item)
 
     def arm_alarm(self) -> None:
-        '''Changes all floors to display red lights and alert of intruders
-        until the alarm is disarmed.'''
+        """
+        Changes all floors to display red lights and alert of intruders
+        until the alarm is disarmed.
+        """
         for sensor in self.bg_task_manager.motionsensors:
             sensor.lockdown_state = True
 
     def disarm_alarm(self) -> None:
-        '''Removes alarm status so that all floors to display white lights 
-        and do not log intrusion alerts.'''
+        """
+        Removes alarm status so that all floors to display white lights 
+        and do not log intrusion alerts.
+        """
         for sensor in self.bg_task_manager.motionsensors:
             sensor.lockdown_state = False
 
     def set_temp(self, floor:int, temp:int) -> None:
-        '''A background process calls this function and sets the floor and temp 
+        """
+        A background process calls this function and sets the floor and temp 
         whenever a temperature is changed. Then the UI is changed 
-        accordingly.'''
+        accordingly.
+        """
 
         if (floor == 0):
             # This sensor is disconnected and should never emit a signal.
@@ -265,8 +282,10 @@ class OurMainWindow():
             self.ui.top_floor_temp_split.setStyleSheet(color)
     
     def detect_motion(self, floor:int, state:str):
-        '''A background process calls this function with the floor and state and
-        the UI is updated with the correct colors and text'''
+        """
+        A background process calls this function with the floor and state and
+        the UI is updated with the correct colors and text
+        """
         if floor == 2:
             if state == "off":
                 self.ui.top_floor_motion_split.setStyleSheet(self.GREY)
@@ -307,6 +326,10 @@ class OurMainWindow():
                 self.ui.bottom_floor_motion_split.setText("MOTION")
     
     def setUpCheckBoxes(self):
+        """
+        This method tells the check boxes on the "Log Filtering" view which method to
+        call when their state has changed
+        """
 
         self.ui.DoorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
         self.ui.HVAC_CheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
@@ -314,17 +337,73 @@ class OurMainWindow():
         self.ui.MotionSensorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
         self.ui.AfterHoursDoorCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
         self.ui.AfterHoursMotionCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
+        self.ui.HardwareAlertsCheckBox.stateChanged.connect(lambda:self.logFilteringStateChanged())
     
     def logFilteringStateChanged(self):
-        
+        """
+        logFilteringStateChanged is desinged to be called when one of the 
+        check boxes change state on the "Log Filtering" view. 
+        This method will gather the current states and send it to the database.
+        """
+
         self.states = [
         self.ui.MotionSensorCheckBox.isChecked(),
         self.ui.AfterHoursMotionCheckBox.isChecked(),
         self.ui.ElevatorCheckBox.isChecked(),
         self.ui.HVAC_CheckBox.isChecked(),
         self.ui.DoorCheckBox.isChecked(),
-        self.ui.AfterHoursDoorCheckBox.isChecked()]
+        self.ui.AfterHoursDoorCheckBox.isChecked(),
+        self.ui.HardwareAlertsCheckBox.isChecked()]
         print(self.states)
 
         Database.log_filtering_is_on = self.states
         self.set_up_logs()
+    
+    def update_requested(self, bsList):
+        """ 
+        This method updates the state of the elevator boxes. If a specific floor is in the 
+        requested list, it will change that box to yellow. 
+        """
+
+        # Updates for the bottom floor. 
+        if (0 in bsList):
+            self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
+            self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+            self.ui.bottom_floor_elevator.setText("Requested")
+            self.ui.bottom_floor_elevator_split.setText("REQ")
+            
+        else:
+            self.ui.bottom_floor_elevator.setStyleSheet(self.GREY)
+            self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREY)
+            
+            self.ui.bottom_floor_elevator.setText("Not Here")
+            self.ui.bottom_floor_elevator_split.setText("Not Here")
+        
+        # Updates for the middle floor
+        if (1 in bsList):
+            self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
+            self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+            self.ui.middle_floor_elevator.setText("Requested")
+            self.ui.middle_floor_elevator_split.setText("REQ")
+        else:
+            self.ui.middle_floor_elevator.setStyleSheet(self.GREY)
+            self.ui.middle_floor_elevator_split.setStyleSheet(self.GREY)
+
+            self.ui.middle_floor_elevator.setText("Not Here")
+            self.ui.middle_floor_elevator_split.setText("Not Here")
+        
+        # Updates for the top floor
+        if (2 in bsList):
+            self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
+            self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+            self.ui.top_floor_elevator.setText("Requested")
+            self.ui.top_floor_elevator_split.setText("REQ")
+        else:
+            self.ui.top_floor_elevator.setStyleSheet(self.GREY)
+            self.ui.top_floor_elevator_split.setStyleSheet(self.GREY)
+
+            self.ui.top_floor_elevator.setText("Not Here")
+            self.ui.top_floor_elevator_split.setText("Not Here")
