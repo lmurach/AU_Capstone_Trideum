@@ -46,12 +46,13 @@ class LogTypes(IntEnum):
 class AlertTypes(IntEnum):
     '''Alert types passed from the GUI in an array format. This is so that
     various alerts can be turned on and off.'''
-    MOTION = 0,
-    MOTION_ALERT = 1,
-    ELEVATOR = 2,
-    HVAC = 3,
-    DOOR = 4,
+    MOTION = 0
+    MOTION_ALERT = 1
+    ELEVATOR = 2
+    HVAC = 3
+    DOOR = 4
     DOOR_ALERTS = 5
+    IO_ALERTS = 6
 
 # Note when generating test data: ids start at 1.
 # Do not use an id of 0 or a foreign key constrain error
@@ -112,7 +113,9 @@ class Database:
             """CREATE TABLE IF NOT EXISTS HVAC_logs(
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                 date INTEGER,
-                floor INTEGER
+                floor INTEGER,
+                is_alert INTEGER,
+                state INTEGER
             );"""
         )
         cur.execute(
@@ -173,9 +176,9 @@ class Database:
         )
         cur.executemany(
             """INSERT INTO HVAC_logs(
-                date, floor
+                date, floor, is_alert, floor
                 )
-                VALUES(?, ?);""", DBTemp.HVAC_log_data
+                VALUES(?, ?, ?, ?);""", DBTemp.HVAC_log_data
         )
         cur.executemany(
             """INSERT INTO motion_logs(
@@ -231,6 +234,7 @@ class Database:
             query_output[0][1],
             query_output[0][2]
         ]
+        print(temp_array)
         return temp_array
 
     def set_temperature(self, floor:int, temp:int):
@@ -283,6 +287,21 @@ class Database:
                 date, e_id, is_alert, state
                 )
                 VALUES(?, ?, ?, ?);""", (date, e_id, is_alert, state)
+        )
+        con.commit()
+        con.close()
+        Database.mutex.unlock()
+
+    def create_HVAC_log(self, date:datetime, floor:int, is_alert:int, state:str):
+        '''Creates a log when the HVAC turns on for an individual floor'''
+        Database.mutex.lock()
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """INSERT INTO HVAC_logs(
+                date, floor, is_alert, state
+                )
+                VALUES(?, ?, ?, ?);""", (date, floor, is_alert, state)
         )
         con.commit()
         con.close()
@@ -374,10 +393,24 @@ class Database:
                         f"{query[LogTypes.NAME]} left the door open."
                     )
             if query[LogTypes.TYPE] == "HVAC":
-                log_string_array.append(
-                    f"{query[LogTypes.DATE]}: "
-                    f"HVAC turned on for floor {query[LogTypes.FLOOR]}."
-                )
+                if query[LogTypes.IS_ALERT] == 1:
+                    if query[LogTypes.STATE] == 1:
+                        log_string_array.append(
+                            f"{query[LogTypes.DATE]}: "
+                            f"Temperature sensor reconnected "
+                            f"on {query[LogTypes.FLOOR]}."
+                        )
+                    if query[LogTypes.STATE] == 0:
+                        log_string_array.append(
+                            f"{query[LogTypes.DATE]}: "
+                            f"Temperature sensor disconnected "
+                            f"on {query[LogTypes.FLOOR]}."
+                        )
+                if query[LogTypes.IS_ALERT] == 0:
+                    log_string_array.append(
+                        f"{query[LogTypes.DATE]}: "
+                        f"HVAC turned on for floor {query[LogTypes.FLOOR]}."
+                    )
             if query[LogTypes.TYPE] == "motion":
                 if query[LogTypes.IS_ALERT]:
                     log_string_array.append(
@@ -467,13 +500,20 @@ class Database:
                 """)
         if Database.log_filtering_is_on[AlertTypes.HVAC]:
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, NULL AS is_alert,
-                    NULL AS state, 'HVAC' AS type
+                SELECT NULL AS name, time(date), floor, is_alert, state,
+                    'HVAC' AS type
                 FROM HVAC_logs
+                WHERE is_alert = 0
+                """)
+        if Database.log_filtering_is_on[AlertTypes.IO_ALERTS]:
+            query_list.append("""
+                SELECT NULL AS name, time(date), floor, is_alert, state,
+                    'HVAC' AS type
+                FROM HVAC_logs
+                WHERE is_alert = 1
                 """)
         query_string = ""
         for index, query in enumerate(query_list):
-            print(f"{index} and len of query list {len(query_list)}")
             if (index != 0 and index < len(query_list)):
                 query_string += """
                     UNION ALL

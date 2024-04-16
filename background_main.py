@@ -5,7 +5,6 @@ Purpose : This is the main class to operate as a scheduler. Later in time
           concurrency will be added.
 """
 import time
-from typing import Tuple, List
 from PyQt5.QtCore import QRunnable, pyqtSlot, pyqtSignal, QObject, QThread
 
 from RFID import RFIDSecurity
@@ -25,13 +24,12 @@ class BackgroundMain(QObject):
     GUI (if 4 threads activate so the GUI is put on the queue)'''
 
     logs_changed = pyqtSignal()
-    temp_signal = pyqtSignal(int, int)
+    temp_signal = pyqtSignal(int, int, bool)
     motion_signal = pyqtSignal(int, str)
 
     rfid = RFIDSecurity()
     door = Door()
     door.GPIO_init()
-    temp_sensor = TempControl()
 
     def __init__(self):
         super().__init__()
@@ -43,9 +41,11 @@ class BackgroundMain(QObject):
             self.motion_sensor_1,
             self.motion_sensor_2
         ]
-        self.temp_sesors = [
-            self.temp_sensor.floor1_address,
-            self.temp_sensor.floor2_address
+        self.temp_sensor_1 = TempControl(1, 0x48)
+        self.temp_sensor_2 = TempControl(2, 0x4D)
+        self.temp_sensors = [
+            self.temp_sensor_1,
+            self.temp_sensor_2
         ]
 
     def run(self):
@@ -97,10 +97,14 @@ class BackgroundMain(QObject):
                 self.motion_signal.emit(num, "off")
 
     def _temp_handler(self):
-        temp = self.temp_sensor.read_temperature(self.temp_sensor.floor1_address)
-        self.temp_signal.emit(1, temp)
-        temp = self.temp_sensor.read_temperature(self.temp_sensor.floor2_address)
-        self.temp_signal.emit(2, temp)
+        for sensor in self.temp_sensors:
+            is_changed, temp = sensor.get_temp_if_changed()
+            if is_changed:
+                self.logs_changed.emit()
+            if temp == sensor.TEMP_ERROR_VAL:
+                self.temp_signal.emit(sensor.floor, 0, False)
+            else:
+                self.temp_signal.emit(sensor.floor, temp, True)
 
         # Fake Data:
         # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)

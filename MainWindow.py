@@ -120,6 +120,8 @@ class OurMainWindow():
         the rest of the Ui. 
         """
         temps = self.db.get_config_temperature_array() # basement to top
+        if len(temps) == 0:
+            temps = [70, 70, 70]
 
         # Set the range of the dials
         self.ui.top_floor_hvac_dial.setRange(50, 90)
@@ -242,34 +244,42 @@ class OurMainWindow():
         
             # If the temperature is above the "Cool To Temperature"
             if (temp > self.ui.middle_floor_hvac_dial.value()):
-                # Set the text on the control and split view.
-                self.ui.middle_floor_temp.setText(f"{str(temp)}°F ON")
-                self.ui.middle_floor_temp_split.setText(f"{str(temp)}°F")
-                # Change the Style Sheet
-                self.ui.middle_floor_temp.setStyleSheet(self.GREEN)
-                self.ui.middle_floor_temp_split.setStyleSheet(self.GREEN)
+                self.set_temp_text(floor, str(temp), self.GREEN, " ON")
             # If the temperature is less than or at the "Cool To Temperature"
             elif (temp <= self.ui.middle_floor_hvac_dial.value()):
-                # Set the text on the control and split view.
-                self.ui.middle_floor_temp.setText(f"{str(temp)}°F OFF")
-                self.ui.middle_floor_temp_split.setText(f"{str(temp)}°F")
-                # Change the Style Sheet
-                self.ui.middle_floor_temp.setStyleSheet(self.GREY)
-                self.ui.middle_floor_temp_split.setStyleSheet(self.GREY)
+                self.set_temp_text(floor, str(temp), self.GREY, " OFF")
 
         elif (floor == 2):
 
             if (temp > self.ui.top_floor_hvac_dial.value()):
-                self.ui.top_floor_temp.setText(f"{str(temp)}°F ON")
-                self.ui.top_floor_temp_split.setText(f"{str(temp)}°F")
-                self.ui.top_floor_temp.setStyleSheet(self.GREEN)
-                self.ui.top_floor_temp_split.setStyleSheet(self.GREEN)
+                self.set_temp_text(floor, str(temp), self.GREEN, " ON")
 
             elif (temp <= self.ui.top_floor_hvac_dial.value()):
-                self.ui.top_floor_temp.setText(f"{str(temp)}°F OFF")
-                self.ui.top_floor_temp_split.setText(f"{str(temp)}°F")
-                self.ui.top_floor_temp.setStyleSheet(self.GREY)
-                self.ui.top_floor_temp_split.setStyleSheet(self.GREY)
+                self.set_temp_text(floor, str(temp), self.GREY, " OFF")
+    
+    def set_temp_text(self, floor, text:str, color:str, state:str) -> None:
+        '''Changes the text on the UI (regular view and split)
+        and changes the stylesheet so that the color changes'''
+        degree_text = "°F"
+        short_text = text
+        if text == "Not Connected":
+            degree_text = ""
+            short_text = "NC"
+        if floor == 0:
+            self.ui.bottom_floor_temp.setText(f"{text}{degree_text}{state}")
+            self.ui.bottom_floor_temp_split.setText(f"{short_text}{degree_text}")
+            self.ui.bottom_floor_temp.setStyleSheet(color)
+            self.ui.bottom_floor_temp_split.setStyleSheet(color)
+        elif floor == 1:
+            self.ui.middle_floor_temp.setText(f"{text}{degree_text}{state}")
+            self.ui.middle_floor_temp_split.setText(f"{short_text}{degree_text}")
+            self.ui.middle_floor_temp.setStyleSheet(color)
+            self.ui.middle_floor_temp_split.setStyleSheet(color)
+        elif floor == 2:
+            self.ui.top_floor_temp.setText(f"{text}{degree_text}{state}")
+            self.ui.top_floor_temp_split.setText(f"{short_text}{degree_text}")
+            self.ui.top_floor_temp.setStyleSheet(color)
+            self.ui.top_floor_temp_split.setStyleSheet(color)
     
     def detect_motion(self, floor:int, state:str):
         """
