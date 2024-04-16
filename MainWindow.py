@@ -36,7 +36,7 @@ class OurMainWindow():
         self.door = adoor
         self.db = adb
         self.bg_task_manager = BackgroundMain()
-        self.bg_elevator     = BGElevator()
+        # self.bg_elevator     = BGElevator()
 
         # Set up functionality for the dials, alarm, door, and logs.
         self.setUpDials()
@@ -62,6 +62,7 @@ class OurMainWindow():
         self.app.exec_()
         print("After Close")
         GPIO.cleanup()
+        TempControl.pwm_stop()
         input()
 
     def update_top_floor_dials(self):
@@ -254,8 +255,12 @@ class OurMainWindow():
         """
 
         if (floor == 0):
-            # This sensor is disconnected and should never emit a signal.
-            print("How'd you get here?")
+            # If the temperature is above the "Cool To Temperature"
+            if (temp > self.ui.bottom_floor_hvac_dial.value()):
+                self.set_temp_text(floor, str(temp), self.GREEN, " ON")
+            # If the temperature is less than or at the "Cool To Temperature"
+            elif (temp <= self.ui.bottom_floor_hvac_dial.value()):
+                self.set_temp_text(floor, str(temp), self.GREY, " OFF")
 
         elif (floor == 1):
         

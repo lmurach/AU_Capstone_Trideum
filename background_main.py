@@ -41,9 +41,11 @@ class BackgroundMain(QObject):
             self.motion_sensor_1,
             self.motion_sensor_2
         ]
-        self.temp_sensor_1 = TempControl(1, 0x48)
+        self.temp_sensor_0 = TempControl(0, 0x48)
+        self.temp_sensor_1 = TempControl(1, 0x49)
         self.temp_sensor_2 = TempControl(2, 0x4D)
         self.temp_sensors = [
+            self.temp_sensor_0,
             self.temp_sensor_1,
             self.temp_sensor_2
         ]
@@ -57,8 +59,6 @@ class BackgroundMain(QObject):
             self._door_handler()
             self._light_handler()
             self._temp_handler()
-            # self.temp_sensor_1.test_temps()
-            # self.temp_sensor_2.test_temps()
             time.sleep(0.2)
 
     # @pyqtSlot()
@@ -100,6 +100,7 @@ class BackgroundMain(QObject):
                 self.motion_signal.emit(num, "off")
 
     def _temp_handler(self):
+        hvac_on = False
         for sensor in self.temp_sensors:
             is_changed, temp = sensor.get_temp_if_changed()
             if is_changed:
@@ -108,8 +109,12 @@ class BackgroundMain(QObject):
                 self.temp_signal.emit(sensor.floor, 0, False)
             else:
                 self.temp_signal.emit(sensor.floor, temp, True)
+            if sensor.prev_HVAC_is_on:
+                hvac_on = True
+            print(f"f:{sensor.floor} hvac status: {sensor.prev_HVAC_is_on}")
+        TempControl.change_HVAC_cooler_state(hvac_on)
         if TempControl.servo_busy_counter == 0:
-            TempControl.servo_turn = (TempControl.servo_turn % 2) + 1
+            TempControl.servo_turn = (TempControl.servo_turn + 1 ) % len(self.temp_sensors)
         else:
             TempControl.servo_busy_counter -= 1
 
