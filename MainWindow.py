@@ -2,6 +2,7 @@ from main_form import Ui_MainWindow
 from PyQt5 import QtWidgets, QtCore
 from database import Database
 from door import Door
+from tempSensor import TempControl
 from background_main import BackgroundMain
 import sys
 
@@ -59,53 +60,68 @@ class OurMainWindow():
 
     def update_top_floor_dials(self):
         """ This method will activate when a user rotates the top dial from the control view."""
-        
         # Update the text with the new value for the control and split views.
-        self.ui.top_floor_activate_on.setText(f"Cool to: {self.ui.top_floor_hvac_dial.value()}°F")
-        self.ui.top_floor_activate_on_split.setText(f"{self.ui.top_floor_hvac_dial.value()}°F")
+        dial_temp_value = self.ui.top_floor_hvac_dial.value()
+        self.ui.top_floor_activate_on.setText(f"Cool to: {dial_temp_value}°F")
+        self.ui.top_floor_activate_on_split.setText(f"{dial_temp_value}°F")
+        TempControl.set_temps[2] = dial_temp_value
         # Set the split view dial to the same value.
-        self.ui.top_floor_hvac_dial_split.setValue(self.ui.top_floor_hvac_dial.value())
-    
+        self.ui.top_floor_hvac_dial_split.setValue(dial_temp_value)
+
     def update_top_floor_dials_split(self):
         """ This method will activate when a user rotates the top dial from the split view."""
-
         # Update the text with the new values for the control and split views.
-        self.ui.top_floor_activate_on.setText(f"Cool to: {self.ui.top_floor_hvac_dial_split.value()}°F")
-        self.ui.top_floor_activate_on_split.setText(f"{self.ui.top_floor_hvac_dial_split.value()}°F")
+        dial_temp_value = self.ui.top_floor_hvac_dial_split.value()
+        self.ui.top_floor_activate_on.setText(f"Cool to: {dial_temp_value}°F")
+        self.ui.top_floor_activate_on_split.setText(f"{dial_temp_value}°F")
+        # update the background object's set value
+        TempControl.set_temps[2] = dial_temp_value
         # Set the control view dial to the same value.
-        self.ui.top_floor_hvac_dial.setValue(self.ui.top_floor_hvac_dial_split.value())
+        self.ui.top_floor_hvac_dial.setValue(dial_temp_value)
 
     def update_mid_floor_dials(self):
         """ This method will activate when a user rotates the middle dial from the control view."""
         # Update the text with the new values for the control and split views.
-        self.ui.middle_floor_activate_on.setText(f"Cool to: {self.ui.middle_floor_hvac_dial.value()}°F")
-        self.ui.middle_floor_activate_on_split.setText(f"{self.ui.middle_floor_hvac_dial.value()}°F")
-        # Set the split view dial to the same value. 
-        self.ui.middle_floor_hvac_dial_split.setValue(self.ui.middle_floor_hvac_dial.value())
-    
+        dial_temp_value = self.ui.middle_floor_hvac_dial.value()
+        self.ui.middle_floor_activate_on.setText(f"Cool to: {dial_temp_value}°F")
+        self.ui.middle_floor_activate_on_split.setText(f"{dial_temp_value}°F")
+        # update the background object's set value
+        TempControl.set_temps[1] = dial_temp_value
+        # Set the split view dial to the same value.
+        self.ui.middle_floor_hvac_dial_split.setValue(dial_temp_value)
+
     def update_mid_floor_dials_split(self):
         """ This method will activate when a user rotates the middle dial from the split view."""
         # Update the text with the new values for the control and split views.
-        self.ui.middle_floor_activate_on.setText(f"Cool to: {self.ui.middle_floor_hvac_dial_split.value()}°F")
-        self.ui.middle_floor_activate_on_split.setText(f"{self.ui.middle_floor_hvac_dial_split.value()}°F")
+        dial_temp_value = self.ui.middle_floor_hvac_dial_split.value()
+        self.ui.middle_floor_activate_on.setText(f"Cool to: {dial_temp_value}°F")
+        self.ui.middle_floor_activate_on_split.setText(f"{dial_temp_value}°F")
+        # update the background object's set value
+        TempControl.set_temps[1] = dial_temp_value
         # Set the control view dial to the same value.
-        self.ui.middle_floor_hvac_dial.setValue(self.ui.middle_floor_hvac_dial_split.value())
-    
+        self.ui.middle_floor_hvac_dial.setValue(dial_temp_value)
+
     def update_bot_floor_dials(self):
         """ This method will activate when a user rotates the bottom dial from the control view."""
         # Update the text with the new values for the control and split views.
-        self.ui.bottom_floor_activate_on.setText(f"Cool to: {self.ui.bottom_floor_hvac_dial.value()}°F")
-        self.ui.bottom_floor_activate_on_split.setText(f"{self.ui.bottom_floor_hvac_dial.value()}°F")
+        dial_temp_value = self.ui.bottom_floor_hvac_dial.value()
+        self.ui.bottom_floor_activate_on.setText(f"Cool to: {dial_temp_value}°F")
+        self.ui.bottom_floor_activate_on_split.setText(f"{dial_temp_value}°F")
+        # update the background object's set value
+        TempControl.set_temps[0] = dial_temp_value
         # Set the split view dial to the same value.
-        self.ui.bottom_floor_hvac_dial_split.setValue(self.ui.bottom_floor_hvac_dial.value())
+        self.ui.bottom_floor_hvac_dial_split.setValue(dial_temp_value)
     
     def update_bot_floor_dials_split(self):
         """ This method activates when a user rotates the bottom dial from the split view."""
         # Update the text with the new values for the control and split views.
-        self.ui.bottom_floor_activate_on.setText(f"Cool to: {self.ui.bottom_floor_hvac_dial_split.value()}°F")
-        self.ui.bottom_floor_activate_on_split.setText(f"{self.ui.bottom_floor_hvac_dial_split.value()}°F")
+        dial_temp_value = self.ui.bottom_floor_hvac_dial_split.value()
+        self.ui.bottom_floor_activate_on.setText(f"Cool to: {dial_temp_value}°F")
+        self.ui.bottom_floor_activate_on_split.setText(f"{dial_temp_value}°F")
+        # update the background object's set value
+        TempControl.set_temps[0] = dial_temp_value
         # Set the control view dial to the same value.
-        self.ui.bottom_floor_hvac_dial.setValue(self.ui.bottom_floor_hvac_dial_split.value())
+        self.ui.bottom_floor_hvac_dial.setValue(dial_temp_value)
 
     def setUpDials(self):
         """ 
@@ -116,6 +132,7 @@ class OurMainWindow():
         temps = self.db.get_config_temperature_array() # basement to top
         if len(temps) == 0:
             temps = [70, 70, 70]
+        TempControl.set_temps = temps
 
         # Set the range of the dials
         self.ui.top_floor_hvac_dial.setRange(0, 100)
