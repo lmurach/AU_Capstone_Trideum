@@ -12,6 +12,7 @@ from neo_pixel_motion import NeoPixelMotion
 from door import Door
 from database import Database
 from tempSensor import TempControl
+from door_lights import DoorLights
 
 class BackgroundMain(QObject):
     '''This serves as the "main" function for everything that is not the GUI.
@@ -59,6 +60,7 @@ class BackgroundMain(QObject):
             self._door_handler()
             self._light_handler()
             self._temp_handler()
+            DoorLights.handle_turning_off_lights()
             time.sleep(0.2)
 
     # @pyqtSlot()
@@ -78,8 +80,8 @@ class BackgroundMain(QObject):
     def _RFID_handler(self):
         if self.rfid.is_card_there():
             (validity, e_id) = self.rfid.handle_read_card()
-            for _ in range (0, 20):
-                self.rfid.is_card_there()
+            # for _ in range (0, 20):
+            #     self.rfid.is_card_there()
             if validity:
                 self.door.card_owner_id = e_id
 
@@ -111,7 +113,7 @@ class BackgroundMain(QObject):
                 self.temp_signal.emit(sensor.floor, temp, True)
             if sensor.prev_HVAC_is_on:
                 hvac_on = True
-            print(f"f:{sensor.floor} hvac status: {sensor.prev_HVAC_is_on}")
+            # print(f"f:{sensor.floor} hvac status: {sensor.prev_HVAC_is_on}")
         TempControl.change_HVAC_cooler_state(hvac_on)
         if TempControl.servo_busy_counter == 0:
             TempControl.servo_turn = (TempControl.servo_turn + 1 ) % len(self.temp_sensors)

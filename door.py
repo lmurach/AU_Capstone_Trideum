@@ -10,6 +10,7 @@ from rpi_hardware_pwm import HardwarePWM
 import RPi.GPIO as GPIO
 
 from database import Database
+from door_lights import DoorLights
 
 class Door:
     '''The door has a locking mechanism controlled by a servomotor. This locking mechanism 
@@ -24,14 +25,15 @@ class Door:
         self.time_until_run:datetime = datetime.now()
         self.seconds_door_open:int = 0
         self.alert_sent:bool = False
-        self.pin = 17
+        self.reed_pin = 22
         self.db = Database()
+        DoorLights.initialize_door_lights()
 
     def GPIO_init(self):
         '''Initilaizes the correct GPIO board type and makes the pin for the 
         alert LED an output pin'''
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self.reed_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     def handle_lock(self) -> bool:
         '''The locking mechanism is normally blocking. To get around this, a 
@@ -49,6 +51,7 @@ class Door:
         if datetime.now() > self.time_until_run:
             if self.state == "ready_to_open":
                 Door.open_lock()
+                DoorLights.turn_on(True)
                 self._add_wait_time(4, 0)
                 self.state = "open"
                 self._log_to_database(0, "open")
@@ -120,10 +123,10 @@ class Door:
         pwm.start(10)
 
     def _is_door_closed(self):
-        state = GPIO.input(self.pin)
+        state = GPIO.input(self.reed_pin)
         # reed_switch = push_button.PushButton(21)
         # state = reed_switch.GetState()
-        return state
+        return not state
 
 def fake_loop(rfid_obj:Door):
     '''A test demo of the concurrency functionality'''
