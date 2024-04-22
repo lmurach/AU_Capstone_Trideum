@@ -2,7 +2,7 @@ import time
 from rpi_hardware_pwm import HardwarePWM
 import RPi.GPIO as GPIO
 
-from RFID import RFIDSecurity
+from neo_pixel_motion import NeoPixelMotion as NPM
 
 def open_servo():
     pwm = HardwarePWM(pwm_channel = 0, hz = 50, chip = 0)
@@ -13,10 +13,7 @@ def close_servo():
     pwm.start(10)
 
 if __name__ == "__main__":
-    rfid = RFIDSecurity()
+    npm = NPM(0, 16)
     while True:
-        if rfid.read_id() is None:
-            print("no card")
-        else:
-            print("card")
-        time.sleep(0.3)
+        npm.turn_on_lights_raw()
+        time.sleep(0.4)

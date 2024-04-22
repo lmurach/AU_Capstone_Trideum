@@ -23,8 +23,8 @@ class TempControl:
     # Initialize I2C bus
     bus = smbus2.SMBus(bus_number)
     TEMP_ERROR_VAL = -65
-    servo_select_pins = [5, 6]
-    HVAC_cooler_pin = 26
+    servo_select_pins = [13, 26]
+    HVAC_cooler_pin = 6
     set_temps = [75, 75, 75]
     servo_turn = 1
     servo_busy_counter = 0

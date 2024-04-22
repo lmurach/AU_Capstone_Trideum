@@ -34,9 +34,9 @@ class BackgroundMain(QObject):
 
     def __init__(self):
         super().__init__()
-        self.motion_sensor_0 = NeoPixelMotion(0, 23)
-        self.motion_sensor_1 = NeoPixelMotion(1, 24)
-        self.motion_sensor_2 = NeoPixelMotion(2, 25)
+        self.motion_sensor_0 = NeoPixelMotion(0, 12)
+        self.motion_sensor_1 = NeoPixelMotion(1, 16)
+        self.motion_sensor_2 = NeoPixelMotion(2, 20)
         self.motionsensors = [
             self.motion_sensor_0,
             self.motion_sensor_1,
@@ -58,6 +58,7 @@ class BackgroundMain(QObject):
         while True:
             self._RFID_handler()
             self._door_handler()
+            print(self.door._is_door_closed())
             self._light_handler()
             self._temp_handler()
             DoorLights.handle_turning_off_lights()
