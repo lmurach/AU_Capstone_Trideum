@@ -36,7 +36,7 @@ class OurMainWindow():
         self.door = adoor
         self.db = adb
         self.bg_task_manager = BackgroundMain()
-        self.bg_elevator     = BGElevator()
+        # self.bg_elevator     = BGElevator()
 
         # Set up functionality for the dials, alarm, door, and logs.
         self.setUpDials()

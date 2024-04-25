@@ -5,6 +5,7 @@ Purpose : This is the main class to operate as a scheduler. Later in time
           concurrency will be added.
 """
 import time
+import serial
 from PyQt5.QtCore import QRunnable, pyqtSlot, pyqtSignal, QObject, QThread
 
 from RFID import RFIDSecurity
@@ -27,6 +28,7 @@ class BackgroundMain(QObject):
     logs_changed = pyqtSignal()
     temp_signal = pyqtSignal(int, int, bool)
     motion_signal = pyqtSignal(int, str)
+    button_signal = pyqtSignal(list)
 
     rfid = RFIDSecurity()
     door = Door()
@@ -52,6 +54,9 @@ class BackgroundMain(QObject):
         ]
         self.temp_sensor_turn = 1
 
+        self.ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
+        self.ser.reset_input_buffer()
+
     def run(self):
         '''Main thread'''
 
@@ -62,6 +67,7 @@ class BackgroundMain(QObject):
             self._light_handler()
             self._temp_handler()
             DoorLights.handle_turning_off_lights()
+            self._update_elevator()
             time.sleep(0.2)
 
     # @pyqtSlot()
@@ -120,9 +126,32 @@ class BackgroundMain(QObject):
             TempControl.servo_turn = (TempControl.servo_turn + 1 ) % len(self.temp_sensors)
         else:
             TempControl.servo_busy_counter -= 1
+            # Fake Data:
+            # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)
+            # self.temp_signal.emit(1, temp)
+            # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor2_address)
+            # self.temp_signal.emit(2, temp)
 
-        # Fake Data:
-        # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor1_address)
-        # self.temp_signal.emit(1, temp)
-        # temp = self.temp_sensor.read_fake_temp(self.temp_sensor.floor2_address)
-        # self.temp_signal.emit(2, temp)
+    def _update_elevator(self):
+        """ This method will read the state of the elevator from the serial port"""
+                # If there are messages to read.
+        if (self.ser.in_waiting>0):
+
+            # Read the starting bit.
+            start = self.ser.readline().decode('utf-8').rstrip()
+
+            # check to ensure the start is the start.
+            if (start == "S"):
+
+                # Read the next three lines that represent the state of our requested queue.
+                bs1 = self.ser.readline().decode('utf-8').rstrip()
+                bs2 = self.ser.readline().decode('utf-8').rstrip()
+                bs3 = self.ser.readline().decode('utf-8').rstrip()
+                current_floor = self.ser.readline().decode('utf-8').rstrip()
+
+                # read the last byte and make sure it is the ending byte. 
+                end = self.ser.readline().decode('utf-8').rstrip()
+
+                if (end == "E"):
+                    # Emit the queue to the GUI
+                    self.button_signal.emit([int(bs1), int(bs2), int(bs3), int(current_floor)])
