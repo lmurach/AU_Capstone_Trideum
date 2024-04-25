@@ -21,7 +21,7 @@ class BGElevator(QObject):
     def __init__(self):
         super().__init__()
         # Connect to this serial port and clear out any junk that may already be there
-        self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        self.ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
         self.ser.reset_input_buffer()
 
     def run(self):
