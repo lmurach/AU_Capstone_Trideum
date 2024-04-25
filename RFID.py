@@ -7,6 +7,7 @@ Purpose : The RFID class handles all security and utility related to the RFID
 from typing import Tuple
 import time
 import RPi.GPIO as GPIO
+from door_lights import DoorLights
 
 from datetime import datetime, timedelta
 # from Crypto.PublicKey import RSA
@@ -24,7 +25,7 @@ class RFIDSecurity(RFID):
     cryptography toolkit standard'''
 
     def __init__(self, *args, **kwargs):
-        super().__init__(pin_mode=GPIO.BCM, pin_rst=27, pin_irq=22)
+        super().__init__(pin_mode=GPIO.BCM, pin_rst=25, pin_irq=6)
         # original RFID library is in BOARD, but it MUST be in BCM to play nice
         # with the Adafruit neopixel library
         self.time_until_run:datetime = datetime.now()
@@ -53,18 +54,22 @@ class RFIDSecurity(RFID):
     def is_card_there(self) -> bool:
         '''Writes a command to the board and if an interrupt is sent back, then
         the card is known to be there.'''
-        self.init()
-        self.irq.clear()
-        self.dev_write(0x04, 0x00)
-        self.dev_write(0x02, 0xA0)
-        self.dev_write(0x09, 0x26)
-        self.dev_write(0x01, 0x0C)
-        self.dev_write(0x0D, 0x87)
-        if self.irq_flag:
-            self.irq_flag = False
-            self.irq.clear()
-            return True
-        return False
+        eid = self.read_id()
+        if eid is None:
+            return False
+        return True
+        # self.init()
+        # self.irq.clear()
+        # self.dev_write(0x04, 0x00)
+        # self.dev_write(0x02, 0xA0)
+        # self.dev_write(0x09, 0x26)
+        # self.dev_write(0x01, 0x0C)
+        # self.dev_write(0x0D, 0x87)
+        # if self.irq_flag:
+        #     self.irq_flag = False
+        #     self.irq.clear()
+        #     return True
+        # return False
 
     def handle_read_card(self) -> Tuple[bool, int]:
         '''Reads the card and returns a tuple. The first value being a 
@@ -74,16 +79,13 @@ class RFIDSecurity(RFID):
             (name, uid) = self.read_card()
             if not name is None:
                 name = name.strip()
-                print(uid)
                 e_id = self.db.does_employee_have_access(name)
-                print(e_id)
                 if e_id != -1:
-                    print("has access")
                     if self.db.does_employee_have_uid(e_id, uid):
-                        print("is authentic")
                         return (True, e_id)
-                    print("is not authentic")
+                    DoorLights.turn_on(False)
                     return (False, 0)
+        DoorLights.turn_on(False)
         return (False, 0)
 
     def _add_wait_time(self, seconds:int, milliseconds:int):

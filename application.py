@@ -94,20 +94,20 @@ if __name__ == "__main__":
     thread = QThread()
     bm.moveToThread(thread)
     thread.started.connect(bm.run)
-    bm.temp_signal.connect(set_temp)
+    bm.temp_signal.connect(get_temp)
     bm.motion_signal.connect(detect_motion)
     bm.logs_changed.connect(update_logs)
 
-    # Set up the Elevator thread
-    bge = ourMainWindow.bg_elevator
-    eThread = QThread()
-    bge.moveToThread(eThread)
-    eThread.started.connect(bge.run)
-    bge.button_signal.connect(update_requested)
+    # # Set up the Elevator thread
+    # bge = ourMainWindow.bg_elevator
+    # eThread = QThread()
+    # bge.moveToThread(eThread)
+    # eThread.started.connect(bge.run)
+    # bge.button_signal.connect(update_requested)
 
     # Start the Threads
     thread.start()
-    eThread.start()
+    # eThread.start()
 
     # Finally show the window
     ourMainWindow.show()

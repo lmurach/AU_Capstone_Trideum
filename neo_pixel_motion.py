@@ -17,7 +17,7 @@ class NeoPixelMotion:
 
     lockdown_state = False
     pixel_pin = board.D21
-    strand_length = 30
+    strand_length = 90
     color_order = neopixel.GRB
     pixels = neopixel.NeoPixel(
         pixel_pin,
@@ -66,22 +66,33 @@ class NeoPixelMotion:
         """Function activiating lights on the target floor"""
         if self.is_time():     #only activates if timeDif's value in seconds has passed since the last update
             if self.lockdown_state:
-                for i in range(10):
-                    self.pixels[i + (self.floor * 10)] = (255, 0, 0)          #lights turn red if motion is detected during a lockdown
+                for i in range(30):
+                    self.pixels[i + (self.floor * 30)] = (255, 0, 0)          #lights turn red if motion is detected during a lockdown
             else:
-                for i in range(10):
-                    self.pixels[i + (self.floor * 10)] = (255, 255, 255)      #lights turn white if motion is detected during open hours
+                for i in range(30):
+                    self.pixels[i + (self.floor * 30)] = (255, 255, 255)      #lights turn white if motion is detected during open hours
             # L: added a database call here so that the motion alert is changed
             self.db.create_motion_log(self.floor, self.lockdown_state)          
             self.pixels.show()
         self.start_time = time.time()                     #updates the starttime0 variable to reset timer.
 
+    # def turn_on_lights_raw(self):
+    #     """Function activiating lights on the target floor"""
+    #     if self.lockdown_state:
+    #         for i in range(10):
+    #             self.pixels[i + (self.floor * 10)] = (255, 0, 0)          #lights turn red if motion is detected during a lockdown
+    #     else:
+    #         for i in range(10):
+    #             self.pixels[i + (self.floor * 10)] = (255, 255, 255)      #lights turn white if motion is detected during open hours
+    #     # L: added a database call here so that the motion alert is changed        
+    #     self.pixels.show()
+
     def turn_off_lights(self):
         """Function for determining if lights should turn off in the target floor"""
         self.sense_time = time.time()                     #updates the sensetime0 variable to perform a comparison with starttime0
         if self.is_time():     #only activates if timeDif's value in seconds has passed since the last update
-            for i in range(10):
-                self.pixels[i + (self.floor * 10)] = (0, 0, 0)                #lights turn off if motion is not detected for 5 minutes
+            for i in range(30):
+                self.pixels[i + (self.floor * 30)] = (0, 0, 0)                #lights turn off if motion is not detected for 5 minutes
             self.pixels.show()                            #does not update starttime0, since if motion is detected again lights should turn on
 
     #the following code tells the pi what to do based off what signals it recieves from each motion sensor

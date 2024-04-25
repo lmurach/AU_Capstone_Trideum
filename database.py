@@ -533,7 +533,7 @@ class Database:
                 
                 LIMIT 45;
                 """
-        print(query_string)
+        # print(query_string)
         cur = con.cursor()
         res = cur.execute(query_string)
         logs = res.fetchall()

@@ -12,6 +12,7 @@ from neo_pixel_motion import NeoPixelMotion
 from door import Door
 from database import Database
 from tempSensor import TempControl
+from door_lights import DoorLights
 
 class BackgroundMain(QObject):
     '''This serves as the "main" function for everything that is not the GUI.
@@ -33,17 +34,19 @@ class BackgroundMain(QObject):
 
     def __init__(self):
         super().__init__()
-        self.motion_sensor_0 = NeoPixelMotion(0, 23)
-        self.motion_sensor_1 = NeoPixelMotion(1, 24)
-        self.motion_sensor_2 = NeoPixelMotion(2, 25)
+        self.motion_sensor_0 = NeoPixelMotion(0, 12)
+        self.motion_sensor_1 = NeoPixelMotion(1, 16)
+        self.motion_sensor_2 = NeoPixelMotion(2, 20)
         self.motionsensors = [
             self.motion_sensor_0,
             self.motion_sensor_1,
             self.motion_sensor_2
         ]
-        self.temp_sensor_1 = TempControl(1, 0x48)
+        self.temp_sensor_0 = TempControl(0, 0x48)
+        self.temp_sensor_1 = TempControl(1, 0x49)
         self.temp_sensor_2 = TempControl(2, 0x4D)
         self.temp_sensors = [
+            self.temp_sensor_0,
             self.temp_sensor_1,
             self.temp_sensor_2
         ]
@@ -55,10 +58,10 @@ class BackgroundMain(QObject):
         while True:
             self._RFID_handler()
             self._door_handler()
+            print(self.door._is_door_closed())
             self._light_handler()
             self._temp_handler()
-            # self.temp_sensor_1.test_temps()
-            # self.temp_sensor_2.test_temps()
+            DoorLights.handle_turning_off_lights()
             time.sleep(0.2)
 
     # @pyqtSlot()
@@ -78,8 +81,8 @@ class BackgroundMain(QObject):
     def _RFID_handler(self):
         if self.rfid.is_card_there():
             (validity, e_id) = self.rfid.handle_read_card()
-            for _ in range (0, 20):
-                self.rfid.is_card_there()
+            # for _ in range (0, 20):
+            #     self.rfid.is_card_there()
             if validity:
                 self.door.card_owner_id = e_id
 
@@ -100,6 +103,7 @@ class BackgroundMain(QObject):
                 self.motion_signal.emit(num, "off")
 
     def _temp_handler(self):
+        hvac_on = False
         for sensor in self.temp_sensors:
             is_changed, temp = sensor.get_temp_if_changed()
             if is_changed:
@@ -108,8 +112,12 @@ class BackgroundMain(QObject):
                 self.temp_signal.emit(sensor.floor, 0, False)
             else:
                 self.temp_signal.emit(sensor.floor, temp, True)
+            if sensor.prev_HVAC_is_on:
+                hvac_on = True
+            # print(f"f:{sensor.floor} hvac status: {sensor.prev_HVAC_is_on}")
+        TempControl.change_HVAC_cooler_state(hvac_on)
         if TempControl.servo_busy_counter == 0:
-            TempControl.servo_turn = (TempControl.servo_turn % 2) + 1
+            TempControl.servo_turn = (TempControl.servo_turn + 1 ) % len(self.temp_sensors)
         else:
             TempControl.servo_busy_counter -= 1
 
