@@ -36,7 +36,7 @@ class OurMainWindow():
         self.door = adoor
         self.db = adb
         self.bg_task_manager = BackgroundMain()
-        # self.bg_elevator     = BGElevator()
+        self.bg_elevator     = BGElevator()
 
         # Set up functionality for the dials, alarm, door, and logs.
         self.setUpDials()
@@ -388,44 +388,67 @@ class OurMainWindow():
         """
 
         # Updates for the bottom floor. 
-        if (0 in bsList):
-            self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
-            self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
+        current_floor = bsList[3]
 
-            self.ui.bottom_floor_elevator.setText("Requested")
-            self.ui.bottom_floor_elevator_split.setText("REQ")
-            
+        if (current_floor == 0):
+            self.ui.bottom_floor_elevator.setStyleSheet(self.GREEN)
+            self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREEN)
+
+            self.ui.bottom_floor_elevator.setText("HERE")
+            self.ui.bottom_floor_elevator_split.setText("HERE")
         else:
-            self.ui.bottom_floor_elevator.setStyleSheet(self.GREY)
-            self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREY)
-            
-            self.ui.bottom_floor_elevator.setText("Not Here")
-            self.ui.bottom_floor_elevator_split.setText("Not Here")
+            if (0 in bsList):
+                self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
+                self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+                self.ui.bottom_floor_elevator.setText("Requested")
+                self.ui.bottom_floor_elevator_split.setText("REQ")
+                
+            else:
+                self.ui.bottom_floor_elevator.setStyleSheet(self.GREY)
+                self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREY)
+                
+                self.ui.bottom_floor_elevator.setText("Not Here")
+                self.ui.bottom_floor_elevator_split.setText("Not Here")
         
         # Updates for the middle floor
-        if (1 in bsList):
-            self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
-            self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
+        if (current_floor == 1):
+            self.ui.middle_floor_elevator.setStyleSheet(self.GREEN)
+            self.ui.middle_floor_elevator_split.setStyleSheet(self.GREEN)
 
-            self.ui.middle_floor_elevator.setText("Requested")
-            self.ui.middle_floor_elevator_split.setText("REQ")
-        else:
-            self.ui.middle_floor_elevator.setStyleSheet(self.GREY)
-            self.ui.middle_floor_elevator_split.setStyleSheet(self.GREY)
+            self.ui.middle_floor_elevator.setText("HERE")
+            self.ui.middle_floor_elevator_split.setText("HERE")
+        else: 
+            if (1 in bsList):
+                self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
+                self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
 
-            self.ui.middle_floor_elevator.setText("Not Here")
-            self.ui.middle_floor_elevator_split.setText("Not Here")
+                self.ui.middle_floor_elevator.setText("Requested")
+                self.ui.middle_floor_elevator_split.setText("REQ")
+            else:
+                self.ui.middle_floor_elevator.setStyleSheet(self.GREY)
+                self.ui.middle_floor_elevator_split.setStyleSheet(self.GREY)
+
+                self.ui.middle_floor_elevator.setText("Not Here")
+                self.ui.middle_floor_elevator_split.setText("Not Here")
         
         # Updates for the top floor
-        if (2 in bsList):
-            self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
-            self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
+        if (current_floor == 2):
+            self.ui.top_floor_elevator.setStyleSheet(self.GREEN)
+            self.ui.top_floor_elevator_split.setStyleSheet(self.GREEN)
 
-            self.ui.top_floor_elevator.setText("Requested")
-            self.ui.top_floor_elevator_split.setText("REQ")
+            self.ui.top_floor_elevator.setText("HERE")
+            self.ui.top_floor_elevator_split.setText("HERE")
         else:
-            self.ui.top_floor_elevator.setStyleSheet(self.GREY)
-            self.ui.top_floor_elevator_split.setStyleSheet(self.GREY)
+            if (2 in bsList):
+                self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
+                self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
 
-            self.ui.top_floor_elevator.setText("Not Here")
-            self.ui.top_floor_elevator_split.setText("Not Here")
+                self.ui.top_floor_elevator.setText("Requested")
+                self.ui.top_floor_elevator_split.setText("REQ")
+            else:
+                self.ui.top_floor_elevator.setStyleSheet(self.GREY)
+                self.ui.top_floor_elevator_split.setStyleSheet(self.GREY)
+
+                self.ui.top_floor_elevator.setText("Not Here")
+                self.ui.top_floor_elevator_split.setText("Not Here")

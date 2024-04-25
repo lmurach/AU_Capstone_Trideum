@@ -46,10 +46,11 @@ class BGElevator(QObject):
                 bs1 = self.ser.readline().decode('utf-8').rstrip()
                 bs2 = self.ser.readline().decode('utf-8').rstrip()
                 bs3 = self.ser.readline().decode('utf-8').rstrip()
+                current_floor = self.ser.readline().decode('utf-8').rstrip()
 
                 # read the last byte and make sure it is the ending byte. 
                 end = self.ser.readline().decode('utf-8').rstrip()
 
                 if (end == "E"):
                     # Emit the queue to the GUI
-                    self.button_signal.emit([int(bs1), int(bs2), int(bs3)])
+                    self.button_signal.emit([int(bs1), int(bs2), int(bs3), int(current_floor)])
