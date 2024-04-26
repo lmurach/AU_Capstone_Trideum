@@ -67,6 +67,7 @@ class OurMainWindow():
         GPIO.cleanup()
         TempControl.pwm_stop()
         self.thread.quit()
+        self.thread.wait()
         input()
 
     def update_top_floor_dials(self):
