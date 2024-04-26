@@ -106,21 +106,23 @@ class Door:
         open too long.'''
         self.db.create_door_log(datetime.now(), self.card_owner_id, is_alert, state)
 
-    @staticmethod
-    def open_lock():
+    #@staticmethod
+    def open_lock(self):
         '''The servomotor accepts a 50hz signal with a 1-2 ms pulse,
         so this function generates a duty cycle of 5% (1ms) for
         a degree of 0 turn (open)'''
         pwm = HardwarePWM(pwm_channel = 0, hz = 50, chip = 0)
         pwm.start(5)
 
-    @staticmethod
-    def close_lock():
+    #@staticmethod
+    def close_lock(self):
         '''The servomotor accepts a 50hz signal with a 1-2 ms pulse,
         so this function generates a duty cycle of 10% (2ms) for
         a degree of 90 turn (closed)'''
-        pwm = HardwarePWM(pwm_channel = 0, hz = 50, chip = 0)
-        pwm.start(10)
+
+        if self._is_door_closed():
+            pwm = HardwarePWM(pwm_channel = 0, hz = 50, chip = 0)
+            pwm.start(10)
 
     def _is_door_closed(self):
         state = GPIO.input(self.reed_pin)

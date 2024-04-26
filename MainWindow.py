@@ -203,14 +203,18 @@ class OurMainWindow():
         functions. 
         """
 
-        self.ui.lock_door_button.clicked.connect(self.door.close_lock)
-        self.ui.unlock_door_button.clicked.connect(self.door.open_lock)
+        self.ui.lock_door_button.clicked.connect(lambda: self.door.close_lock())
+        self.ui.unlock_door_button.clicked.connect(lambda: self.door.open_lock())
 
-        self.ui.lock_door_button.clicked.connect(lambda: self.door._log_to_database(0, "close"))
+        self.ui.lock_door_button.clicked.connect(lambda: self.log_locked_door())
         self.ui.unlock_door_button.clicked.connect(lambda: self.door._log_to_database(0, "open"))
 
         self.ui.lock_door_button.clicked.connect(self.set_up_logs)
         self.ui.unlock_door_button.clicked.connect(self.set_up_logs)
+
+    def log_locked_door(self):
+        if self.door._is_door_closed(): 
+            self.door._log_to_database(0, "close")
 
     def set_up_logs(self):
         """
