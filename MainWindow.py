@@ -7,6 +7,7 @@ from background_main import BackgroundMain
 from background_elevator import BGElevator
 import sys
 import RPi.GPIO as GPIO
+from PyQt5.QtCore import QThread
 
 class OurMainWindow():
     """ 
@@ -21,6 +22,8 @@ class OurMainWindow():
         The database object will allow us to pull information from our database and 
         store new data there.
         """
+        # Create a thread 
+        self.thread = QThread()
 
         # Create a QApplication using Pyqt5
         self.app = QtWidgets.QApplication(sys.argv)
@@ -63,6 +66,7 @@ class OurMainWindow():
         print("After Close")
         GPIO.cleanup()
         TempControl.pwm_stop()
+        self.thread.quit()
         input()
 
     def update_top_floor_dials(self):
