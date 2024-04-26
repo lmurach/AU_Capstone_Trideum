@@ -66,8 +66,6 @@ class OurMainWindow():
         self.bg_task_manager.running = False
         self.thread.quit()
         self.thread.wait()
-        GPIO.setmode(GPIO.BCM)
-        GPIO.cleanup()
         TempControl.pwm_stop()
 
 
