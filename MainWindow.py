@@ -62,13 +62,11 @@ class OurMainWindow():
         sys.exit(self.appExec())
 
     def appExec(self):
-        self.app.exec_()
-        print("After Close")
-        GPIO.cleanup()
-        TempControl.pwm_stop()
         self.thread.quit()
         self.thread.wait()
-        input()
+        GPIO.cleanup()
+        TempControl.pwm_stop()
+        self.app.exec_()
 
     def update_top_floor_dials(self):
         """ This method will activate when a user rotates the top dial from the control view."""
