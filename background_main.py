@@ -7,7 +7,7 @@ Purpose : This is the main class to operate as a scheduler. Later in time
 import time
 import serial
 from PyQt5.QtCore import QRunnable, pyqtSlot, pyqtSignal, QObject, QThread
-
+import RPi.GPIO as GPIO
 from RFID import RFIDSecurity
 from neo_pixel_motion import NeoPixelMotion
 from door import Door
@@ -36,6 +36,7 @@ class BackgroundMain(QObject):
 
     def __init__(self):
         super().__init__()
+        GPIO.setmode(GPIO.BCM)
         self.motion_sensor_0 = NeoPixelMotion(0, 12)
         self.motion_sensor_1 = NeoPixelMotion(1, 16)
         self.motion_sensor_2 = NeoPixelMotion(2, 20)
