@@ -57,10 +57,12 @@ class BackgroundMain(QObject):
         self.ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
         self.ser.reset_input_buffer()
 
+        self.running = True
+
     def run(self):
         '''Main thread'''
 
-        while True:
+        while self.running:
             self._RFID_handler()
             self._door_handler()
             print(self.door._is_door_closed())

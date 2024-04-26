@@ -63,6 +63,7 @@ class OurMainWindow():
 
     def appExec(self):
         self.app.exec_()
+        self.bg_task_manager.running = False
         self.thread.quit()
         self.thread.wait()
         GPIO.cleanup()
