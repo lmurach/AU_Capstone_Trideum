@@ -50,7 +50,7 @@ class Door:
         to be changed'''
         if datetime.now() > self.time_until_run:
             if self.state == "ready_to_open":
-                Door.open_lock()
+                self.open_lock()
                 DoorLights.turn_on(True)
                 self._add_wait_time(4, 0)
                 self.state = "open"
@@ -70,7 +70,7 @@ class Door:
                 self.seconds_door_open += seconds_to_wait
                 return False
             if self.state == "ready_to_close":
-                Door.close_lock()
+                self.close_lock()
                 self._add_wait_time(1, 0)
                 self.state = "closed"
                 return False
