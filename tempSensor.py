@@ -43,7 +43,6 @@ class TempControl:
         GPIO.setup(self.HVAC_cooler_pin, GPIO.OUT)
 
         self.pwm = GPIO.PWM(pin, 50) # pin number, 50 hz
-        self.pwm.stop()
     # Define I2C addresses of the TC74 sensors
 
     def get_temp_if_changed(self) -> Tuple[bool, int]:
@@ -109,7 +108,6 @@ class TempControl:
         First, the PWM signal stops while the pins are changing to reduce jitter
         on the vents. Then the select pins change to high or low depending on
         the floor, then the correct servo moves with a PWM signal.'''
-        self.pwm_stop()
         #self._set_demux_inputs(self.floor)
         if is_on:
             self._open_servo()
@@ -135,9 +133,6 @@ class TempControl:
     def change_HVAC_cooler_state(is_on:bool) -> None:
         '''If all vents are closed, the HVAC turns off.'''
         GPIO.output(TempControl.HVAC_cooler_pin, is_on)
-
-    def pwm_stop(self):
-        self.pwm.stop()
 
     def _open_servo(self):
         self.pwm.start(5.5)
