@@ -7,6 +7,7 @@ from background_main import BackgroundMain
 from background_elevator import BGElevator
 import sys
 import RPi.GPIO as GPIO
+from PyQt5.QtCore import QThread
 
 class OurMainWindow():
     """ 
@@ -21,6 +22,8 @@ class OurMainWindow():
         The database object will allow us to pull information from our database and 
         store new data there.
         """
+        # Create a thread 
+        self.thread = QThread()
 
         # Create a QApplication using Pyqt5
         self.app = QtWidgets.QApplication(sys.argv)
@@ -60,10 +63,13 @@ class OurMainWindow():
 
     def appExec(self):
         self.app.exec_()
-        print("After Close")
-        GPIO.cleanup()
-        TempControl.pwm_stop()
-        input()
+        self.bg_task_manager.running = False
+        self.thread.quit()
+        self.thread.wait() 
+        
+        for temp_sensor in self.bg_task_manager.temp_sensors:
+            temp_sensor.pwm.stop()
+
 
     def update_top_floor_dials(self):
         """ This method will activate when a user rotates the top dial from the control view."""
@@ -199,14 +205,34 @@ class OurMainWindow():
         functions. 
         """
 
-        self.ui.lock_door_button.clicked.connect(self.door.close_lock)
-        self.ui.unlock_door_button.clicked.connect(self.door.open_lock)
+        self.ui.lock_door_button.clicked.connect(lambda: self.handle_door_close())
+        self.ui.unlock_door_button.clicked.connect(lambda: self.handle_door_open())
+    
+    def handle_door_open(self):
+        # If the door is already open
+        if self.door._is_door_closed() == False:
+            # Do Nothing 
+            return 
+        else:
+            # Open the door and log it to database
+            self.door.open_lock()
+            self.door._log_to_database(0, "open")
+            self.set_up_logs()
 
-        self.ui.lock_door_button.clicked.connect(lambda: self.door._log_to_database(0, "close"))
-        self.ui.unlock_door_button.clicked.connect(lambda: self.door._log_to_database(0, "open"))
+    def handle_door_close(self):
+        # If the door is still open 
+        if self.door._is_door_closed() == False:
+            # Do Nothing
+            return
+        else: 
+            # Close the door and log it to database
+            self.door.close_lock()
+            self.log_locked_door()
+            self.set_up_logs()
 
-        self.ui.lock_door_button.clicked.connect(self.set_up_logs)
-        self.ui.unlock_door_button.clicked.connect(self.set_up_logs)
+    def log_locked_door(self):
+        if self.door._is_door_closed(): 
+            self.door._log_to_database(0, "close")
 
     def set_up_logs(self):
         """
@@ -388,44 +414,67 @@ class OurMainWindow():
         """
 
         # Updates for the bottom floor. 
-        if (0 in bsList):
-            self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
-            self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
+        current_floor = bsList[3]
 
-            self.ui.bottom_floor_elevator.setText("Requested")
-            self.ui.bottom_floor_elevator_split.setText("REQ")
-            
+        if (current_floor == 0):
+            self.ui.bottom_floor_elevator.setStyleSheet(self.GREEN)
+            self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREEN)
+
+            self.ui.bottom_floor_elevator.setText("HERE")
+            self.ui.bottom_floor_elevator_split.setText("HERE")
         else:
-            self.ui.bottom_floor_elevator.setStyleSheet(self.GREY)
-            self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREY)
-            
-            self.ui.bottom_floor_elevator.setText("Not Here")
-            self.ui.bottom_floor_elevator_split.setText("Not Here")
+            if (0 in bsList):
+                self.ui.bottom_floor_elevator.setStyleSheet(self.YELLOW)
+                self.ui.bottom_floor_elevator_split.setStyleSheet(self.YELLOW)
+
+                self.ui.bottom_floor_elevator.setText("Requested")
+                self.ui.bottom_floor_elevator_split.setText("REQ")
+                
+            else:
+                self.ui.bottom_floor_elevator.setStyleSheet(self.GREY)
+                self.ui.bottom_floor_elevator_split.setStyleSheet(self.GREY)
+                
+                self.ui.bottom_floor_elevator.setText("Not Here")
+                self.ui.bottom_floor_elevator_split.setText("Not Here")
         
         # Updates for the middle floor
-        if (1 in bsList):
-            self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
-            self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
+        if (current_floor == 1):
+            self.ui.middle_floor_elevator.setStyleSheet(self.GREEN)
+            self.ui.middle_floor_elevator_split.setStyleSheet(self.GREEN)
 
-            self.ui.middle_floor_elevator.setText("Requested")
-            self.ui.middle_floor_elevator_split.setText("REQ")
-        else:
-            self.ui.middle_floor_elevator.setStyleSheet(self.GREY)
-            self.ui.middle_floor_elevator_split.setStyleSheet(self.GREY)
+            self.ui.middle_floor_elevator.setText("HERE")
+            self.ui.middle_floor_elevator_split.setText("HERE")
+        else: 
+            if (1 in bsList):
+                self.ui.middle_floor_elevator.setStyleSheet(self.YELLOW)
+                self.ui.middle_floor_elevator_split.setStyleSheet(self.YELLOW)
 
-            self.ui.middle_floor_elevator.setText("Not Here")
-            self.ui.middle_floor_elevator_split.setText("Not Here")
+                self.ui.middle_floor_elevator.setText("Requested")
+                self.ui.middle_floor_elevator_split.setText("REQ")
+            else:
+                self.ui.middle_floor_elevator.setStyleSheet(self.GREY)
+                self.ui.middle_floor_elevator_split.setStyleSheet(self.GREY)
+
+                self.ui.middle_floor_elevator.setText("Not Here")
+                self.ui.middle_floor_elevator_split.setText("Not Here")
         
         # Updates for the top floor
-        if (2 in bsList):
-            self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
-            self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
+        if (current_floor == 2):
+            self.ui.top_floor_elevator.setStyleSheet(self.GREEN)
+            self.ui.top_floor_elevator_split.setStyleSheet(self.GREEN)
 
-            self.ui.top_floor_elevator.setText("Requested")
-            self.ui.top_floor_elevator_split.setText("REQ")
+            self.ui.top_floor_elevator.setText("HERE")
+            self.ui.top_floor_elevator_split.setText("HERE")
         else:
-            self.ui.top_floor_elevator.setStyleSheet(self.GREY)
-            self.ui.top_floor_elevator_split.setStyleSheet(self.GREY)
+            if (2 in bsList):
+                self.ui.top_floor_elevator.setStyleSheet(self.YELLOW)
+                self.ui.top_floor_elevator_split.setStyleSheet(self.YELLOW)
 
-            self.ui.top_floor_elevator.setText("Not Here")
-            self.ui.top_floor_elevator_split.setText("Not Here")
+                self.ui.top_floor_elevator.setText("Requested")
+                self.ui.top_floor_elevator_split.setText("REQ")
+            else:
+                self.ui.top_floor_elevator.setStyleSheet(self.GREY)
+                self.ui.top_floor_elevator_split.setStyleSheet(self.GREY)
+
+                self.ui.top_floor_elevator.setText("Not Here")
+                self.ui.top_floor_elevator_split.setText("Not Here")

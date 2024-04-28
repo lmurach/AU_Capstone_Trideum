@@ -21,7 +21,7 @@ class BGElevator(QObject):
     def __init__(self):
         super().__init__()
         # Connect to this serial port and clear out any junk that may already be there
-        self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        self.ser = serial.Serial('/dev/ttyACM0', 115200 , timeout=1)
         self.ser.reset_input_buffer()
 
     def run(self):
@@ -46,10 +46,11 @@ class BGElevator(QObject):
                 bs1 = self.ser.readline().decode('utf-8').rstrip()
                 bs2 = self.ser.readline().decode('utf-8').rstrip()
                 bs3 = self.ser.readline().decode('utf-8').rstrip()
+                current_floor = self.ser.readline().decode('utf-8').rstrip()
 
                 # read the last byte and make sure it is the ending byte. 
                 end = self.ser.readline().decode('utf-8').rstrip()
 
                 if (end == "E"):
                     # Emit the queue to the GUI
-                    self.button_signal.emit([int(bs1), int(bs2), int(bs3)])
+                    self.button_signal.emit([int(bs1), int(bs2), int(bs3), int(current_floor)])

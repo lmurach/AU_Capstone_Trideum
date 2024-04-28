@@ -91,12 +91,12 @@ if __name__ == "__main__":
     ## 
     # Set up the background thread
     bm = ourMainWindow.bg_task_manager
-    thread = QThread()
-    bm.moveToThread(thread)
-    thread.started.connect(bm.run)
+    bm.moveToThread(ourMainWindow.thread)
+    ourMainWindow.thread.started.connect(bm.run)
     bm.temp_signal.connect(get_temp)
     bm.motion_signal.connect(detect_motion)
     bm.logs_changed.connect(update_logs)
+    bm.button_signal.connect(update_requested)
 
     # # Set up the Elevator thread
     # bge = ourMainWindow.bg_elevator
@@ -106,8 +106,13 @@ if __name__ == "__main__":
     # bge.button_signal.connect(update_requested)
 
     # Start the Threads
-    thread.start()
+    ourMainWindow.thread.start()
     # eThread.start()
 
     # Finally show the window
-    ourMainWindow.show()
+    try:
+        
+        ourMainWindow.show()
+    except Exception as e:
+        print(e)
+        ourMainWindow.appExec()

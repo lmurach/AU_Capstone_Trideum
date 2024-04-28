@@ -23,13 +23,12 @@ class TempControl:
     # Initialize I2C bus
     bus = smbus2.SMBus(bus_number)
     TEMP_ERROR_VAL = -65
-    servo_select_pins = [13, 26]
     HVAC_cooler_pin = 6
     set_temps = [75, 75, 75]
     servo_turn = 1
     servo_busy_counter = 0
 
-    def __init__(self, floor:int, address:int):
+    def __init__(self, floor:int, address:int, pin):
         self.floor = floor
         self.address = address
         self.prev_temp = self.TEMP_ERROR_VAL
@@ -39,8 +38,11 @@ class TempControl:
         self.is_connected = True
         self.database = Database()
         print(GPIO.getmode())
-        GPIO.setup(self.servo_select_pins, GPIO.OUT)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(pin, GPIO.OUT)
         GPIO.setup(self.HVAC_cooler_pin, GPIO.OUT)
+
+        self.pwm = GPIO.PWM(pin, 50) # pin number, 50 hz
     # Define I2C addresses of the TC74 sensors
 
     def get_temp_if_changed(self) -> Tuple[bool, int]:
@@ -106,12 +108,11 @@ class TempControl:
         First, the PWM signal stops while the pins are changing to reduce jitter
         on the vents. Then the select pins change to high or low depending on
         the floor, then the correct servo moves with a PWM signal.'''
-        TempControl.pwm_stop()
-        self._set_demux_inputs(self.floor)
+        #self._set_demux_inputs(self.floor)
         if is_on:
-            TempControl._open_servo()
+            self._open_servo()
         else:
-            TempControl._close_servo()
+            self._close_servo()
 
     def _set_demux_inputs(self, servo_floor:int):
         '''Changes the state of the select pins for the demux so that the
@@ -122,31 +123,22 @@ class TempControl:
             GPIO.output(self.servo_select_pins[0], GPIO.LOW)
             GPIO.output(self.servo_select_pins[1], GPIO.LOW)
         if servo_floor == 1:
-            GPIO.output(self.servo_select_pins[0], GPIO.LOW)
-            GPIO.output(self.servo_select_pins[1], GPIO.HIGH)
-        if servo_floor == 2:
             GPIO.output(self.servo_select_pins[0], GPIO.HIGH)
             GPIO.output(self.servo_select_pins[1], GPIO.LOW)
+        if servo_floor == 2:
+            GPIO.output(self.servo_select_pins[0], GPIO.LOW)
+            GPIO.output(self.servo_select_pins[1], GPIO.HIGH)
 
     @staticmethod
     def change_HVAC_cooler_state(is_on:bool) -> None:
         '''If all vents are closed, the HVAC turns off.'''
         GPIO.output(TempControl.HVAC_cooler_pin, is_on)
 
-    @staticmethod
-    def pwm_stop():
-        pwm = HardwarePWM(pwm_channel = 1, hz = 50, chip = 0)
-        pwm.stop()
+    def _open_servo(self):
+        self.pwm.start(5.5)
 
-    @staticmethod
-    def _open_servo():
-        pwm = HardwarePWM(pwm_channel = 1, hz = 50, chip = 0)
-        pwm.start(5)
-
-    @staticmethod
-    def _close_servo():
-        pwm = HardwarePWM(pwm_channel = 1, hz = 50, chip = 0)
-        pwm.start(10)
+    def _close_servo(self):
+        self.pwm.start(8.3)
 
     # '''The following loop is to demonstrate the temperature readings and will 
     # be used to test the accuracy of the sensors before implementation.'''
