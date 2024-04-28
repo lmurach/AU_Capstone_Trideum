@@ -45,9 +45,9 @@ class BackgroundMain(QObject):
             self.motion_sensor_1,
             self.motion_sensor_2
         ]
-        self.temp_sensor_0 = TempControl(0, 0x48, 13)
-        self.temp_sensor_1 = TempControl(1, 0x49, 19)
-        self.temp_sensor_2 = TempControl(2, 0x4D, 26)
+        self.temp_sensor_0 = TempControl(0, 0x48)
+        self.temp_sensor_1 = TempControl(1, 0x49)
+        self.temp_sensor_2 = TempControl(2, 0x4D)
         self.temp_sensors = [
             self.temp_sensor_0,
             self.temp_sensor_1,
