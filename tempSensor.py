@@ -122,11 +122,11 @@ class TempControl:
             GPIO.output(self.servo_select_pins[0], GPIO.LOW)
             GPIO.output(self.servo_select_pins[1], GPIO.LOW)
         if servo_floor == 1:
-            GPIO.output(self.servo_select_pins[0], GPIO.LOW)
-            GPIO.output(self.servo_select_pins[1], GPIO.HIGH)
-        if servo_floor == 2:
             GPIO.output(self.servo_select_pins[0], GPIO.HIGH)
             GPIO.output(self.servo_select_pins[1], GPIO.LOW)
+        if servo_floor == 2:
+            GPIO.output(self.servo_select_pins[0], GPIO.LOW)
+            GPIO.output(self.servo_select_pins[1], GPIO.HIGH)
 
     @staticmethod
     def change_HVAC_cooler_state(is_on:bool) -> None:
@@ -146,7 +146,7 @@ class TempControl:
     @staticmethod
     def _close_servo():
         pwm = HardwarePWM(pwm_channel = 1, hz = 50, chip = 0)
-        pwm.start(8.3)
+        pwm.start(8)
 
     # '''The following loop is to demonstrate the temperature readings and will 
     # be used to test the accuracy of the sensors before implementation.'''
