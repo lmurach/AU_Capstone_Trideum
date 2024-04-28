@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 # from Crypto.PublicKey import RSA
 # from Crypto.Signature import pkcs1_15
 # from Crypto.Hash import SHA256
-from PIRC522.pirc522.rfid import RFID
+from pirc522 import RFID
 
 from database import Database
 
