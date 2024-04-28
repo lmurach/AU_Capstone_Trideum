@@ -284,27 +284,27 @@ class OurMainWindow():
 
         if (floor == 0):
             # If the temperature is above the "Cool To Temperature"
-            if (temp > self.ui.bottom_floor_hvac_dial.value()):
+            if (temp > self.ui.bottom_floor_hvac_dial.value()+2):
                 self.set_temp_text(floor, str(temp), self.GREEN, " ON")
             # If the temperature is less than or at the "Cool To Temperature"
-            elif (temp <= self.ui.bottom_floor_hvac_dial.value()):
+            elif (temp <= self.ui.bottom_floor_hvac_dial.value()-2):
                 self.set_temp_text(floor, str(temp), self.GREY, " OFF")
 
         elif (floor == 1):
         
             # If the temperature is above the "Cool To Temperature"
-            if (temp > self.ui.middle_floor_hvac_dial.value()):
+            if (temp > self.ui.middle_floor_hvac_dial.value()+2):
                 self.set_temp_text(floor, str(temp), self.GREEN, " ON")
             # If the temperature is less than or at the "Cool To Temperature"
-            elif (temp <= self.ui.middle_floor_hvac_dial.value()):
+            elif (temp <= self.ui.middle_floor_hvac_dial.value()-2):
                 self.set_temp_text(floor, str(temp), self.GREY, " OFF")
 
         elif (floor == 2):
 
-            if (temp > self.ui.top_floor_hvac_dial.value()):
+            if (temp > self.ui.top_floor_hvac_dial.value()+2):
                 self.set_temp_text(floor, str(temp), self.GREEN, " ON")
 
-            elif (temp <= self.ui.top_floor_hvac_dial.value()):
+            elif (temp <= self.ui.top_floor_hvac_dial.value()-2):
                 self.set_temp_text(floor, str(temp), self.GREY, " OFF")
     
     def set_temp_text(self, floor, text:str, color:str, state:str) -> None:
@@ -420,7 +420,7 @@ class OurMainWindow():
         current_floor = bsList[3]
 
         if (current_floor != self._previous_elevator_floor):
-            self.db.log_elevator(current_floor)
+            self.db.create_elevator_log(current_floor)
             self._previous_elevator_floor = current_floor
 
         if (current_floor == 0):

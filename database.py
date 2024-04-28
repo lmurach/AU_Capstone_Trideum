@@ -131,7 +131,6 @@ class Database:
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                 date INTEGER,
                 floor INTEGER,
-                state TEXT
             )"""
         )
         cur.execute(
@@ -188,9 +187,9 @@ class Database:
         )
         cur.executemany(
             """INSERT INTO elevator_logs(
-                date, floor, state
+                date, floor
                 )
-                VALUES(?, ?, ?);""", DBTemp.elevator_log_data
+                VALUES(?, ?);""", DBTemp.elevator_log_data
         )
 
     def drop_db(self):
@@ -302,6 +301,24 @@ class Database:
                 date, floor, is_alert, state
                 )
                 VALUES(?, ?, ?, ?);""", (date, floor, is_alert, state)
+        )
+        con.commit()
+        con.close()
+        Database.mutex.unlock()
+    
+    def create_elevator_log(self, floor):
+        '''Creates an elevator log. Enter the floor using 0 for the basement, 1
+        for the 1st floor, and 2 for the top floor.'''
+
+        Database.mutex.lock()
+        date = datetime.now()
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """INSERT INTO motion_logs(
+                date, floor
+                )
+                VALUES(?, ?);""", (date, floor)
         )
         con.commit()
         con.close()
@@ -501,7 +518,7 @@ class Database:
                 """)
         if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, NULL AS is_alert, state,
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert, NULL AS state,
                     'ele' AS type
                 FROM elevator_logs
                 """)

@@ -53,7 +53,7 @@ class TempControl:
         # print(f"turn: {TempControl.servo_turn}")
         # print(f"counter: {TempControl.servo_busy_counter}")
         is_changed, temp = self._read_temperature()
-        if (temp > TempControl.set_temps[self.floor] and
+        if (temp > TempControl.set_temps[self.floor]+2 and
             self.floor == TempControl.servo_turn and
             TempControl.servo_busy_counter == 0 and
             self.prev_HVAC_is_on is False
@@ -62,7 +62,7 @@ class TempControl:
             self.prev_HVAC_is_on = True
             is_changed = True
             TempControl.servo_busy_counter = 2
-        if (temp <= TempControl.set_temps[self.floor] and
+        if (temp <= TempControl.set_temps[self.floor]-2 and
             self.floor == TempControl.servo_turn and
             TempControl.servo_busy_counter == 0 and
             self.prev_HVAC_is_on is True

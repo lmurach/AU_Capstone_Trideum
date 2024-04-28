@@ -54,10 +54,9 @@ class DBTemp:
     ]
 
     elevator_log_data = [
-        (datetime.datetime.now(), 1, "in-progress"),
-        (datetime.datetime.now(), 1, "arrived"),
-        (datetime.datetime.now(), 2, "in-progress"),
-        (datetime.datetime.now(), 2, "arrived")
+        (datetime.datetime.now(), 1),
+        (datetime.datetime.now(), 2),
+        (datetime.datetime.now(), 3)
     ]
 
     config_log_data = [
