@@ -24,11 +24,13 @@ class TempControl:
     bus = smbus2.SMBus(bus_number)
     TEMP_ERROR_VAL = -65
     HVAC_cooler_pin = 6
+    and_gate_input_pins = [13, 23, 26]
     set_temps = [75, 75, 75]
     servo_turn = 1
     servo_busy_counter = 0
+    pwm = HardwarePWM(pwm_channel=1, hz=50, chip=0)
 
-    def __init__(self, floor:int, address:int, pin):
+    def __init__(self, floor:int, address:int):
         self.floor = floor
         self.address = address
         self.prev_temp = self.TEMP_ERROR_VAL
@@ -39,10 +41,8 @@ class TempControl:
         self.database = Database()
         print(GPIO.getmode())
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(pin, GPIO.OUT)
+        GPIO.setup(TempControl.and_gate_input_pins[self.floor], GPIO.OUT)
         GPIO.setup(self.HVAC_cooler_pin, GPIO.OUT)
-
-        self.pwm = GPIO.PWM(pin, 50) # pin number, 50 hz
     # Define I2C addresses of the TC74 sensors
 
     def get_temp_if_changed(self) -> Tuple[bool, int]:
@@ -114,20 +114,20 @@ class TempControl:
         else:
             self._close_servo()
 
-    def _set_demux_inputs(self, servo_floor:int):
-        '''Changes the state of the select pins for the demux so that the
-        correct servo is selected. After this, the correct PWM signal can be
-        applied. Two select pins are needed for 4 servos, 3 would be needed
-        for up to 8.'''
-        if servo_floor == 0:
-            GPIO.output(self.servo_select_pins[0], GPIO.LOW)
-            GPIO.output(self.servo_select_pins[1], GPIO.LOW)
-        if servo_floor == 1:
-            GPIO.output(self.servo_select_pins[0], GPIO.HIGH)
-            GPIO.output(self.servo_select_pins[1], GPIO.LOW)
-        if servo_floor == 2:
-            GPIO.output(self.servo_select_pins[0], GPIO.LOW)
-            GPIO.output(self.servo_select_pins[1], GPIO.HIGH)
+    # def _set_demux_inputs(self, servo_floor:int):
+    #     '''Changes the state of the select pins for the demux so that the
+    #     correct servo is selected. After this, the correct PWM signal can be
+    #     applied. Two select pins are needed for 4 servos, 3 would be needed
+    #     for up to 8.'''
+    #     if servo_floor == 0:
+    #         GPIO.output(self.servo_select_pins[0], GPIO.LOW)
+    #         GPIO.output(self.servo_select_pins[1], GPIO.LOW)
+    #     if servo_floor == 1:
+    #         GPIO.output(self.servo_select_pins[0], GPIO.HIGH)
+    #         GPIO.output(self.servo_select_pins[1], GPIO.LOW)
+    #     if servo_floor == 2:
+    #         GPIO.output(self.servo_select_pins[0], GPIO.LOW)
+    #         GPIO.output(self.servo_select_pins[1], GPIO.HIGH)
 
     @staticmethod
     def change_HVAC_cooler_state(is_on:bool) -> None:
@@ -135,10 +135,15 @@ class TempControl:
         GPIO.output(TempControl.HVAC_cooler_pin, is_on)
 
     def _open_servo(self):
-        self.pwm.start(5.5)
+        GPIO.output(TempControl.and_gate_input_pins, GPIO.LOW)
+        GPIO.output(TempControl.and_gate_input_pins[self.floor], GPIO.HIGH)
+        TempControl.pwm.start(5.5)
+
 
     def _close_servo(self):
-        self.pwm.start(8.3)
+        GPIO.output(TempControl.and_gate_input_pins, GPIO.LOW)
+        GPIO.output(TempControl.and_gate_input_pins[self.floor], GPIO.HIGH)
+        TempControl.pwm.start(8.3)
 
     # '''The following loop is to demonstrate the temperature readings and will 
     # be used to test the accuracy of the sensors before implementation.'''
