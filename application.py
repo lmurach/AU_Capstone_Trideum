@@ -80,6 +80,8 @@ if __name__ == "__main__":
     """
     ### GLOBAL VARS ### 
     # Create a door that assoicates user id 3 with it...
+
+    
     db = Database()
     db.initialize_db()
     ourDoor = Door()

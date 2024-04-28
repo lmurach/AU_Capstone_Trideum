@@ -56,6 +56,8 @@ class OurMainWindow():
         self.GREY   = "border: 3px solid grey;\nbackground-color: lightGrey;\n"
         self.YELLOW = "border: 3px solid yellow;\nbackground-color: lightYellow;\n"
 
+        self._previous_elevator_floor = 0
+
     def show(self):
         """ This method will start the QApplication and present the user with the GUI. """
         self.MainWindow.show()
@@ -412,9 +414,14 @@ class OurMainWindow():
         This method updates the state of the elevator boxes. If a specific floor is in the 
         requested list, it will change that box to yellow. 
         """
+        
 
         # Updates for the bottom floor. 
         current_floor = bsList[3]
+
+        if (current_floor != self._previous_elevator_floor):
+            self.db.log_elevator(current_floor)
+            self._previous_elevator_floor = current_floor
 
         if (current_floor == 0):
             self.ui.bottom_floor_elevator.setStyleSheet(self.GREEN)
