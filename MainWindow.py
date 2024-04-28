@@ -65,8 +65,10 @@ class OurMainWindow():
         self.app.exec_()
         self.bg_task_manager.running = False
         self.thread.quit()
-        self.thread.wait()
-        TempControl.pwm_stop()
+        self.thread.wait() 
+        
+        for temp_sensor in self.bg_task_manager.temp_sensors:
+            temp_sensor.pwm.stop()
 
 
     def update_top_floor_dials(self):
