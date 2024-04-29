@@ -66,7 +66,7 @@ class BackgroundMain(QObject):
         while self.running:
             self._RFID_handler()
             self._door_handler()
-            print(self.door._is_door_closed())
+            #print(self.door._is_door_closed())
             self._light_handler()
             self._temp_handler()
             DoorLights.handle_turning_off_lights()
