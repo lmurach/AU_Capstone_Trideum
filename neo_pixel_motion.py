@@ -67,10 +67,10 @@ class NeoPixelMotion:
         if self.is_time():     #only activates if timeDif's value in seconds has passed since the last update
             if self.lockdown_state:
                 for i in range(30):
-                    self.pixels[i + (self.floor * 30)] = (100, 0, 0)          #lights turn red if motion is detected during a lockdown
+                    self.pixels[i + (self.floor * 30)] = (50, 0, 0)          #lights turn red if motion is detected during a lockdown
             else:
                 for i in range(30):
-                    self.pixels[i + (self.floor * 30)] = (100, 100, 100)      #lights turn white if motion is detected during open hours
+                    self.pixels[i + (self.floor * 30)] = (50, 50, 50)      #lights turn white if motion is detected during open hours
             # L: added a database call here so that the motion alert is changed
             self.db.create_motion_log(self.floor, self.lockdown_state)          
             self.pixels.show()
