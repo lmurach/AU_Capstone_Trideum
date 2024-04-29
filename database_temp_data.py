@@ -27,7 +27,7 @@ class DBTemp:
     employee_data = [
         ("John Johnman", 1, 49208238123),
         ("Dave Daveman", 1, 21341168163),
-        ("Lisa Liswoman", 1, -1),
+        ("Administrator", 1, -1),
         ("Forest Forestman", 0, 49722214946)
     ]
 

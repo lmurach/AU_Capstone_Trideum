@@ -145,6 +145,7 @@ class OurMainWindow():
         the rest of the Ui. 
         """
         temps = self.db.get_config_temperature_array() # basement to top
+        print(f"Temps: {temps}")
         if len(temps) == 0:
             temps = [70, 70, 70]
         TempControl.set_temps = temps
@@ -315,6 +316,7 @@ class OurMainWindow():
         if text == "Not Connected":
             degree_text = ""
             short_text = "NC"
+            color = self.RED
         if floor == 0:
             self.ui.bottom_floor_temp.setText(f"{text}{degree_text}{state}")
             self.ui.bottom_floor_temp_split.setText(f"{short_text}{degree_text}")

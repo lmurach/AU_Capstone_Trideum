@@ -315,7 +315,7 @@ class Database:
         con = sqlite3.connect("database.db")
         cur = con.cursor()
         cur.execute(
-            """INSERT INTO motion_logs(
+            """INSERT INTO elevator_logs(
                 date, floor
                 )
                 VALUES(?, ?);""", (date, floor)
