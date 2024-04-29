@@ -124,14 +124,14 @@ class Database:
                 date INTEGER,
                 floor INTEGER,
                 is_alert INTEGER
-            )"""
+            );"""
         )
         cur.execute(
             """CREATE TABLE IF NOT EXISTS elevator_logs(
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                 date INTEGER,
-                floor INTEGER,
-            )"""
+                floor INTEGER
+            );"""
         )
         cur.execute(
             """CREATE TABLE IF NOT EXISTS config(
@@ -141,7 +141,7 @@ class Database:
                 opening_time INTEGER,
                 closing_time INTEGER,
                 is_dark_mode INTEGER
-            )"""
+            );"""
         )
 
     @staticmethod
