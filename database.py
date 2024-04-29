@@ -442,17 +442,11 @@ class Database:
                         f"{query[LogTypes.FLOOR]}."""
                     )
             if query[LogTypes.TYPE] == "ele":
-                if query[LogTypes.STATE] == "requested":
-                    log_string_array.append(
-                        f"{query[LogTypes.DATE]}: "
-                        f"Elevator requested for floor" 
-                        f"{query[LogTypes.FLOOR]}."
-                    )
-                if query[LogTypes.STATE] == "arrived":
-                    log_string_array.append(
-                        f"{query[LogTypes.DATE]}: "
-                        f"Elevator arrived on floor {query[LogTypes.FLOOR]}."
-                    )
+                log_string_array.append(
+                    f"{query[LogTypes.DATE]}: "
+                    f"Elevator arrived at floor" 
+                    f"{query[LogTypes.FLOOR]}."
+                )
         return log_string_array
 
     def _get_logs_sql(self):
@@ -555,6 +549,7 @@ class Database:
         res = cur.execute(query_string)
         logs = res.fetchall()
         con.close()
+        print(query_string)
         Database.mutex.unlock()
         if len(logs) == 0:
             return []
