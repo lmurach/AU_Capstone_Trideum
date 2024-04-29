@@ -137,7 +137,7 @@ class TempControl:
     def _open_servo(self):
         GPIO.output(TempControl.and_gate_input_pins, GPIO.LOW)
         GPIO.output(TempControl.and_gate_input_pins[self.floor], GPIO.HIGH)
-        TempControl.pwm.start(5.5)
+        TempControl.pwm.start(5.25)
 
 
     def _close_servo(self):
