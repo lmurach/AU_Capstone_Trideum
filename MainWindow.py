@@ -145,6 +145,7 @@ class OurMainWindow():
         the rest of the Ui. 
         """
         temps = self.db.get_config_temperature_array() # basement to top
+        print(f"Temps: {temps}")
         if len(temps) == 0:
             temps = [70, 70, 70]
         TempControl.set_temps = temps
@@ -284,27 +285,27 @@ class OurMainWindow():
 
         if (floor == 0):
             # If the temperature is above the "Cool To Temperature"
-            if (temp > self.ui.bottom_floor_hvac_dial.value()):
+            if (temp > self.ui.bottom_floor_hvac_dial.value()+2):
                 self.set_temp_text(floor, str(temp), self.GREEN, " ON")
             # If the temperature is less than or at the "Cool To Temperature"
-            elif (temp <= self.ui.bottom_floor_hvac_dial.value()):
+            elif (temp <= self.ui.bottom_floor_hvac_dial.value()-2):
                 self.set_temp_text(floor, str(temp), self.GREY, " OFF")
 
         elif (floor == 1):
         
             # If the temperature is above the "Cool To Temperature"
-            if (temp > self.ui.middle_floor_hvac_dial.value()):
+            if (temp > self.ui.middle_floor_hvac_dial.value()+2):
                 self.set_temp_text(floor, str(temp), self.GREEN, " ON")
             # If the temperature is less than or at the "Cool To Temperature"
-            elif (temp <= self.ui.middle_floor_hvac_dial.value()):
+            elif (temp <= self.ui.middle_floor_hvac_dial.value()-2):
                 self.set_temp_text(floor, str(temp), self.GREY, " OFF")
 
         elif (floor == 2):
 
-            if (temp > self.ui.top_floor_hvac_dial.value()):
+            if (temp > self.ui.top_floor_hvac_dial.value()+2):
                 self.set_temp_text(floor, str(temp), self.GREEN, " ON")
 
-            elif (temp <= self.ui.top_floor_hvac_dial.value()):
+            elif (temp <= self.ui.top_floor_hvac_dial.value()-2):
                 self.set_temp_text(floor, str(temp), self.GREY, " OFF")
     
     def set_temp_text(self, floor, text:str, color:str, state:str) -> None:
@@ -315,6 +316,7 @@ class OurMainWindow():
         if text == "Not Connected":
             degree_text = ""
             short_text = "NC"
+            color = self.RED
         if floor == 0:
             self.ui.bottom_floor_temp.setText(f"{text}{degree_text}{state}")
             self.ui.bottom_floor_temp_split.setText(f"{short_text}{degree_text}")
@@ -420,7 +422,7 @@ class OurMainWindow():
         current_floor = bsList[3]
 
         if (current_floor != self._previous_elevator_floor):
-            self.db.log_elevator(current_floor)
+            self.db.create_elevator_log(current_floor)
             self._previous_elevator_floor = current_floor
 
         if (current_floor == 0):

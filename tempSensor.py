@@ -43,17 +43,14 @@ class TempControl:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(TempControl.and_gate_input_pins[self.floor], GPIO.OUT)
         GPIO.setup(self.HVAC_cooler_pin, GPIO.OUT)
-    # Define I2C addresses of the TC74 sensors
 
     def get_temp_if_changed(self) -> Tuple[bool, int]:
         '''Returns a boolean if there was a log (error or update) to the
         database. This way the GUI can update the logs page or the
         temperature. The floor_turn is a very simple implementation of a
         mutex algorithm'''
-        # print(f"turn: {TempControl.servo_turn}")
-        # print(f"counter: {TempControl.servo_busy_counter}")
         is_changed, temp = self._read_temperature()
-        if (temp > TempControl.set_temps[self.floor] and
+        if (temp > TempControl.set_temps[self.floor]+2 and
             self.floor == TempControl.servo_turn and
             TempControl.servo_busy_counter == 0 and
             self.prev_HVAC_is_on is False
@@ -62,7 +59,7 @@ class TempControl:
             self.prev_HVAC_is_on = True
             is_changed = True
             TempControl.servo_busy_counter = 2
-        if (temp <= TempControl.set_temps[self.floor] and
+        if (temp <= TempControl.set_temps[self.floor]-2 and
             self.floor == TempControl.servo_turn and
             TempControl.servo_busy_counter == 0 and
             self.prev_HVAC_is_on is True
@@ -108,26 +105,10 @@ class TempControl:
         First, the PWM signal stops while the pins are changing to reduce jitter
         on the vents. Then the select pins change to high or low depending on
         the floor, then the correct servo moves with a PWM signal.'''
-        #self._set_demux_inputs(self.floor)
         if is_on:
             self._open_servo()
         else:
             self._close_servo()
-
-    # def _set_demux_inputs(self, servo_floor:int):
-    #     '''Changes the state of the select pins for the demux so that the
-    #     correct servo is selected. After this, the correct PWM signal can be
-    #     applied. Two select pins are needed for 4 servos, 3 would be needed
-    #     for up to 8.'''
-    #     if servo_floor == 0:
-    #         GPIO.output(self.servo_select_pins[0], GPIO.LOW)
-    #         GPIO.output(self.servo_select_pins[1], GPIO.LOW)
-    #     if servo_floor == 1:
-    #         GPIO.output(self.servo_select_pins[0], GPIO.HIGH)
-    #         GPIO.output(self.servo_select_pins[1], GPIO.LOW)
-    #     if servo_floor == 2:
-    #         GPIO.output(self.servo_select_pins[0], GPIO.LOW)
-    #         GPIO.output(self.servo_select_pins[1], GPIO.HIGH)
 
     @staticmethod
     def change_HVAC_cooler_state(is_on:bool) -> None:
@@ -135,29 +116,20 @@ class TempControl:
         GPIO.output(TempControl.HVAC_cooler_pin, is_on)
 
     def _open_servo(self):
+        '''The PWM is shared so the output must set all other GPIO pins
+        to low that are connected to other AND gates and then set the correct
+        pin high for its own AND gate. 5.25 is 20 degrees
+        (0 is 5 and 180 is 10)'''
         GPIO.output(TempControl.and_gate_input_pins, GPIO.LOW)
         GPIO.output(TempControl.and_gate_input_pins[self.floor], GPIO.HIGH)
-        TempControl.pwm.start(5.5)
+        TempControl.pwm.start(5.25)
 
 
     def _close_servo(self):
+        '''The PWM is shared so the output must set all other GPIO pins
+        to low that are connected to other AND gates and then set the correct
+        pin high for its own AND gate. 8.3 is 120 degrees
+        (0 is 5 and 180 is 10)'''
         GPIO.output(TempControl.and_gate_input_pins, GPIO.LOW)
         GPIO.output(TempControl.and_gate_input_pins[self.floor], GPIO.HIGH)
         TempControl.pwm.start(8.3)
-
-    # '''The following loop is to demonstrate the temperature readings and will 
-    # be used to test the accuracy of the sensors before implementation.'''
-    # try:
-    #     while True:
-    #         # Read temperature from sensor 1
-    #         temp1 = read_temperature(floor1_address)
-    #         print("Temperature Floor 1: {:.2f}°F".format(temp1))
-
-    #         # Read temperature from sensor 2
-    #         temp2 = read_temperature(floor2_address)
-    #         print("Temperature Floor 2: {:.2f}°F".format(temp2))
-
-    #         time.sleep(1)  # Wait for 1 second before reading again
-
-    # except KeyboardInterrupt:
-    #     print("Exiting...")

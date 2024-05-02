@@ -9,17 +9,7 @@ Purpose : The Database class handles all important logging to keep track of
           opening to the previous configurations on launch.
 
 TODO: 
-1. A relational database is the wrong choice for this application. Functions
-will be used as a skeleton and be switched over to MongoDB, a NoSQL database.
-This is because our logs use almost no relations and benefit from the way that
-MongoDB queries. This was a suggestion from Prof. York after I consulted him 
-about speed and design.
-
-2. More functions need to be added for adding logs to the database. This will be
-prioritized more as the codebases of those functions get built out so the 
-correct arguments will be in place.
-
-3. Look into dialog trees and possible better data structures for the string
+Look into dialog trees and possible better data structures for the string
 array function. Currently the code is managable but better solutions should
 exist for this type of function. 
 """
@@ -82,7 +72,6 @@ class Database:
             Database._create_tables(cur)
             Database._fill_config_table(cur)
             Database._fill_employees_table(cur)
-            Database._fill_tables_with_temp_data(cur)
         con.commit()
         con.close()
 
@@ -124,15 +113,14 @@ class Database:
                 date INTEGER,
                 floor INTEGER,
                 is_alert INTEGER
-            )"""
+            );"""
         )
         cur.execute(
             """CREATE TABLE IF NOT EXISTS elevator_logs(
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
                 date INTEGER,
-                floor INTEGER,
-                state TEXT
-            )"""
+                floor INTEGER
+            );"""
         )
         cur.execute(
             """CREATE TABLE IF NOT EXISTS config(
@@ -142,7 +130,7 @@ class Database:
                 opening_time INTEGER,
                 closing_time INTEGER,
                 is_dark_mode INTEGER
-            )"""
+            );"""
         )
 
     @staticmethod
@@ -158,6 +146,8 @@ class Database:
 
     @staticmethod
     def _fill_employees_table(cur: sqlite3.Cursor):
+        '''Fills only the employee table as it is critial for the door 
+        to operate.'''
         cur.executemany(
             """INSERT INTO employees(
                     name, door_perm, card_uid
@@ -167,7 +157,8 @@ class Database:
 
     @staticmethod
     def _fill_tables_with_temp_data(cur: sqlite3.Cursor):
-        '''runs all necessary inserts of temporary data'''
+        '''Runs all necessary inserts of temporary data found in the file
+        database_temp_data.py'''
         cur.executemany(
             """INSERT INTO door_logs(
                 date, e_id, is_alert, state
@@ -188,9 +179,9 @@ class Database:
         )
         cur.executemany(
             """INSERT INTO elevator_logs(
-                date, floor, state
+                date, floor
                 )
-                VALUES(?, ?, ?);""", DBTemp.elevator_log_data
+                VALUES(?, ?);""", DBTemp.elevator_log_data
         )
 
     def drop_db(self):
@@ -302,6 +293,24 @@ class Database:
                 date, floor, is_alert, state
                 )
                 VALUES(?, ?, ?, ?);""", (date, floor, is_alert, state)
+        )
+        con.commit()
+        con.close()
+        Database.mutex.unlock()
+    
+    def create_elevator_log(self, floor):
+        '''Creates an elevator log. Enter the floor using 0 for the basement, 1
+        for the 1st floor, and 2 for the top floor.'''
+
+        Database.mutex.lock()
+        date = datetime.now()
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(
+            """INSERT INTO elevator_logs(
+                date, floor
+                )
+                VALUES(?, ?);""", (date, floor)
         )
         con.commit()
         con.close()
@@ -425,25 +434,17 @@ class Database:
                         f"{query[LogTypes.FLOOR]}."""
                     )
             if query[LogTypes.TYPE] == "ele":
-                if query[LogTypes.STATE] == "requested":
-                    log_string_array.append(
-                        f"{query[LogTypes.DATE]}: "
-                        f"Elevator requested for floor" 
-                        f"{query[LogTypes.FLOOR]}."
-                    )
-                if query[LogTypes.STATE] == "arrived":
-                    log_string_array.append(
-                        f"{query[LogTypes.DATE]}: "
-                        f"Elevator arrived on floor {query[LogTypes.FLOOR]}."
-                    )
+                log_string_array.append(
+                    f"{query[LogTypes.DATE]}: "
+                    f"Elevator arrived at floor" 
+                    f"{query[LogTypes.FLOOR]}."
+                )
         return log_string_array
 
     def _get_logs_sql(self):
         '''Returns a list of tuples to pass into the string array function. The
         tables are all unioned together into one resulting function so that they
-        can be ordered by datetime.
-        TODO: This function is extremely inefficient and needs to be reworked.
-        The output should remain the same, just with a backend change.'''
+        can be ordered by datetime.'''
         Database.mutex.lock()
         con = sqlite3.connect("database.db")
         query_list = []
@@ -501,7 +502,7 @@ class Database:
                 """)
         if Database.log_filtering_is_on[AlertTypes.ELEVATOR]:
             query_list.append("""
-                SELECT NULL AS name, time(date), floor, NULL AS is_alert, state,
+                SELECT NULL AS name, time(date), floor, NULL AS is_alert, NULL AS state,
                     'ele' AS type
                 FROM elevator_logs
                 """)
@@ -538,6 +539,7 @@ class Database:
         res = cur.execute(query_string)
         logs = res.fetchall()
         con.close()
+        print(query_string)
         Database.mutex.unlock()
         if len(logs) == 0:
             return []

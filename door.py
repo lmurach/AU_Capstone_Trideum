@@ -129,25 +129,3 @@ class Door:
         # reed_switch = push_button.PushButton(21)
         # state = reed_switch.GetState()
         return not state
-
-def fake_loop(rfid_obj:Door):
-    '''A test demo of the concurrency functionality'''
-    while 1:
-        if rfid_obj.time_until_run < datetime.now():
-            if rfid_obj.handle_lock() == 0:
-                return
-        for i in range(1, 10):
-            print(i)
-
-def debug_console(rfid_obj:Door):
-    '''A test method to show the open_lock and close_lock functions
-    in a demo.'''
-    rfid_obj.GPIO_init()
-    while 1:
-        response = input("Enter your door command: ")
-        if response == "open":
-            fake_loop(rfid_obj)
-
-if __name__ == '__main__':
-    rfid_obj = Door("Someone")
-    debug_console(rfid_obj)

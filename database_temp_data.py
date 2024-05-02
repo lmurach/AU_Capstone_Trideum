@@ -27,7 +27,7 @@ class DBTemp:
     employee_data = [
         ("John Johnman", 1, 49208238123),
         ("Dave Daveman", 1, 21341168163),
-        ("Lisa Liswoman", 1, -1),
+        ("Administrator", 1, -1),
         ("Forest Forestman", 0, 49722214946)
     ]
 
@@ -54,10 +54,9 @@ class DBTemp:
     ]
 
     elevator_log_data = [
-        (datetime.datetime.now(), 1, "in-progress"),
-        (datetime.datetime.now(), 1, "arrived"),
-        (datetime.datetime.now(), 2, "in-progress"),
-        (datetime.datetime.now(), 2, "arrived")
+        (datetime.datetime.now(), 1),
+        (datetime.datetime.now(), 2),
+        (datetime.datetime.now(), 3)
     ]
 
     config_log_data = [
