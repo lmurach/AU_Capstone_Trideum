@@ -34,23 +34,6 @@ class RFIDSecurity(RFID):
         self.util_obj = self.util()
         self.db = Database()
 
-    # @staticmethod
-    # def generate_keys():
-    #     '''Public and private keys are generated in seperate files.
-    #     These are to NEVER be posted on github and only ever accessed
-    #     by these read file functions. The .pem file extension is necessary
-    #     for Cryptographic signatures encoding convention rules
-    #     https://serverfault.com/questions/9708/what-is-a-pem-file-and-how-does-it-differ-from-other-openssl-generated-key-file'''
-
-    #     key = RSA.generate(2048)
-    #     private_key = key.export_key()
-    #     with open("private.pem", "wb") as f:
-    #         f.write(private_key)
-
-    #     public_key = key.publickey().export_key()
-    #     with open("receiver.pem", "wb") as f:
-    #         f.write(public_key)
-
     def is_card_there(self) -> bool:
         '''Writes a command to the board and if an interrupt is sent back, then
         the card is known to be there.'''
@@ -122,90 +105,7 @@ class RFIDSecurity(RFID):
             return (name, str_uid)
         return (None, None)
 
-    # @staticmethod
-    # def _read_card() -> Tuple[str, str]:
-    #     '''reads from the card to return an id and the message on the card
-    #     in a tuple'''
-    #     reader = SimpleMFRC522()
-    #     id, text = reader.read()
-    #     return (id, text)
-
-    # @staticmethod
-    # def _write_card(text:str):
-    #     writer = SimpleMFRC522()
-    #     id, text_written = writer.write(text)
-    #     print(f"ID: {id}")
-    #     print(f"Text Written: {text_written}")
-
-    # @staticmethod
-    # def sign_card(emp_name:str) -> bool:
-    #     '''The function should be ran when the card is against the RFID reader.
-    #     It first checks for if an employee exists under a given name and has 
-    #     door permissions. (Returns false if they do not). Then the RFID is read
-    #     for the uid on the card. This uid is written to the employees database
-    #     so that it can be validated later. Finally, the card is written.
-    #     TODO: look into if the data needs to be encrypted'''
-
-    #     if not Database.does_employee_have_access(emp_name):
-    #         print("invalid user")
-    #         return False
-    #     read_tuple = RFIDSecurity._read_card()
-    #     uid = read_tuple[0]
-    #     Database.add_employee_card_uid(emp_name, uid)
-    #     RFIDSecurity._write_card(emp_name)
-    #     return True
-
-    # @staticmethod
-    # def _get_signature(message):
-    #     '''Takes the unencrypted message (likely a name and id combo)
-    #     and encrypts it. The message MUST be encoded to a utf-8 format first.
-    #     Code is taken from the pycryptodome example code.'''
-
-    #     message = message.encode('utf-8')
-    #     key = RSA.import_key(open("private.pem", encoding="'utf-8'").read())
-    #     h = SHA256.new(message)
-    #     signature = pkcs1_15.new(key).sign(h)
-    #     return signature
-
-    # @staticmethod
-    # def is_authentic_card() -> bool:
-    #     '''Takes the encrypted signature on the card and decrypts it with the 
-    #     public key. It is then checked against the original message.
-    #     Code is taken from the pycryptodome example code.'''
-
-    #     try:
-    #         read_tuple = RFIDSecurity._read_card()
-    #         print("read")
-    #     finally:
-    #         RPi.GPIO.cleanup()
-    #     print(read_tuple)
-    #     uid = read_tuple[0]
-    #     name = read_tuple[1].strip()
-    #     is_auth = Database.does_employee_have_uid(name, uid)
-    #     print(is_auth)
-    #     return is_auth
-    #     # if name == "":
-    #     #     print("invalid")
-    #     #     return False
-    #     # return True
-    #     # signature = read_tuple[1]
-    #     # name = name.encode('utf-8')
-    #     # key = RSA.import_key(open("receiver.pem", encoding="'utf-8'").read())
-    #     # h = SHA256.new(name)
-    #     # try:
-    #     #     pkcs1_15.new(key).verify(h, signature)
-    #     #     print ("The signature is valid.")
-    #     # except (ValueError, TypeError):
-    #     #     print ("The signature is not valid.")
-
 if __name__ == "__main__":
-    # Database.initialize_db()
-    # name = input("Enter the card owner's name:  ")
-    # if (RFIDSecurity.sign_card(name)):
-    #     if(RFIDSecurity.is_authentic_card()):
-    #         rfid_obj = Door("Someone")
-    #         Door.debug_console(rfid_obj)
-
     rfid = RFIDSecurity()
     while True:
         if (rfid.is_card_there()):
