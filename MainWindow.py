@@ -422,6 +422,7 @@ class OurMainWindow():
 
         if (current_floor != self._previous_elevator_floor):
             self.db.create_elevator_log(current_floor)
+            self.set_up_logs()
             self._previous_elevator_floor = current_floor
 
         if (current_floor == 0):
