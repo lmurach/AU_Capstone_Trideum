@@ -4,7 +4,6 @@ from database import Database
 from door import Door
 from tempSensor import TempControl
 from background_main import BackgroundMain
-from background_elevator import BGElevator
 import sys
 import RPi.GPIO as GPIO
 from PyQt5.QtCore import QThread
